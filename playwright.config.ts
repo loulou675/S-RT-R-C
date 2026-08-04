@@ -1,0 +1,29 @@
+import { defineConfig, devices } from '@playwright/test'
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  timeout: 30_000,
+  expect: {
+    timeout: 8_000,
+  },
+  use: {
+    baseURL: 'http://127.0.0.1:5175',
+    trace: 'on-first-retry',
+  },
+  webServer: {
+    command: 'pnpm dev --host 127.0.0.1 --port 5175 --strictPort',
+    url: 'http://127.0.0.1:5175',
+    reuseExistingServer: !process.env.CI,
+    env: {
+      VITE_USE_MOCK_VISION: 'true',
+      VITE_AI_TIMEOUT_MS: '10000',
+    },
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+})
