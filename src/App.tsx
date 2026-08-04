@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { FlowProvider } from './app/FlowContext'
 import { AppShell } from './components/AppShell'
 import { AboutPage } from './routes/AboutPage'
@@ -13,7 +13,7 @@ import { ReusePage } from './routes/ReusePage'
 import { ScanPage } from './routes/ScanPage'
 import { SearchPage } from './routes/SearchPage'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <AppShell />,

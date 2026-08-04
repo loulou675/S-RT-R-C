@@ -73,7 +73,7 @@ export class OnnxVisionProvider implements VisionProvider {
 
   private loadSession() {
     if (!this.sessionPromise) {
-      const modelPath = import.meta.env.VITE_AI_MODEL_PATH ?? '/models/waste_classifier.onnx'
+      const modelPath = import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
       this.sessionPromise = fetch(modelPath, { method: 'HEAD' })
         .then((response) => {
           if (!response.ok) {
@@ -92,7 +92,7 @@ export class OnnxVisionProvider implements VisionProvider {
 
   private loadLabels() {
     if (!this.labelsPromise) {
-      const labelsPath = import.meta.env.VITE_AI_LABELS_PATH ?? '/models/labels.json'
+      const labelsPath = import.meta.env.VITE_AI_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/labels.json`
       this.labelsPromise = fetch(labelsPath)
         .then((response) => {
           if (!response.ok) {
