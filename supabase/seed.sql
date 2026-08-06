@@ -39,11 +39,11 @@ select site.id, data.code, data.name_vi, data.name_en, data.color_name, data.col
 from site
 cross join (
   values
-    ('bottle_can', 'Chai & Lon', 'Bottle & Can', 'Orange', '#f45116', 'bottle', 'Chai nhựa rỗng, lon nhôm và chai được chấp nhận.', 'Empty plastic drink bottles, aluminium cans and accepted bottles.', 1),
-    ('organic', 'Chất Thải Hữu Cơ', 'Organic Waste', 'Green', '#a8b400', 'leaf', 'Thức ăn thừa, vỏ trái cây và chất lỏng được chấp nhận.', 'Leftover food, fruit peels and accepted liquids.', 2),
-    ('clean_plastic', 'Nhựa Sạch', 'Clean Plastic', 'Red/Pink', '#e91573', 'cup', 'Ly nhựa sạch, hộp nhựa sạch, túi nhựa sạch và bao bì sạch.', 'Clean plastic cups, containers, bags, snack packaging and clean foam.', 3),
-    ('paper_cardboard', 'Giấy & Bìa Carton', 'Paper & Cardboard', 'Blue', '#1056a0', 'paper', 'Giấy, túi giấy và bìa carton sạch, khô.', 'Clean and dry paper, cardboard and paper bags.', 4),
-    ('landfill', 'Chất Thải Chôn Lấp', 'Landfill', 'Brown', '#ad653d', 'landfill', 'Nhựa bẩn, ly giấy, khăn giấy và bao bì nhiễm bẩn.', 'Dirty plastic, paper cups, tissues, napkins and contaminated packaging.', 5),
+    ('bottle_can', 'Chai & Lon', 'Bottle & Can', 'Orange', '#cb795f', 'bottle', 'Chai nhựa rỗng, lon nhôm và chai được chấp nhận.', 'Empty plastic drink bottles, aluminium cans and accepted bottles.', 1),
+    ('organic', 'Chất Thải Hữu Cơ', 'Organic Waste', 'Green', '#3e8860', 'leaf', 'Thức ăn thừa, vỏ trái cây và chất lỏng được chấp nhận.', 'Leftover food, fruit peels and accepted liquids.', 2),
+    ('clean_plastic', 'Nhựa Sạch', 'Clean Plastic', 'Red/Pink', '#b43b44', 'cup', 'Ly nhựa sạch, hộp nhựa sạch, túi nhựa sạch và bao bì sạch.', 'Clean plastic cups, containers, bags, snack packaging and clean foam.', 3),
+    ('paper_cardboard', 'Giấy & Bìa Carton', 'Paper & Cardboard', 'Blue', '#235398', 'paper', 'Giấy, túi giấy và bìa carton sạch, khô.', 'Clean and dry paper, cardboard and paper bags.', 4),
+    ('landfill', 'Chất Thải Chôn Lấp', 'Landfill', 'Brown', '#793c36', 'landfill', 'Nhựa bẩn, ly giấy, khăn giấy và bao bì nhiễm bẩn.', 'Dirty plastic, paper cups, tissues, napkins and contaminated packaging.', 5),
     ('special_handling', 'Xử Lý Riêng', 'Hazardous', 'Orange', '#f59a00', 'alert', 'Vật phẩm cần điểm thu gom được phê duyệt hoặc hướng dẫn từ nhân viên RMIT.', 'Items that need an approved collection point or RMIT staff guidance.', 6)
 ) as data(code, name_vi, name_en, color_name, color_hex, icon_key, description_vi, description_en, sort_order)
 on conflict (site_id, code) do update set

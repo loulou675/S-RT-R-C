@@ -56,6 +56,8 @@ Install dependencies:
 pnpm install
 ```
 
+Use Node.js 22 or newer. Dependencies and generated `dist/` files are intentionally not committed.
+
 Copy environment variables:
 
 ```bash
@@ -76,6 +78,12 @@ Build:
 pnpm build
 ```
 
+To refresh the GitHub Pages copy in `docs/`:
+
+```bash
+pnpm build:pages
+```
+
 ## Environment Variables
 
 ```text
@@ -84,8 +92,10 @@ VITE_SUPABASE_ANON_KEY=
 VITE_USE_MOCK_VISION=false
 VITE_AI_MODEL_PATH=/models/waste_classifier.onnx
 VITE_AI_LABELS_PATH=/models/labels.json
+VITE_AI_NORMALIZATION=zero-one
 VITE_AI_MIN_ACCEPTANCE=0.55
 VITE_AI_MIN_MARGIN=0.15
+VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE=0.8
 VITE_AI_TIMEOUT_MS=10000
 ```
 
@@ -145,6 +155,7 @@ The model should output internal item codes such as:
 - `plastic_water_bottle`
 - `aluminium_drink_can`
 - `plastic_takeaway_cup`
+- `fruit_peel`
 - `cardboard_box`
 - `paper_cup`
 - `battery`

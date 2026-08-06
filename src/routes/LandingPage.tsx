@@ -1,10 +1,11 @@
-import { Check, ImageUp, RotateCcw, ScanLine, X } from 'lucide-react'
+import { Check, Crop, ImageUp, RotateCcw, ScanLine, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BinPanel } from '../components/BinPanel'
 import { StatusBlock } from '../components/StatusBlock'
 import { CameraCapture } from '../features/camera/CameraCapture'
+import { CropEditor } from '../features/camera/CropEditor'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
@@ -16,11 +17,11 @@ import type { InputMethod, RuleEngineResult } from '../types/domain'
 type RecognitionStage = 'idle' | 'camera' | 'preview' | 'processing'
 
 const demoItems = [
-  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#f6a35b' },
-  { itemCode: 'fruit_peel', label: 'Organic', color: '#b9c77a' },
-  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#ee9fc8' },
-  { itemCode: 'cardboard_box', label: 'Paper', color: '#a9c3e8' },
-  { itemCode: 'paper_cup', label: 'Landfill', color: '#bd865f' },
+  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#cb795f' },
+  { itemCode: 'fruit_peel', label: 'Organic', color: '#3e8860' },
+  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#b43b44' },
+  { itemCode: 'cardboard_box', label: 'Paper', color: '#235398' },
+  { itemCode: 'paper_cup', label: 'Landfill', color: '#793c36' },
   { itemCode: 'battery', label: 'Hazardous', color: '#f4ca59' },
 ]
 
@@ -28,6 +29,8 @@ export function LandingPage() {
   const [searchParams] = useSearchParams()
   const [stage, setStage] = useState<RecognitionStage>('idle')
   const [imagePreview, setImagePreview] = useState<string>()
+  const [cropSource, setCropSource] = useState<string>()
+  const [cropEditorOpen, setCropEditorOpen] = useState(false)
   const [inputMethod, setInputMethod] = useState<InputMethod>('camera')
   const [result, setResult] = useState<RuleEngineResult>()
   const [status, setStatus] = useState<string>()
@@ -70,8 +73,28 @@ export function LandingPage() {
 
   function showImagePreview(dataUrl: string, method: InputMethod) {
     setImagePreview(dataUrl)
+    setCropSource(dataUrl)
+    setCropEditorOpen(true)
     setInputMethod(method)
     setStage('preview')
+  }
+
+  function openCropEditor() {
+    if (!imagePreview) return
+    setCropSource(imagePreview)
+    setCropEditorOpen(true)
+  }
+
+  function applyCrop(dataUrl: string) {
+    setImagePreview(dataUrl)
+    setCropSource(undefined)
+    setCropEditorOpen(false)
+  }
+
+  function cancelCrop() {
+    setImagePreview(cropSource ?? imagePreview)
+    setCropSource(undefined)
+    setCropEditorOpen(false)
   }
 
   async function processImage() {
@@ -111,6 +134,8 @@ export function LandingPage() {
 
   function retake() {
     setImagePreview(undefined)
+    setCropSource(undefined)
+    setCropEditorOpen(false)
     setErrorCode(undefined)
     setStage(inputMethod === 'camera' ? 'camera' : 'idle')
     if (inputMethod === 'upload') {
@@ -120,6 +145,8 @@ export function LandingPage() {
 
   function resetRecognition() {
     setImagePreview(undefined)
+    setCropSource(undefined)
+    setCropEditorOpen(false)
     setErrorCode(undefined)
     setStatus(undefined)
     setStage('idle')
@@ -154,25 +181,33 @@ export function LandingPage() {
             }}
           />
         ) : stage === 'preview' && imagePreview ? (
-          <div className="inline-preview">
-            <div className="preview-frame">
-              <img src={imagePreview} alt="Captured waste item preview" />
+          cropEditorOpen && cropSource ? (
+            <CropEditor source={cropSource} onApply={applyCrop} onCancel={cancelCrop} onRetake={retake} />
+          ) : (
+            <div className="inline-preview">
+              <div className="preview-frame">
+                <img src={imagePreview} alt="Captured waste item preview" />
+              </div>
+              <div className="button-row full">
+                <button type="button" className="primary-action" onClick={processImage}>
+                  <Check size={17} aria-hidden="true" />
+                  Use photo
+                </button>
+                <button type="button" className="secondary-action" onClick={openCropEditor}>
+                  <Crop size={17} aria-hidden="true" />
+                  Adjust crop
+                </button>
+                <button type="button" className="secondary-action" onClick={retake}>
+                  <RotateCcw size={17} aria-hidden="true" />
+                  Retake
+                </button>
+                <button type="button" className="ghost-action" onClick={resetRecognition}>
+                  <X size={17} aria-hidden="true" />
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div className="button-row full">
-              <button type="button" className="primary-action" onClick={processImage}>
-                <Check size={17} aria-hidden="true" />
-                Use photo
-              </button>
-              <button type="button" className="secondary-action" onClick={retake}>
-                <RotateCcw size={17} aria-hidden="true" />
-                Retake
-              </button>
-              <button type="button" className="ghost-action" onClick={resetRecognition}>
-                <X size={17} aria-hidden="true" />
-                Cancel
-              </button>
-            </div>
-          </div>
+          )
         ) : stage === 'processing' ? (
           <div className="hero-copy recognition-copy">
             <h1>

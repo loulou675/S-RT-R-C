@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Local environment files
+.env*
+!.env.example
+
+# Generated output and test artifacts
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# TypeScript and Vite caches
+*.tsbuildinfo
+node_modules/.tmp/
+node_modules/.vite/
+
+# Local YOLO training data and generated training artifacts
+training/dataset/**
+!training/dataset/**/
+!training/dataset/**/.gitkeep
+training/dataset_curated/
+training/quarantine/
+training/runs/
+training/exports/
+training/.venv/
+training/models/
+yolo26n-cls.pt
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp

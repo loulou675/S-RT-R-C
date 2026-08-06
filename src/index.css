@@ -764,15 +764,15 @@ button:disabled {
 }
 
 .numbered-step-list li:nth-child(3) span {
-  background: #b9c77a;
+  background: #3e8860;
 }
 
 .numbered-step-list li:nth-child(4) span {
-  background: #f6a35b;
+  background: #cb795f;
 }
 
 .numbered-step-list li:nth-child(5) span {
-  background: #a9c3e8;
+  background: #235398;
 }
 
 .numbered-step-list p {
@@ -1065,6 +1065,84 @@ button:disabled {
   display: grid;
   justify-items: center;
   gap: 1rem;
+}
+
+.crop-editor {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 38rem);
+  gap: 0.8rem;
+  margin: 0 auto;
+}
+
+.crop-viewport {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 34rem);
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  background: #111111;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.crop-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.crop-image {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+}
+
+.crop-frame {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 1rem;
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.crop-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  color: #555047;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.crop-zoom {
+  display: grid;
+  width: min(100%, 24rem);
+  gap: 0.35rem;
+  color: #282828;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.crop-zoom span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.crop-zoom input {
+  width: 100%;
+  accent-color: #111111;
+}
+
+.crop-actions {
+  margin-top: 0.35rem;
+}
+
+.crop-actions button:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
 .status-block {

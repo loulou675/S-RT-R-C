@@ -1,11 +1,44 @@
 #!/bin/zsh
 
+set -e
+
 cd "$(dirname "$0")" || exit 1
 
-export PATH="/Users/mac/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/mac/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:$PATH"
-export VITE_USE_MOCK_VISION=true
+if [[ -z "${VITE_USE_MOCK_VISION+x}" ]]; then
+  if [[ -f public/models/waste_classifier.onnx && -f public/models/labels.json ]]; then
+    export VITE_USE_MOCK_VISION=false
+  else
+    export VITE_USE_MOCK_VISION=true
+  fi
+fi
 
-URL="http://127.0.0.1:5176/"
+URL="http://127.0.0.1:5173/"
+pnpm_command="$(command -v pnpm || true)"
+node_command="$(command -v node || true)"
+
+if [[ -z "$node_command" && -n "$pnpm_command" ]]; then
+  pnpm_directory="$(cd "$(dirname "$pnpm_command")" && pwd)"
+  bundled_node="${pnpm_directory}/../../node/bin/node"
+  if [[ -x "$bundled_node" ]]; then
+    node_command="$bundled_node"
+  fi
+fi
+
+if [[ -z "$pnpm_command" ]]; then
+  echo "pnpm is required. Install it with: corepack enable"
+  read -r "?Press Return to close..."
+  exit 1
+fi
+
+if [[ -z "$node_command" ]]; then
+  echo "Node.js is required. Install Node.js 22 or newer, then try again."
+  read -r "?Press Return to close..."
+  exit 1
+fi
+
+if [[ ! -d node_modules ]]; then
+  "$pnpm_command" install
+fi
 
 if curl -fsS "$URL" >/dev/null 2>&1; then
   open "$URL"
@@ -13,4 +46,4 @@ if curl -fsS "$URL" >/dev/null 2>&1; then
 fi
 
 (sleep 1.2 && open "$URL") &
-pnpm dev --host 127.0.0.1 --port 5176 --strictPort
+"$node_command" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort

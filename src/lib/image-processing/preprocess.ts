@@ -3,6 +3,7 @@ import * as ort from 'onnxruntime-web'
 export interface ImagePreprocessOptions {
   width?: number
   height?: number
+  normalization?: 'imagenet' | 'zero-one'
 }
 
 export async function preprocessImageToTensor(
@@ -11,6 +12,7 @@ export async function preprocessImageToTensor(
 ) {
   const width = options.width ?? 224
   const height = options.height ?? 224
+  const normalization = options.normalization ?? 'imagenet'
   const image = await loadImage(source)
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d', { willReadFrequently: true })
@@ -36,14 +38,19 @@ export async function preprocessImageToTensor(
 
   for (let index = 0; index < width * height; index += 1) {
     const pixel = index * 4
-    data[index] = imageData.data[pixel] / 255 - mean[0]
-    data[width * height + index] = imageData.data[pixel + 1] / 255 - mean[1]
-    data[2 * width * height + index] = imageData.data[pixel + 2] / 255 - mean[2]
-  }
+    const red = imageData.data[pixel] / 255
+    const green = imageData.data[pixel + 1] / 255
+    const blue = imageData.data[pixel + 2] / 255
 
-  for (let index = 0; index < data.length; index += 1) {
-    const channel = Math.floor(index / (width * height))
-    data[index] = data[index] / std[channel]
+    if (normalization === 'zero-one') {
+      data[index] = red
+      data[width * height + index] = green
+      data[2 * width * height + index] = blue
+    } else {
+      data[index] = (red - mean[0]) / std[0]
+      data[width * height + index] = (green - mean[1]) / std[1]
+      data[2 * width * height + index] = (blue - mean[2]) / std[2]
+    }
   }
 
   return new ort.Tensor('float32', data, [1, channels, height, width])

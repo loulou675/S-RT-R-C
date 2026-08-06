@@ -21,7 +21,8 @@ export class OnnxVisionProvider implements VisionProvider {
 
   private async runInference(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
     const [session, labels] = await Promise.all([this.loadSession(), this.loadLabels()])
-    const tensor = await preprocessImageToTensor(image, { width: 224, height: 224 })
+    const normalization = import.meta.env.VITE_AI_NORMALIZATION === 'imagenet' ? 'imagenet' : 'zero-one'
+    const tensor = await preprocessImageToTensor(image, { width: 224, height: 224, normalization })
     const inputName = session.inputNames[0]
     const outputName = session.outputNames[0]
 
@@ -62,10 +63,16 @@ export class OnnxVisionProvider implements VisionProvider {
       throw new AppError('ITEM_AMBIGUOUS', 'Model result is uncertain')
     }
 
-    const supported = wasteItems.some((item) => item.code === top.label.code && item.isActive && item.code !== 'unknown')
+    const supported = wasteItems.find((item) => item.code === top.label.code && item.isActive && item.code !== 'unknown')
 
     if (!supported) {
       throw new AppError('ITEM_NOT_RECOGNISED', 'Unsupported class')
+    }
+
+    const specialHandlingMinAcceptance = Number(import.meta.env.VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE ?? 0.8)
+
+    if (supported.specialHandling && top.score < specialHandlingMinAcceptance) {
+      throw new AppError('ITEM_AMBIGUOUS', 'Special-handling item result is uncertain')
     }
 
     return { itemCode: top.label.code }

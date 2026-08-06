@@ -1,0 +1,17 @@
+{
+  "classes": [
+    "aluminium_drink_can",
+    "battery",
+    "cardboard_box",
+    "fruit_peel",
+    "paper_cup",
+    "plastic_takeaway_cup",
+    "plastic_water_bottle",
+    "unknown"
+  ],
+  "notes": [
+    "Use each code as the name of a class folder.",
+    "Keep unknown as a real class containing non-target waste and non-waste examples.",
+    "Do not encode clean/dirty or wet/dry in the class name; the app's condition flow handles those questions."
+  ]
+}
