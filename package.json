@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:pages": "tsc -b && node scripts/build-pages.mjs",
+    "build:pages:training": "VITE_TRAINING_MODE=true pnpm build:pages",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",

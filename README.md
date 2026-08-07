@@ -115,6 +115,15 @@ the Vite server or rebuild the app. Because Vite environment variables are
 embedded at build time, a production rebuild is required before the training
 controls disappear from a deployed build.
 
+To publish a temporary training-mode Pages build, run:
+
+```bash
+pnpm build:pages:training
+```
+
+To restore the client-facing Pages build, run `pnpm build:pages` and push the
+new `docs/` output.
+
 ## Supabase Setup
 
 Create a Supabase project, then apply:
