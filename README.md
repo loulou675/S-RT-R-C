@@ -97,9 +97,23 @@ VITE_AI_MIN_ACCEPTANCE=0.55
 VITE_AI_MIN_MARGIN=0.15
 VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE=0.8
 VITE_AI_TIMEOUT_MS=10000
+VITE_TRAINING_MODE=false
 ```
 
 Do not expose Supabase service-role keys in the browser.
+
+## Private training mode
+
+Set `VITE_TRAINING_MODE=true` only in a local or private field-test `.env.local`.
+When enabled, the scan flow shows a correction form for unknown or incorrect
+results and stores compact feedback images plus labels in the browser for later
+export. The public/client build keeps this feature hidden when the variable is
+unset or set to `false`.
+
+After field testing, set `VITE_TRAINING_MODE=false` (or remove it) and restart
+the Vite server or rebuild the app. Because Vite environment variables are
+embedded at build time, a production rebuild is required before the training
+controls disappear from a deployed build.
 
 ## Supabase Setup
 

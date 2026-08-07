@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BinPanel } from '../components/BinPanel'
 import { StatusBlock } from '../components/StatusBlock'
+import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { CameraCapture } from '../features/camera/CameraCapture'
 import { CropEditor } from '../features/camera/CropEditor'
 import { fileToDataUrl } from '../features/camera/fileInput'
@@ -33,6 +34,7 @@ export function LandingPage() {
   const [cropEditorOpen, setCropEditorOpen] = useState(false)
   const [inputMethod, setInputMethod] = useState<InputMethod>('camera')
   const [result, setResult] = useState<RuleEngineResult>()
+  const [predictedItemCode, setPredictedItemCode] = useState<string>()
   const [status, setStatus] = useState<string>()
   const [errorCode, setErrorCode] = useState<AppErrorCode>()
   const [uploadOpen, setUploadOpen] = useState(false)
@@ -109,6 +111,7 @@ export function LandingPage() {
       setStatus('Identifying item...')
       const provider = await createVisionProvider()
       const visionResult = await provider.identify(imagePreview)
+      setPredictedItemCode(visionResult.itemCode)
 
       setStatus('Checking disposal guidance...')
       await wait(160)
@@ -127,6 +130,7 @@ export function LandingPage() {
 
       const appError = error instanceof AppError ? error : toAppError(error, 'INFERENCE_FAILED')
       setErrorCode(appError.code)
+      setPredictedItemCode(undefined)
       setStage('idle')
       setStatus(undefined)
     }
@@ -137,6 +141,7 @@ export function LandingPage() {
     setCropSource(undefined)
     setCropEditorOpen(false)
     setErrorCode(undefined)
+    setPredictedItemCode(undefined)
     setStage(inputMethod === 'camera' ? 'camera' : 'idle')
     if (inputMethod === 'upload') {
       setUploadOpen(true)
@@ -148,6 +153,7 @@ export function LandingPage() {
     setCropSource(undefined)
     setCropEditorOpen(false)
     setErrorCode(undefined)
+    setPredictedItemCode(undefined)
     setStatus(undefined)
     setStage('idle')
   }
@@ -252,6 +258,21 @@ export function LandingPage() {
               </div>
             </div>
             {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
+            <TrainingFeedbackPanel
+              imagePreview={imagePreview}
+              predictedItemCode={predictedItemCode}
+              errorCode={errorCode}
+              inputMethod={inputMethod}
+              onCorrected={(correctedCode) => {
+                try {
+                  setResult(getDisposalForItem(correctedCode))
+                  setErrorCode(undefined)
+                  setResultCollapsed(false)
+                } catch {
+                  // The feedback panel only offers active reference-data classes.
+                }
+              }}
+            />
           </div>
         )}
       </div>

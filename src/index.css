@@ -388,6 +388,87 @@ a {
   background: #ffe6be;
 }
 
+.training-feedback {
+  display: grid;
+  gap: 0.8rem;
+  width: min(100%, 34rem);
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #d5b86a;
+  border-radius: 0.75rem;
+  text-align: left;
+  background: #fff8df;
+}
+
+.training-feedback-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  color: #6d4d00;
+}
+
+.training-feedback-heading .eyebrow {
+  margin: 0;
+  color: #8c6500;
+}
+
+.training-feedback-heading h2 {
+  margin: 0.15rem 0 0;
+  color: #2c250f;
+  font-size: 1.05rem;
+}
+
+.training-feedback-copy {
+  margin: 0 !important;
+  color: #5f512d !important;
+  font-size: 0.86rem !important;
+  line-height: 1.35 !important;
+}
+
+.training-feedback-field {
+  display: grid;
+  gap: 0.35rem;
+  color: #3c331f;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.training-feedback-field select,
+.training-feedback-field textarea {
+  width: 100%;
+  border: 1px solid #cbbd92;
+  border-radius: 0.45rem;
+  padding: 0.6rem 0.7rem;
+  color: #211d12;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 400;
+}
+
+.training-feedback-field textarea {
+  resize: vertical;
+}
+
+.training-feedback .secondary-action {
+  justify-self: start;
+}
+
+.training-feedback-saved {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #2f6b3d;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.training-feedback-export {
+  justify-self: start;
+  padding-inline: 0;
+  color: #6d4d00;
+  background: transparent;
+}
+
 .button-row {
   display: flex;
   flex-wrap: wrap;

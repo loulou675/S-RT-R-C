@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { EmptyState } from '../components/EmptyState'
 import { ItemGlyph } from '../components/ItemGlyph'
+import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { getItem, hasConditionQuestion } from '../features/sorting/ruleEngine'
 
 export function ConfirmPage() {
@@ -36,6 +37,7 @@ export function ConfirmPage() {
         <h1>{item.nameEn}</h1>
         <span>{item.nameVi}</span>
       </div>
+      <TrainingFeedbackPanel imagePreview={state.imagePreview} predictedItemCode={state.predictedItemCode} inputMethod={state.inputMethod} />
 
       <div className="action-stack">
         <button type="button" className="primary-action large" onClick={continueFlow}>

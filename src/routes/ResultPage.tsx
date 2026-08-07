@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { BinPanel } from '../components/BinPanel'
 import { EmptyState } from '../components/EmptyState'
+import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError } from '../lib/errors'
 import type { ConditionKey } from '../types/domain'
@@ -78,6 +79,12 @@ export function ResultPage() {
             Return home
           </button>
         </div>
+        <TrainingFeedbackPanel
+          imagePreview={state.imagePreview}
+          predictedItemCode={state.predictedItemCode}
+          inputMethod={state.inputMethod}
+          onCorrected={(correctedCode) => navigate(`/result?item=${correctedCode}&condition=default`)}
+        />
       </div>
       <BinPanel bin={result.destinationBin} result={result} resultPanel />
     </section>

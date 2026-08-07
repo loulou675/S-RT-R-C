@@ -1,6 +1,7 @@
 import { ImageUp, RotateCcw, Search, Home } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
+import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { messageForError } from '../lib/errors'
 
 export function ErrorPage() {
@@ -13,6 +14,7 @@ export function ErrorPage() {
         <p className="eyebrow">Try again</p>
         <h1>{messageForError(state.errorCode)}</h1>
       </div>
+      <TrainingFeedbackPanel imagePreview={state.imagePreview} predictedItemCode={state.predictedItemCode} errorCode={state.errorCode} inputMethod={state.inputMethod} />
       <div className="action-stack">
         <button type="button" className="primary-action large" onClick={() => navigate('/scan')}>
           <RotateCcw size={19} aria-hidden="true" />
