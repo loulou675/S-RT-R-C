@@ -1,5 +1,7 @@
+import { X } from 'lucide-react'
 import { useRef } from 'react'
 import type { CSSProperties } from 'react'
+import type { ReactNode } from 'react'
 import type { Bin, RuleEngineResult } from '../types/domain'
 
 interface BinPanelProps {
@@ -9,9 +11,11 @@ interface BinPanelProps {
   resultPanel?: boolean
   collapsed?: boolean
   onToggleCollapsed?: () => void
+  onClose?: () => void
+  footer?: ReactNode
 }
 
-export function BinPanel({ bin, result, compact = false, resultPanel = false, collapsed = false, onToggleCollapsed }: BinPanelProps) {
+export function BinPanel({ bin, result, compact = false, resultPanel = false, collapsed = false, onToggleCollapsed, onClose, footer }: BinPanelProps) {
   const touchStartY = useRef<number | null>(null)
   const className = ['bin-panel', compact ? 'compact' : '', resultPanel ? 'result-panel' : '', collapsed ? 'collapsed' : '']
     .filter(Boolean)
@@ -23,6 +27,10 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
       className={className}
       style={{ '--bin-color': bin.colorHex } as CSSProperties}
       onTouchStart={(event) => {
+        if (event.target instanceof Element && event.target.closest('.training-feedback')) {
+          touchStartY.current = null
+          return
+        }
         touchStartY.current = event.touches[0]?.clientY ?? null
       }}
       onTouchEnd={(event) => {
@@ -38,9 +46,16 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
       }}
     >
       {resultPanel ? (
-        <button type="button" className="sheet-handle" aria-label={collapsed ? 'Expand result panel' : 'Collapse result panel'} onClick={onToggleCollapsed}>
-          <span />
-        </button>
+        <>
+          <button type="button" className="sheet-handle" aria-label={collapsed ? 'Expand result panel' : 'Collapse result panel'} onClick={onToggleCollapsed}>
+            <span />
+          </button>
+          {onClose ? (
+            <button type="button" className="result-panel-close" aria-label="Close result panel" onClick={onClose}>
+              <X size={19} aria-hidden="true" />
+            </button>
+          ) : null}
+        </>
       ) : null}
       <div>
         <p className="eyebrow">This object belongs to</p>
@@ -74,6 +89,7 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
           </ol>
         </div>
       )}
+      {footer}
     </aside>
   )
 }

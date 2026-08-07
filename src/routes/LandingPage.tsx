@@ -62,14 +62,24 @@ export function LandingPage() {
     }
   }, [searchedItemCode, searchedSource])
 
-  function startCamera() {
+  function closeResult() {
+    setResult(undefined)
+    setResultCollapsed(false)
     setErrorCode(undefined)
+  }
+
+  function startCamera() {
+    closeResult()
+    setImagePreview(undefined)
+    setPredictedItemCode(undefined)
     setInputMethod('camera')
     setStage('camera')
   }
 
   function openUpload() {
-    setErrorCode(undefined)
+    closeResult()
+    setImagePreview(undefined)
+    setPredictedItemCode(undefined)
     setUploadOpen(true)
   }
 
@@ -137,6 +147,7 @@ export function LandingPage() {
   }
 
   function retake() {
+    setResult(undefined)
     setImagePreview(undefined)
     setCropSource(undefined)
     setCropEditorOpen(false)
@@ -149,6 +160,7 @@ export function LandingPage() {
   }
 
   function resetRecognition() {
+    setResult(undefined)
     setImagePreview(undefined)
     setCropSource(undefined)
     setCropEditorOpen(false)
@@ -258,21 +270,23 @@ export function LandingPage() {
               </div>
             </div>
             {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
-            <TrainingFeedbackPanel
-              imagePreview={imagePreview}
-              predictedItemCode={predictedItemCode}
-              errorCode={errorCode}
-              inputMethod={inputMethod}
-              onCorrected={(correctedCode) => {
-                try {
-                  setResult(getDisposalForItem(correctedCode))
-                  setErrorCode(undefined)
-                  setResultCollapsed(false)
-                } catch {
-                  // The feedback panel only offers active reference-data classes.
-                }
-              }}
-            />
+            {!result ? (
+              <TrainingFeedbackPanel
+                imagePreview={imagePreview}
+                predictedItemCode={predictedItemCode}
+                errorCode={errorCode}
+                inputMethod={inputMethod}
+                onCorrected={(correctedCode) => {
+                  try {
+                    setResult(getDisposalForItem(correctedCode))
+                    setErrorCode(undefined)
+                    setResultCollapsed(false)
+                  } catch {
+                    // The feedback panel only offers active reference-data classes.
+                  }
+                }}
+              />
+            ) : null}
           </div>
         )}
       </div>
@@ -284,6 +298,23 @@ export function LandingPage() {
           resultPanel
           collapsed={resultCollapsed}
           onToggleCollapsed={() => setResultCollapsed((current) => !current)}
+          onClose={closeResult}
+          footer={
+            <TrainingFeedbackPanel
+              imagePreview={imagePreview}
+              predictedItemCode={predictedItemCode}
+              inputMethod={inputMethod}
+              onCorrected={(correctedCode) => {
+                try {
+                  setResult(getDisposalForItem(correctedCode))
+                  setErrorCode(undefined)
+                  setResultCollapsed(false)
+                } catch {
+                  // The feedback panel only offers active reference-data classes.
+                }
+              }}
+            />
+          }
         />
       ) : null}
 
