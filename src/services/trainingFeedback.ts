@@ -52,7 +52,10 @@ export function downloadTrainingFeedback() {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `sot-rac-training-feedback-${new Date().toISOString().slice(0, 10)}.json`
+  // Keep milliseconds in the filename so exports made on the same day remain
+  // distinguishable when they are uploaded to the shared review folder.
+  const exportTimestamp = new Date().toISOString().replace(/[:.]/g, '-')
+  link.download = `sot-rac-training-feedback-${exportTimestamp}.json`
   link.click()
   URL.revokeObjectURL(url)
 }
