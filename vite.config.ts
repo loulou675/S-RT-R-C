@@ -7,6 +7,9 @@ export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
   server: {
+    // Full-page refreshes are more reliable for this project than keeping a
+    // long-lived HMR module graph across model/build changes.
+    hmr: false,
     watch: {
       ignored: ['**/training/**'],
     },
