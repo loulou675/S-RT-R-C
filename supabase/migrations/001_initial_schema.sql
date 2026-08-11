@@ -53,7 +53,7 @@ create table public.waste_items (
   image_key text not null,
   is_active boolean not null default true,
   verification_status text not null check (
-    verification_status in ('BASED_ON_RMIT_SIGNAGE', 'PENDING_RMIT_CONFIRMATION', 'VERIFIED_BY_RMIT', 'SUSPENDED')
+    verification_status in ('BASED_ON_LOCAL_GUIDANCE', 'PENDING_CONFIRMATION', 'VERIFIED_GUIDANCE', 'SUSPENDED')
   ),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -85,7 +85,7 @@ create table public.disposal_rules (
   component_actions jsonb not null default '[]'::jsonb,
   priority integer not null default 100,
   verification_status text not null check (
-    verification_status in ('BASED_ON_RMIT_SIGNAGE', 'PENDING_RMIT_CONFIRMATION', 'VERIFIED_BY_RMIT', 'SUSPENDED')
+    verification_status in ('BASED_ON_LOCAL_GUIDANCE', 'PENDING_CONFIRMATION', 'VERIFIED_GUIDANCE', 'SUSPENDED')
   ),
   source_reference text not null,
   is_active boolean not null default true,
@@ -123,7 +123,7 @@ create table public.reuse_suggestions (
   estimated_minutes integer not null,
   priority integer not null default 100,
   verification_status text not null check (
-    verification_status in ('BASED_ON_RMIT_SIGNAGE', 'PENDING_RMIT_CONFIRMATION', 'VERIFIED_BY_RMIT', 'SUSPENDED')
+    verification_status in ('BASED_ON_LOCAL_GUIDANCE', 'PENDING_CONFIRMATION', 'VERIFIED_GUIDANCE', 'SUSPENDED')
   ),
   is_active boolean not null default true
 );

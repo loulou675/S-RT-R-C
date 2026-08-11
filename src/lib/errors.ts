@@ -50,6 +50,30 @@ export function messageForError(code?: AppErrorCode) {
     return 'Disposal guidance is temporarily unavailable. Please try manual search again.'
   }
 
+  if (code === 'MODEL_NOT_CONFIGURED') {
+    return 'AI model files are missing. Add the ONNX model and labels, then rebuild the app.'
+  }
+
+  if (code === 'MODEL_LOAD_FAILED') {
+    return 'The AI model could not load. Check the model file, labels file and deployment path.'
+  }
+
+  if (code === 'INFERENCE_FAILED') {
+    return 'The AI model loaded, but could not process this image. Try a clearer image or check the model export.'
+  }
+
+  if (code === 'INFERENCE_TIMEOUT') {
+    return 'AI recognition took too long. Try a smaller image or reload the page.'
+  }
+
+  if (code === 'ITEM_NOT_RECOGNISED') {
+    return 'The AI ran, but this image matched Unknown. Crop one clear item and try again.'
+  }
+
+  if (code === 'ITEM_AMBIGUOUS') {
+    return 'The AI ran, but confidence was too low. Crop closer around one item or use a clearer photo.'
+  }
+
   if (code === 'OFFLINE') {
     return 'You appear to be offline. Local scan guidance may be limited.'
   }

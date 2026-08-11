@@ -35,7 +35,7 @@ export const bins: Bin[] = [
     nameVi: 'Chai & Lon',
     nameEn: 'Bottle & Can',
     colorName: 'Orange',
-    colorHex: '#cb795f',
+    colorHex: '#d98b52',
     iconKey: 'bottle',
     descriptionVi: 'Chai nhựa rỗng, lon nhôm và chai được chấp nhận.',
     descriptionEn: 'Empty plastic drink bottles, aluminium cans and accepted bottles.',
@@ -47,7 +47,7 @@ export const bins: Bin[] = [
     nameVi: 'Chất Thải Hữu Cơ',
     nameEn: 'Organic Waste',
     colorName: 'Green',
-    colorHex: '#3e8860',
+    colorHex: '#7fa36b',
     iconKey: 'leaf',
     descriptionVi: 'Thức ăn thừa, vỏ trái cây và chất lỏng được chấp nhận.',
     descriptionEn: 'Leftover food, fruit peels and accepted liquids.',
@@ -58,8 +58,8 @@ export const bins: Bin[] = [
     code: 'clean_plastic',
     nameVi: 'Nhựa Sạch',
     nameEn: 'Clean Plastic',
-    colorName: 'Red/Pink',
-    colorHex: '#b43b44',
+    colorName: 'Red',
+    colorHex: '#d9675e',
     iconKey: 'cup',
     descriptionVi: 'Ly nhựa sạch, hộp nhựa sạch, túi nhựa sạch và bao bì sạch.',
     descriptionEn: 'Clean plastic cups, containers, bags, snack packaging and clean foam.',
@@ -71,7 +71,7 @@ export const bins: Bin[] = [
     nameVi: 'Giấy & Bìa Carton',
     nameEn: 'Paper & Cardboard',
     colorName: 'Blue',
-    colorHex: '#235398',
+    colorHex: '#7896d2',
     iconKey: 'paper',
     descriptionVi: 'Giấy, túi giấy và bìa carton sạch, khô.',
     descriptionEn: 'Clean and dry paper, cardboard and paper bags.',
@@ -83,7 +83,7 @@ export const bins: Bin[] = [
     nameVi: 'Chất Thải Chôn Lấp',
     nameEn: 'Landfill',
     colorName: 'Brown',
-    colorHex: '#793c36',
+    colorHex: '#a86e50',
     iconKey: 'landfill',
     descriptionVi: 'Nhựa bẩn, ly giấy, khăn giấy và bao bì nhiễm bẩn.',
     descriptionEn: 'Dirty plastic, paper cups, tissues, napkins and contaminated packaging.',
@@ -95,7 +95,7 @@ export const bins: Bin[] = [
     nameVi: 'Xử Lý Riêng',
     nameEn: 'Hazardous',
     colorName: 'Orange',
-    colorHex: '#f4ca59',
+    colorHex: '#e8c35a',
     iconKey: 'alert',
     descriptionVi: 'Vật phẩm cần điểm thu gom được phê duyệt hoặc hướng dẫn từ nhân viên phụ trách.',
     descriptionEn: 'Items that need an approved collection point or guidance from responsible staff.',
@@ -171,6 +171,10 @@ export const wasteItems: WasteItem[] = [
     'hộp mang đi',
     'hộp nhựa takeaway',
   ], ['plastic takeaway box', 'takeout box', 'takeaway box']),
+  item('plastic_bag', 'Túi nhựa', 'Plastic bag', 'soft_plastic', 'bag', 'Clean Plastic', false, false, [
+    'túi nhựa',
+    'bao ni lông',
+  ], ['plastic bag', 'carrier bag', 'shopping bag']),
   item('clean_plastic_bag', 'Túi nhựa sạch', 'Clean plastic bag', 'soft_plastic', 'bag', 'Clean Plastic', false, false, [
     'túi nhựa sạch',
     'bao ni lông sạch',
@@ -193,6 +197,10 @@ export const wasteItems: WasteItem[] = [
     'hộp xốp sạch',
     'xốp sạch',
   ], ['clean styrofoam', 'clean foam container']),
+  item('styrofoam_container', 'Hộp xốp', 'Styrofoam container', 'mixed_plastic', 'foam', 'Clean Plastic', false, false, [
+    'hộp xốp',
+    'hộp foam',
+  ], ['styrofoam container', 'foam food box', 'foam container']),
   item('dirty_styrofoam_container', 'Hộp xốp bẩn', 'Dirty styrofoam container', 'mixed_plastic', 'foam', 'Landfill', false, false, [
     'hộp xốp bẩn',
     'xốp bẩn',
@@ -217,6 +225,14 @@ export const wasteItems: WasteItem[] = [
     'túi giấy',
     'bao giấy',
   ], ['paper bag', 'kraft bag']),
+  item('envelope', 'Phong bì giấy', 'Paper envelope', 'paper', 'paper', 'Paper & Cardboard', false, false, [
+    'phong bì',
+    'bao thư',
+  ], ['envelope', 'paper envelope', 'mail envelope']),
+  item('paperboard_packaging', 'Hộp giấy mỏng', 'Paperboard packaging', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
+    'hộp giấy',
+    'bìa giấy mỏng',
+  ], ['paperboard packaging', 'cereal box', 'paperboard box']),
   item('cardboard_box', 'Thùng carton', 'Cardboard box', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
     'thùng carton',
     'bìa carton',
@@ -231,6 +247,19 @@ export const wasteItems: WasteItem[] = [
     'cốc giấy',
     'ly cà phê giấy',
   ], ['paper cup', 'takeaway coffee cup', 'coffee cup']),
+  item('drink_carton', 'Hộp đồ uống nhiều lớp', 'Drink carton', 'mixed_material', 'box', 'Paper & Cardboard', false, false, [
+    'hộp sữa',
+    'hộp nước trái cây',
+    'hộp giấy nhiều lớp',
+  ], ['drink carton', 'milk carton', 'juice carton']),
+  item('paper_plate', 'Đĩa giấy', 'Paper plate', 'mixed_material', 'paper', 'Landfill', false, false, [
+    'đĩa giấy',
+    'dĩa giấy',
+  ], ['paper plate', 'disposable paper plate']),
+  item('receipt', 'Hóa đơn giấy', 'Receipt', 'mixed_material', 'paper', 'Landfill', false, false, [
+    'hóa đơn',
+    'giấy in nhiệt',
+  ], ['receipt', 'thermal receipt', 'till receipt']),
   item('tissue', 'Khăn giấy', 'Tissue', 'paper', 'paper', 'Landfill', false, false, [
     'khăn giấy',
     'giấy lau',
@@ -257,6 +286,15 @@ export const wasteItems: WasteItem[] = [
     'vỏ chuối',
     'vỏ cam',
   ], ['fruit peel', 'banana peel', 'orange peel']),
+  item('vegetable_scraps', 'Rau củ thừa', 'Vegetable scraps', 'organic', 'food', 'Organic Waste', false, false, [
+    'rau thừa',
+    'vỏ rau củ',
+    'cuống rau',
+  ], ['vegetable scraps', 'vegetable peel', 'food scraps']),
+  item('egg_shell', 'Vỏ trứng', 'Egg shell', 'organic', 'food', 'Organic Waste', false, false, [
+    'vỏ trứng',
+    'trứng vỡ',
+  ], ['egg shell', 'eggshell']),
   item('coffee_grounds', 'Bã cà phê', 'Coffee grounds', 'organic', 'food', 'Organic Waste', false, false, [
     'bã cà phê',
     'cặn cà phê',
@@ -314,10 +352,58 @@ export const wasteItems: WasteItem[] = [
     'hộp hóa chất',
     'bao bì hóa chất',
   ], ['chemical container', 'chemical bottle', 'hazard container']),
+  item('paint_container', 'Thùng sơn', 'Paint container', 'hazardous', 'container', 'Special Handling', true, true, [
+    'thùng sơn',
+    'lon sơn',
+    'hộp sơn',
+  ], ['paint container', 'paint can', 'paint tin']),
+  item('pesticide_container', 'Bao bì thuốc trừ sâu', 'Pesticide container', 'hazardous', 'container', 'Special Handling', true, true, [
+    'chai thuốc trừ sâu',
+    'bao bì thuốc bảo vệ thực vật',
+    'hộp thuốc trừ sâu',
+  ], ['pesticide container', 'pesticide bottle', 'insecticide container']),
+  item('aerosol_can', 'Bình xịt', 'Aerosol can', 'hazardous', 'can', 'Special Handling', true, true, [
+    'bình xịt',
+    'lon xịt',
+  ], ['aerosol can', 'spray can', 'pressurised can']),
+  item('medicine_blister_pack', 'Vỉ thuốc', 'Medicine blister pack', 'mixed_material', 'packaging', 'Special Handling', true, true, [
+    'vỉ thuốc',
+    'bao bì thuốc',
+  ], ['medicine blister pack', 'pill blister', 'tablet pack']),
+  item('loose_medicine', 'Thuốc không sử dụng', 'Unused medicine', 'hazardous', 'small_waste', 'Special Handling', true, true, [
+    'thuốc thừa',
+    'thuốc hết hạn',
+    'viên thuốc',
+  ], ['unused medicine', 'expired medicine', 'loose pills']),
+  item('used_syringe', 'Kim tiêm đã sử dụng', 'Used syringe', 'hazardous', 'small_waste', 'Special Handling', true, true, [
+    'kim tiêm',
+    'ống tiêm',
+    'bơm kim tiêm',
+  ], ['used syringe', 'syringe', 'medical needle']),
+  item('power_bank', 'Pin sạc dự phòng', 'Power bank', 'electronic', 'device', 'Special Handling', true, true, [
+    'sạc dự phòng',
+    'pin dự phòng',
+  ], ['power bank', 'portable charger', 'battery pack']),
+  item('small_e_waste', 'Rác điện tử nhỏ', 'Small e-waste', 'electronic', 'device', 'Special Handling', true, true, [
+    'rác điện tử',
+    'thiết bị điện tử cũ',
+    'đồ điện tử hỏng',
+  ], ['e-waste', 'electronic waste', 'small electronics']),
   item('medical_mask', 'Khẩu trang y tế', 'Medical mask', 'mixed_material', 'mask', 'Landfill', false, false, [
     'khẩu trang',
     'khẩu trang y tế',
   ], ['medical mask', 'face mask', 'disposable mask']),
+  item('disposable_diaper', 'Tã dùng một lần', 'Disposable diaper', 'mixed_material', 'hygiene', 'Landfill', false, false, [
+    'tã',
+    'bỉm',
+  ], ['diaper', 'nappy', 'disposable diaper']),
+  item('sanitary_pad', 'Băng vệ sinh', 'Sanitary pad', 'mixed_material', 'hygiene', 'Landfill', false, false, [
+    'băng vệ sinh',
+  ], ['sanitary pad', 'period pad']),
+  item('cigarette_butt', 'Đầu lọc thuốc lá', 'Cigarette butt', 'mixed_material', 'small_waste', 'Landfill', false, false, [
+    'đầu lọc thuốc lá',
+    'mẩu thuốc lá',
+  ], ['cigarette butt', 'cigarette filter']),
   item('unknown', 'Vật phẩm chưa xác định', 'Unknown item', 'unknown', 'unknown', 'Unknown', false, false, [
     'không rõ',
     'vật lạ',
@@ -367,7 +453,7 @@ export const conditionQuestions: ConditionQuestion[] = [
     sortOrder: 1,
     isActive: true,
   })),
-  ...['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container'].map(
+  ...['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container'].map(
     (itemCode) => ({
       itemCode,
       questionKey: 'plastic_cleanliness',
@@ -387,6 +473,8 @@ export const conditionQuestions: ConditionQuestion[] = [
     'newspaper',
     'magazine',
     'paper_bag',
+    'envelope',
+    'paperboard_packaging',
     'cardboard_box',
     'pizza_box',
   ].map((itemCode) => ({
@@ -469,7 +557,7 @@ export const disposalRules: DisposalRule[] = [
   ...plasticContainerRules('plastic_food_container', 'hộp nhựa', 'plastic food container'),
   ...plasticContainerRules('plastic_takeaway_box', 'hộp nhựa mang đi', 'plastic takeaway box'),
   ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork']),
-  ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container']),
+  ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container']),
   rule('clean_plastic_bag', 'default', 'clean_plastic', {
     vi: 'Đặt túi nhựa sạch vào thùng Nhựa Sạch.',
     en: 'Place the clean plastic bag in Clean Plastic.',
@@ -496,6 +584,8 @@ export const disposalRules: DisposalRule[] = [
     'newspaper',
     'magazine',
     'paper_bag',
+    'envelope',
+    'paperboard_packaging',
     'cardboard_box',
   ]),
   ...paperRules(['pizza_box'], true),
@@ -511,14 +601,22 @@ export const disposalRules: DisposalRule[] = [
     warningVi: 'Ly giấy thường có lớp phủ và không thuộc nhóm giấy sạch.',
     warningEn: 'Paper cups usually have a lining and are not clean paper.',
   }),
-  ...defaultRules(['tissue', 'paper_napkin', 'wooden_utensil', 'medical_mask'], 'landfill', {
+  rule('drink_carton', 'default', 'paper_cardboard', {
+    vi: 'Làm rỗng, tráng sạch và để khô hộp trước khi đặt vào Giấy & Bìa Carton.',
+    en: 'Empty, rinse and dry the carton before placing it in Paper & Cardboard.',
+    stepsVi: ['Đổ hết chất lỏng còn lại.', 'Tráng sạch hộp.', 'Để hộp ráo và khô.', 'Đặt vào Giấy & Bìa Carton.'],
+    stepsEn: ['Empty any remaining liquid.', 'Rinse the carton.', 'Let it drain and dry.', 'Place it in Paper & Cardboard.'],
+    warningVi: 'Hộp đồ uống có nhiều lớp vật liệu; chỉ bỏ hộp rỗng, sạch và khô vào dòng này.',
+    warningEn: 'Drink cartons contain multiple material layers; use this stream only for empty, clean and dry cartons.',
+  }),
+  ...defaultRules(['tissue', 'paper_napkin', 'wooden_utensil', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
     vi: 'Đặt vật phẩm này vào thùng Chất Thải Chôn Lấp.',
     en: 'Place this item in Landfill.',
     stepsVi: ['Không bỏ vào thùng tái chế.', 'Đặt vào Chất Thải Chôn Lấp.'],
     stepsEn: ['Do not place it in a recycling bin.', 'Place it in Landfill.'],
   }),
   ...defaultRules(
-    ['food_waste', 'leftover_rice', 'leftover_noodles', 'fruit_peel', 'coffee_grounds', 'tea_bag', 'leftover_drink'],
+    ['food_waste', 'leftover_rice', 'leftover_noodles', 'fruit_peel', 'vegetable_scraps', 'egg_shell', 'coffee_grounds', 'tea_bag', 'leftover_drink'],
     'organic',
     {
       vi: 'Đặt phần hữu cơ vào thùng Chất Thải Hữu Cơ.',
@@ -529,7 +627,7 @@ export const disposalRules: DisposalRule[] = [
       warningEn: 'Any packaging should be sorted separately.',
     },
   ),
-  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container'], 'special_handling', {
+  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container', 'paint_container', 'pesticide_container', 'aerosol_can', 'medicine_blister_pack', 'loose_medicine', 'used_syringe', 'power_bank', 'small_e_waste'], 'special_handling', {
     vi: 'Vật phẩm này cần xử lý riêng.',
     en: 'Special handling is required for this item.',
     stepsVi: ['Không bỏ vào năm thùng rác thông thường.', 'Dùng điểm thu gom được phê duyệt hoặc hỏi nhân viên phụ trách.'],

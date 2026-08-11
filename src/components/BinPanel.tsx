@@ -47,7 +47,13 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
     >
       {resultPanel ? (
         <>
-          <button type="button" className="sheet-handle" aria-label={collapsed ? 'Expand result panel' : 'Collapse result panel'} onClick={onToggleCollapsed}>
+          <button
+            type="button"
+            className="sheet-handle"
+            aria-label={collapsed ? 'Expand result panel' : 'Collapse result panel'}
+            aria-expanded={!collapsed}
+            onClick={onToggleCollapsed}
+          >
             <span />
           </button>
           {onClose ? (
@@ -57,39 +63,41 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
           ) : null}
         </>
       ) : null}
-      <div>
-        <p className="eyebrow">This object belongs to</p>
-        <h2>{heading}</h2>
-        <p className="object-name">{result?.item.nameEn ?? 'Object name'}</p>
-        {result?.specialHandling ? <p className="special-note">Special handling required</p> : null}
-        {!resultPanel ? <p className="bin-color">{bin.colorName} Bin</p> : null}
-      </div>
+      <div className="result-panel-body" aria-hidden={resultPanel && collapsed ? true : undefined}>
+        <div className="result-heading">
+          <p className="eyebrow">This object belongs to</p>
+          <h2>{heading}</h2>
+          <p className="object-name">{result?.item.nameEn ?? 'Object name'}</p>
+          {result?.specialHandling ? <p className="special-note">Special handling required</p> : null}
+          {!resultPanel ? <p className="bin-color">{bin.colorName} Bin</p> : null}
+        </div>
 
-      {result ? (
-        <div className="panel-card-stack steps-only">
-          <section className="steps-section">
-            <h3>Preparation steps</h3>
-            <ol className="numbered-step-list">
-              {result.preparationSteps.slice(0, 5).map((step, index) => (
-                <li key={step}>
-                  <span aria-hidden="true">{index + 1}</span>
-                  <p>{step}</p>
-                </li>
-              ))}
+        {result ? (
+          <div className="panel-card-stack steps-only">
+            <section className="steps-section">
+              <h3>Preparation steps</h3>
+              <ol className="numbered-step-list">
+                {result.preparationSteps.slice(0, 5).map((step, index) => (
+                  <li key={step}>
+                    <span aria-hidden="true">{index + 1}</span>
+                    <p>{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          </div>
+        ) : (
+          <div className="instruction-card">
+            <strong>Preparation steps:</strong>
+            <ol>
+              <li>Identify one item.</li>
+              <li>Answer only relevant questions.</li>
+              <li>Follow the recommended bin guidance.</li>
             </ol>
-          </section>
-        </div>
-      ) : (
-        <div className="instruction-card">
-          <strong>Preparation steps:</strong>
-          <ol>
-            <li>Identify one item.</li>
-            <li>Answer only relevant questions.</li>
-            <li>Follow the recommended bin guidance.</li>
-          </ol>
-        </div>
-      )}
-      {footer}
+          </div>
+        )}
+        {footer}
+      </div>
     </aside>
   )
 }

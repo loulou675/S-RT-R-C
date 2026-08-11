@@ -30,9 +30,10 @@ export function ScanPage() {
   if (cameraOpen) {
     return (
       <CameraCapture
-        onCapture={(dataUrl) => {
+        onCapture={async (dataUrl) => {
           setImagePreview(dataUrl, 'camera')
           navigate('/scan/preview')
+          return true
         }}
         onCancel={() => setCameraOpen(false)}
         onError={(code) => {

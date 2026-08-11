@@ -1,17 +1,90 @@
 {
   "classes": [
+    "aerosol_can",
     "aluminium_drink_can",
     "battery",
     "cardboard_box",
+    "chemical_container",
+    "disposable_diaper",
+    "drink_carton",
+    "electronic_cable",
+    "food_waste",
     "fruit_peel",
+    "glass_drink_bottle",
+    "light_bulb",
+    "medical_mask",
+    "medicine_blister_pack",
+    "mobile_phone",
+    "newspaper",
+    "paper_bag",
     "paper_cup",
+    "paper_plate",
+    "paperboard_packaging",
+    "plastic_bag",
+    "plastic_food_container",
     "plastic_takeaway_cup",
     "plastic_water_bottle",
-    "unknown"
+    "power_bank",
+    "printing_paper",
+    "sanitary_pad",
+    "snack_wrapper",
+    "steel_food_can",
+    "styrofoam_container",
+    "tissue",
+    "unknown",
+    "vegetable_scraps"
   ],
+  "groups": {
+    "bottle_can": [
+      "aluminium_drink_can",
+      "glass_drink_bottle",
+      "plastic_water_bottle",
+      "steel_food_can"
+    ],
+    "organic": [
+      "food_waste",
+      "fruit_peel",
+      "vegetable_scraps"
+    ],
+    "clean_plastic": [
+      "plastic_bag",
+      "plastic_food_container",
+      "plastic_takeaway_cup",
+      "snack_wrapper",
+      "styrofoam_container"
+    ],
+    "paper_cardboard": [
+      "cardboard_box",
+      "newspaper",
+      "paper_bag",
+      "paperboard_packaging",
+      "printing_paper"
+    ],
+    "landfill": [
+      "disposable_diaper",
+      "drink_carton",
+      "medical_mask",
+      "paper_cup",
+      "paper_plate",
+      "sanitary_pad",
+      "tissue"
+    ],
+    "special_handling": [
+      "aerosol_can",
+      "battery",
+      "chemical_container",
+      "electronic_cable",
+      "light_bulb",
+      "medicine_blister_pack",
+      "mobile_phone",
+      "power_bank"
+    ],
+    "fallback": ["unknown"]
+  },
   "notes": [
+    "These are visually distinguishable phase-one classes, not every searchable item in the app.",
     "Use each code as the name of a class folder.",
-    "Keep unknown as a real class containing non-target waste and non-waste examples.",
-    "Do not encode clean/dirty or wet/dry in the class name; the app's condition flow handles those questions."
+    "Keep unknown as a large, varied class containing non-target waste, non-waste objects, empty frames, hands, faces and clutter.",
+    "Do not split clean and dirty versions into separate visual classes. The rule layer handles condition-dependent disposal."
   ]
 }

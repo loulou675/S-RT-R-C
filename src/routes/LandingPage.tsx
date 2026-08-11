@@ -1,12 +1,11 @@
-import { Check, Crop, ImageUp, RotateCcw, ScanLine, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ImageUp, ScanLine, X } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BinPanel } from '../components/BinPanel'
 import { StatusBlock } from '../components/StatusBlock'
 import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { CameraCapture } from '../features/camera/CameraCapture'
-import { CropEditor } from '../features/camera/CropEditor'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
@@ -15,23 +14,21 @@ import { saveScanHistory } from '../services/history'
 import type { AppErrorCode } from '../lib/errors'
 import type { InputMethod, RuleEngineResult } from '../types/domain'
 
-type RecognitionStage = 'idle' | 'camera' | 'preview' | 'processing'
+type RecognitionStage = 'idle' | 'camera' | 'processing'
 
 const demoItems = [
-  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#cb795f' },
-  { itemCode: 'fruit_peel', label: 'Organic', color: '#3e8860' },
-  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#b43b44' },
-  { itemCode: 'cardboard_box', label: 'Paper', color: '#235398' },
-  { itemCode: 'paper_cup', label: 'Landfill', color: '#793c36' },
-  { itemCode: 'battery', label: 'Hazardous', color: '#f4ca59' },
+  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#d98b52' },
+  { itemCode: 'fruit_peel', label: 'Organic', color: '#7fa36b' },
+  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#d9675e' },
+  { itemCode: 'cardboard_box', label: 'Paper', color: '#7896d2' },
+  { itemCode: 'paper_cup', label: 'Landfill', color: '#a86e50' },
+  { itemCode: 'battery', label: 'Hazardous', color: '#e8c35a' },
 ]
 
 export function LandingPage() {
   const [searchParams] = useSearchParams()
   const [stage, setStage] = useState<RecognitionStage>('idle')
   const [imagePreview, setImagePreview] = useState<string>()
-  const [cropSource, setCropSource] = useState<string>()
-  const [cropEditorOpen, setCropEditorOpen] = useState(false)
   const [inputMethod, setInputMethod] = useState<InputMethod>('camera')
   const [result, setResult] = useState<RuleEngineResult>()
   const [predictedItemCode, setPredictedItemCode] = useState<string>()
@@ -40,6 +37,7 @@ export function LandingPage() {
   const [uploadOpen, setUploadOpen] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [resultCollapsed, setResultCollapsed] = useState(false)
+  const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
   const searchedItemCode = searchParams.get('item')
   const searchedSource = searchParams.get('source')
 
@@ -70,6 +68,7 @@ export function LandingPage() {
 
   function startCamera() {
     closeResult()
+    setFeedbackDelivery(undefined)
     setImagePreview(undefined)
     setPredictedItemCode(undefined)
     setInputMethod('camera')
@@ -78,61 +77,35 @@ export function LandingPage() {
 
   function openUpload() {
     closeResult()
+    setFeedbackDelivery(undefined)
     setImagePreview(undefined)
     setPredictedItemCode(undefined)
     setUploadOpen(true)
   }
 
-  function showImagePreview(dataUrl: string, method: InputMethod) {
+  const recogniseImage = useCallback(async (dataUrl: string, method: InputMethod, keepCameraOpen = false) => {
+    setFeedbackDelivery(undefined)
     setImagePreview(dataUrl)
-    setCropSource(dataUrl)
-    setCropEditorOpen(true)
     setInputMethod(method)
-    setStage('preview')
-  }
-
-  function openCropEditor() {
-    if (!imagePreview) return
-    setCropSource(imagePreview)
-    setCropEditorOpen(true)
-  }
-
-  function applyCrop(dataUrl: string) {
-    setImagePreview(dataUrl)
-    setCropSource(undefined)
-    setCropEditorOpen(false)
-  }
-
-  function cancelCrop() {
-    setImagePreview(cropSource ?? imagePreview)
-    setCropSource(undefined)
-    setCropEditorOpen(false)
-  }
-
-  async function processImage() {
-    if (!imagePreview) return
-
     setErrorCode(undefined)
-    setStage('processing')
+    if (!keepCameraOpen) setStage('processing')
 
     try {
       setStatus('Preparing image...')
-      await wait(160)
       setStatus('Identifying item...')
       const provider = await createVisionProvider()
-      const visionResult = await provider.identify(imagePreview)
+      const visionResult = await provider.identify(dataUrl)
       setPredictedItemCode(visionResult.itemCode)
 
       setStatus('Checking disposal guidance...')
-      await wait(160)
-
       const disposal = getDisposalForItem(visionResult.itemCode)
 
       setResult(disposal)
       setResultCollapsed(false)
-      saveScanHistory(disposal, inputMethod)
+      saveScanHistory(disposal, method)
       setStage('idle')
       setStatus(undefined)
+      return true
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error(error)
@@ -141,37 +114,35 @@ export function LandingPage() {
       const appError = error instanceof AppError ? error : toAppError(error, 'INFERENCE_FAILED')
       setErrorCode(appError.code)
       setPredictedItemCode(undefined)
-      setStage('idle')
+      setStage(keepCameraOpen ? 'camera' : 'idle')
       setStatus(undefined)
+      return false
     }
-  }
+  }, [])
 
-  function retake() {
+  const resetRecognition = useCallback(() => {
     setResult(undefined)
     setImagePreview(undefined)
-    setCropSource(undefined)
-    setCropEditorOpen(false)
-    setErrorCode(undefined)
-    setPredictedItemCode(undefined)
-    setStage(inputMethod === 'camera' ? 'camera' : 'idle')
-    if (inputMethod === 'upload') {
-      setUploadOpen(true)
-    }
-  }
-
-  function resetRecognition() {
-    setResult(undefined)
-    setImagePreview(undefined)
-    setCropSource(undefined)
-    setCropEditorOpen(false)
     setErrorCode(undefined)
     setPredictedItemCode(undefined)
     setStatus(undefined)
     setStage('idle')
-  }
+    setFeedbackDelivery(undefined)
+  }, [])
+
+  const handleCameraCapture = useCallback(
+    (dataUrl: string) => recogniseImage(dataUrl, 'camera', true),
+    [recogniseImage],
+  )
+
+  const handleCameraError = useCallback((code: AppErrorCode) => {
+    setErrorCode(code)
+    setStage('idle')
+  }, [])
 
   function showDemoResult(itemCode: string) {
     try {
+      setFeedbackDelivery(undefined)
       const disposal = getDisposalForItem(itemCode)
       setResult(disposal)
       setResultCollapsed(false)
@@ -186,46 +157,21 @@ export function LandingPage() {
 
   const hasResult = Boolean(result)
 
+  const layoutClassName = [
+    'hero-layout recognition-layout',
+    hasResult ? 'has-result' : '',
+    hasResult && resultCollapsed ? 'result-collapsed' : '',
+  ].filter(Boolean).join(' ')
+
   return (
-    <section className={hasResult ? 'hero-layout recognition-layout has-result' : 'hero-layout recognition-layout'}>
+    <section className={layoutClassName}>
       <div className="recognition-pane">
         {stage === 'camera' ? (
           <CameraCapture
-            onCapture={(dataUrl) => showImagePreview(dataUrl, 'camera')}
+            onCapture={handleCameraCapture}
             onCancel={resetRecognition}
-            onError={(code) => {
-              setErrorCode(code)
-              setStage('idle')
-            }}
+            onError={handleCameraError}
           />
-        ) : stage === 'preview' && imagePreview ? (
-          cropEditorOpen && cropSource ? (
-            <CropEditor source={cropSource} onApply={applyCrop} onCancel={cancelCrop} onRetake={retake} />
-          ) : (
-            <div className="inline-preview">
-              <div className="preview-frame">
-                <img src={imagePreview} alt="Captured waste item preview" />
-              </div>
-              <div className="button-row full">
-                <button type="button" className="primary-action" onClick={processImage}>
-                  <Check size={17} aria-hidden="true" />
-                  Use photo
-                </button>
-                <button type="button" className="secondary-action" onClick={openCropEditor}>
-                  <Crop size={17} aria-hidden="true" />
-                  Adjust crop
-                </button>
-                <button type="button" className="secondary-action" onClick={retake}>
-                  <RotateCcw size={17} aria-hidden="true" />
-                  Retake
-                </button>
-                <button type="button" className="ghost-action" onClick={resetRecognition}>
-                  <X size={17} aria-hidden="true" />
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )
         ) : stage === 'processing' ? (
           <div className="hero-copy recognition-copy">
             <h1>
@@ -276,8 +222,10 @@ export function LandingPage() {
                 predictedItemCode={predictedItemCode}
                 errorCode={errorCode}
                 inputMethod={inputMethod}
-                onCorrected={(correctedCode) => {
+                submittedStatus={feedbackDelivery}
+                onCorrected={(correctedCode, uploaded) => {
                   try {
+                    setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
                     setResult(getDisposalForItem(correctedCode))
                     setErrorCode(undefined)
                     setResultCollapsed(false)
@@ -304,8 +252,10 @@ export function LandingPage() {
               imagePreview={imagePreview}
               predictedItemCode={predictedItemCode}
               inputMethod={inputMethod}
-              onCorrected={(correctedCode) => {
+              submittedStatus={feedbackDelivery}
+              onCorrected={(correctedCode, uploaded) => {
                 try {
+                  setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
                   setResult(getDisposalForItem(correctedCode))
                   setErrorCode(undefined)
                   setResultCollapsed(false)
@@ -331,7 +281,7 @@ export function LandingPage() {
               const dataUrl = await fileToDataUrl(file)
               setUploadOpen(false)
               setIsDragging(false)
-              showImagePreview(dataUrl, 'upload')
+              await recogniseImage(dataUrl, 'upload')
             } catch (error) {
               setUploadOpen(false)
               setIsDragging(false)
@@ -406,10 +356,6 @@ function UploadDialog({
       </section>
     </div>
   )
-}
-
-function wait(ms: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms))
 }
 
 function getDisposalForItem(itemCode: string) {

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import random
 from pathlib import Path
 
@@ -10,7 +11,6 @@ from PIL import Image, ImageEnhance, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 TRAIN_ROOT = ROOT / "training" / "dataset_curated" / "train"
-TARGET_COUNT = 20
 SEED = 20260805
 
 
@@ -33,17 +33,20 @@ def augment(image: Image.Image, rng: random.Random) -> Image.Image:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target", type=int, default=60, help="Balanced train images per class after augmentation")
+    args = parser.parse_args()
     rng = random.Random(SEED)
     for class_dir in sorted(TRAIN_ROOT.iterdir()):
         if not class_dir.is_dir():
             continue
         originals = sorted(path for path in class_dir.glob("*.jpg") if not path.name.startswith("aug_"))
-        if not originals or len(list(class_dir.glob("*.jpg"))) >= TARGET_COUNT:
+        if not originals or len(list(class_dir.glob("*.jpg"))) >= args.target:
             continue
 
         existing = len(list(class_dir.glob("*.jpg")))
         index = 0
-        while existing < TARGET_COUNT:
+        while existing < args.target:
             source = originals[index % len(originals)]
             with Image.open(source) as image:
                 output = class_dir / f"aug_{index:03d}_{source.stem}.jpg"

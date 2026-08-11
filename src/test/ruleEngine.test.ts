@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { AppError } from '../lib/errors'
-import { evaluateDisposal } from '../features/sorting/ruleEngine'
+import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
+import { trainingTargetClassCodes } from '../config/modelClasses'
+import { wasteItems } from '../data/referenceData'
 import type { ConditionKey } from '../types/domain'
 
 function answers(condition: ConditionKey) {
@@ -123,5 +125,17 @@ describe('rule engine', () => {
     expect(result.specialHandling).toBe(true)
     expect(result.mainInstruction).toContain('Special handling')
     expect(result.preparationSteps.join(' ')).not.toContain('dismantle')
+  })
+
+  it('has a usable default rule for every active reference item', () => {
+    const activeCodes = wasteItems.filter((item) => item.isActive && item.code !== 'unknown').map((item) => item.code)
+
+    expect(() => activeCodes.forEach((itemCode) => evaluate(itemCode, getDefaultConditionForItem(itemCode)))).not.toThrow()
+  })
+
+  it('keeps every training class connected to an active reference item', () => {
+    const activeCodes = new Set(wasteItems.filter((item) => item.isActive).map((item) => item.code))
+
+    expect(trainingTargetClassCodes.filter((itemCode) => !activeCodes.has(itemCode))).toEqual([])
   })
 })

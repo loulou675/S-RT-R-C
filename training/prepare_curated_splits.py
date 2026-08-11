@@ -7,12 +7,15 @@ import json
 import shutil
 from pathlib import Path
 
+from PIL import Image, ImageOps
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / "training" / "dataset"
 OUTPUT_ROOT = ROOT / "training" / "dataset_curated"
 MANIFEST_PATH = ROOT / "training" / "curated-split.json"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
+MAX_ORIGINALS_PER_CLASS = 60
 
 EXCLUDE = {
     "training/dataset/val/fruit_peel/000468_6e8b938e5d0641cd891f239a3a969d12~mv2.jpeg",
@@ -31,6 +34,20 @@ def digest(path: Path) -> str:
 
 def stable_key(path: Path) -> str:
     return hashlib.sha256(str(path.relative_to(ROOT)).encode()).hexdigest()
+
+
+def difference_hash(path: Path) -> int:
+    """Return a small visual fingerprint used to reject near-duplicate photos."""
+    with Image.open(path) as opened:
+        image = ImageOps.exif_transpose(opened).convert("L").resize((9, 8), Image.Resampling.LANCZOS)
+    pixels = list(image.getdata())
+    bits = 0
+    for row in range(8):
+        for column in range(8):
+            left = pixels[row * 9 + column]
+            right = pixels[row * 9 + column + 1]
+            bits = (bits << 1) | int(left > right)
+    return bits
 
 
 def split_files(files: list[Path]) -> dict[str, list[Path]]:
@@ -64,19 +81,36 @@ def main() -> None:
     for class_name in CLASSES:
         candidates = []
         for source_split in ("train", "val", "test"):
+            source_folder = SOURCE_ROOT / source_split / class_name
+            if not source_folder.exists():
+                continue
             candidates.extend(
                 path
-                for path in (SOURCE_ROOT / source_split / class_name).iterdir()
+                for path in source_folder.iterdir()
                 if path.is_file() and path.name not in {".gitkeep", ".DS_Store"} and str(path.relative_to(ROOT)) not in EXCLUDE
             )
 
         unique_files = []
+        visual_hashes: list[int] = []
         for path in sorted(candidates):
             file_hash = digest(path)
             if file_hash in seen_hashes:
                 continue
+            try:
+                visual_hash = difference_hash(path)
+            except Exception as error:  # noqa: BLE001 - report and skip unreadable candidates
+                print(f"skip unreadable {path.relative_to(ROOT)}: {type(error).__name__}")
+                continue
+            if any((visual_hash ^ previous).bit_count() <= 3 for previous in visual_hashes):
+                print(f"skip near-duplicate {path.relative_to(ROOT)}")
+                continue
             seen_hashes.add(file_hash)
+            visual_hashes.append(visual_hash)
             unique_files.append(path)
+
+        # Prevent large source folders (especially unknown) from dominating
+        # the first training run while keeping selection reproducible.
+        unique_files = sorted(unique_files, key=stable_key)[:MAX_ORIGINALS_PER_CLASS]
 
         for split, files in split_files(unique_files).items():
             manifest[split][class_name] = []
@@ -86,8 +120,6 @@ def main() -> None:
                 if source.suffix.lower() not in {".jpg", ".jpeg"}:
                     # Ultralytics/Pillow can read these, but standardize the
                     # extension and contents through the existing PIL runtime.
-                    from PIL import Image
-
                     with Image.open(source) as opened:
                         opened.convert("RGB").save(destination, format="JPEG", quality=92)
                 else:

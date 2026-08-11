@@ -21,12 +21,15 @@ training/dataset/**
 !training/dataset/**/
 !training/dataset/**/.gitkeep
 training/dataset_curated/
+training/review_sheets/
 training/quarantine/
 training/runs/
 training/exports/
 training/.venv/
 training/models/
+training/__pycache__/
 yolo26n-cls.pt
+runs/
 
 # Editor and operating-system files
 .DS_Store

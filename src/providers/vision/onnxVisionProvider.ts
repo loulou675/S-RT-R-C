@@ -45,6 +45,13 @@ export class OnnxVisionProvider implements VisionProvider {
       throw new AppError('INFERENCE_FAILED', 'Model output is malformed')
     }
 
+    if (scores.length !== labels.length) {
+      throw new AppError(
+        'MODEL_LOAD_FAILED',
+        `Model returns ${scores.length} classes but labels.json contains ${labels.length}`,
+      )
+    }
+
     const ranked = scores
       .map((score, index) => ({ score, label: labels.find((label) => label.index === index) }))
       .filter((entry): entry is { score: number; label: LabelRecord } => Boolean(entry.label))
