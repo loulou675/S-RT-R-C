@@ -81,16 +81,22 @@ def main() -> None:
     if not samples:
         raise SystemExit(f"No test images found under {args.data}")
 
-    model = YOLO(str(args.model))
+    model = YOLO(str(args.model), task="classify")
     options = {
-        "source": [str(path) for path, _ in samples],
         "imgsz": 224,
         "verbose": False,
         "stream": False,
     }
     if args.device:
         options["device"] = args.device
-    results = model.predict(**options)
+    if args.model.suffix.lower() == ".onnx":
+        # The browser export uses a fixed batch size of one.
+        results = [
+            model.predict(source=str(path), **options)[0]
+            for path, _ in samples
+        ]
+    else:
+        results = model.predict(source=[str(path) for path, _ in samples], **options)
 
     per_class: dict[str, Counter[str]] = defaultdict(Counter)
     confidences: dict[str, list[float]] = defaultdict(list)

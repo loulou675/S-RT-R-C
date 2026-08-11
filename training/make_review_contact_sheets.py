@@ -47,12 +47,17 @@ def main() -> None:
     parser.add_argument("--data", type=Path, default=ROOT / "training" / "dataset" / "train")
     parser.add_argument("--output", type=Path, default=ROOT / "training" / "review_sheets")
     parser.add_argument("--samples", type=int, default=20)
+    parser.add_argument("--prefix", default="", help="Only include filenames with this prefix")
     args = parser.parse_args()
 
     classes = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
     for class_name in classes:
         folder = args.data / class_name
-        files = [path for path in folder.glob("**/*") if path.suffix.lower() in IMAGE_EXTENSIONS]
+        files = [
+            path
+            for path in folder.glob("**/*")
+            if path.suffix.lower() in IMAGE_EXTENSIONS and path.name.startswith(args.prefix)
+        ]
         selected = stable_sample(files, args.samples)
         if not selected:
             continue

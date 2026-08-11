@@ -21,13 +21,18 @@ training/dataset/**
 !training/dataset/**/
 !training/dataset/**/.gitkeep
 training/dataset_curated/
+training/dataset_curated_v2/
 training/review_sheets/
+training/review_sheets_taco/
+training/review_rejected/
+training/source_review/
 training/quarantine/
 training/runs/
 training/exports/
 training/.venv/
 training/models/
 training/__pycache__/
+.training-venv/
 yolo26n-cls.pt
 runs/
 

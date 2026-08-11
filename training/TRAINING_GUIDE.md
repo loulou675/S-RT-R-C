@@ -57,22 +57,24 @@ Create a clean Python environment and install Ultralytics plus ONNX export suppo
 python -m pip install -U ultralytics onnx onnxslim
 ```
 
-Then run:
+Then run a named candidate training job:
 
 ```bash
-python training/train_and_export.py --epochs 100 --batch 32
+python training/train_and_export.py --epochs 100 --batch 32 --name waste-classifier-candidate
 ```
 
 On Apple Silicon, add `--device mps`. On a CUDA machine or Google Colab GPU, add `--device 0`. If memory is insufficient, reduce `--batch` to 16 or 8.
 
-The script trains at 224 x 224, evaluates the untouched test split, exports ONNX, verifies class order, and installs:
+The script trains at 224 x 224, evaluates the untouched test split, exports ONNX, and verifies class order. It keeps the candidate inside its run folder so the live app is not changed before evaluation.
+
+After the candidate passes review, copy its `best.onnx` and generated `labels.json` into:
 
 ```text
 public/models/waste_classifier.onnx
 public/models/labels.json
 ```
 
-Never edit label indexes by hand. Their order must exactly match the model output.
+Alternatively, include `--install` in a new training run to install that run automatically after it completes. Never edit label indexes by hand. Their order must exactly match the model output.
 
 ## 5. Acceptance test
 

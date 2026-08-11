@@ -25,8 +25,21 @@ ANNOTATIONS_URL = "https://raw.githubusercontent.com/pedropro/TACO/master/data/a
 USER_AGENT = "sort-rac-local-taco-collector/1.0 (single-item research prototype)"
 
 CLASS_MAP = {
+    "Aluminium blister pack": "medicine_blister_pack",
     "Battery": "battery",
+    "Corrugated carton": "cardboard_box",
+    "Crisp packet": "snack_wrapper",
+    "Drink can": "aluminium_drink_can",
+    "Drink carton": "drink_carton",
+    "Food Can": "steel_food_can",
+    "Other carton": "paperboard_packaging",
+    "Other plastic wrapper": "snack_wrapper",
+    "Paper bag": "paper_bag",
     "Paper cup": "paper_cup",
+    "Polypropylene bag": "plastic_bag",
+    "Single-use carrier bag": "plastic_bag",
+    "Tissues": "tissue",
+    "Foam cup": "styrofoam_container",
     "Disposable plastic cup": "plastic_takeaway_cup",
     "Clear plastic bottle": "plastic_water_bottle",
     "Other plastic bottle": "plastic_water_bottle",
@@ -35,7 +48,20 @@ CLASS_MAP = {
     "Food waste": "fruit_peel",
 }
 
-TARGET_TOTALS = {"plastic_water_bottle": 25}
+TARGET_TOTALS = {
+    "aluminium_drink_can": 80,
+    "cardboard_box": 40,
+    "drink_carton": 40,
+    "medicine_blister_pack": 6,
+    "paper_bag": 27,
+    "paperboard_packaging": 50,
+    "plastic_bag": 50,
+    "plastic_water_bottle": 40,
+    "snack_wrapper": 80,
+    "steel_food_can": 30,
+    "styrofoam_container": 13,
+    "tissue": 40,
+}
 
 
 def get_json(url: str) -> dict:

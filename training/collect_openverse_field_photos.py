@@ -8,6 +8,7 @@ candidate is perfect; manually review them before rebuilding the curated split.
 
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from io import BytesIO
@@ -24,11 +25,21 @@ API_URL = "https://api.openverse.org/v1/images/"
 USER_AGENT = "sort-rac-local-openverse-collector/1.0 (single-item research prototype)"
 
 TARGETS: dict[str, list[str]] = {
+    "aluminium_drink_can": [
+        "single soda can held in hand",
+        "single beer can on table",
+        "aluminium drink can outdoors",
+        "crushed beverage can",
+        "discarded soda can litter",
+        "red soft drink can",
+    ],
     "fruit_peel": ["single banana peel", "banana peel on ground", "orange peel", "fruit peel"],
     "battery": ["single AA battery", "single AAA battery", "single 9V battery", "battery litter"],
     "paper_cup": ["single paper coffee cup", "paper cup on table", "paper cup litter", "disposable paper cup"],
     "plastic_takeaway_cup": ["single plastic cup", "disposable plastic cup", "plastic takeaway cup", "plastic cup litter"],
 }
+
+ALLOWED_LICENSES = {"by", "by-sa", "cc0", "pdm"}
 
 BAD_TITLE_TOKENS = (
     "pile", "collection", "group", "set", "various", "multiple", "comparison",
@@ -69,7 +80,10 @@ def suitable(result: dict) -> bool:
     title = str(result.get("title", "")).lower()
     tags = " ".join(str(tag.get("name", "")) for tag in result.get("tags", [])).lower()
     text = f"{title} {tags}"
-    return not any(token in text for token in BAD_TITLE_TOKENS)
+    return (
+        result.get("license") in ALLOWED_LICENSES
+        and not any(token in text for token in BAD_TITLE_TOKENS)
+    )
 
 
 def collect_class(class_name: str, queries: list[str], target: int, seen: set[str], session: requests.Session, log) -> int:
@@ -132,10 +146,17 @@ def collect_class(class_name: str, queries: list[str], target: int, seen: set[st
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target", type=int, default=20, help="New candidates to collect per selected class")
+    parser.add_argument("--class", dest="class_names", action="append", choices=sorted(TARGETS))
+    args = parser.parse_args()
+    selected = set(args.class_names or TARGETS)
     seen = existing_ids()
     with requests.Session() as session, SOURCES_PATH.open("a", encoding="utf-8") as log:
         for class_name, queries in TARGETS.items():
-            added = collect_class(class_name, queries, target=20, seen=seen, session=session, log=log)
+            if class_name not in selected:
+                continue
+            added = collect_class(class_name, queries, target=args.target, seen=seen, session=session, log=log)
             print(f"{class_name}: added {added} candidate photos", flush=True)
 
 

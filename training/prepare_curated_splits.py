@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+import argparse
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -12,10 +13,12 @@ from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / "training" / "dataset"
-OUTPUT_ROOT = ROOT / "training" / "dataset_curated"
-MANIFEST_PATH = ROOT / "training" / "curated-split.json"
+DEFAULT_OUTPUT_ROOT = ROOT / "training" / "dataset_curated"
+DEFAULT_MANIFEST_PATH = ROOT / "training" / "curated-split.json"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
-MAX_ORIGINALS_PER_CLASS = 60
+MAX_INDEPENDENT_ORIGINALS_PER_CLASS = 80
+MAX_TRAIN_ONLY_SOURCE_IMAGES_PER_CLASS = 120
+TRAIN_ONLY_PREFIXES = ("rhw_", "drinking_waste_cc0_", "commons_train_", "taco_field_")
 
 EXCLUDE = {
     "training/dataset/val/fruit_peel/000468_6e8b938e5d0641cd891f239a3a969d12~mv2.jpeg",
@@ -68,12 +71,19 @@ def split_files(files: list[Path]) -> dict[str, list[Path]]:
 
 
 def main() -> None:
-    if OUTPUT_ROOT.exists():
-        raise SystemExit(f"Refusing to overwrite existing curated dataset: {OUTPUT_ROOT}")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST_PATH)
+    args = parser.parse_args()
+    output_root = args.output.resolve()
+    manifest_path = args.manifest.resolve()
+
+    if output_root.exists():
+        raise SystemExit(f"Refusing to overwrite existing curated dataset: {output_root}")
 
     for split in ("train", "val", "test"):
         for class_name in CLASSES:
-            (OUTPUT_ROOT / split / class_name).mkdir(parents=True, exist_ok=True)
+            (output_root / split / class_name).mkdir(parents=True, exist_ok=True)
 
     seen_hashes: set[str] = set()
     manifest: dict[str, dict[str, list[str]]] = {split: {} for split in ("train", "val", "test")}
@@ -108,14 +118,19 @@ def main() -> None:
             visual_hashes.append(visual_hash)
             unique_files.append(path)
 
-        # Prevent large source folders (especially unknown) from dominating
-        # the first training run while keeping selection reproducible.
-        unique_files = sorted(unique_files, key=stable_key)[:MAX_ORIGINALS_PER_CLASS]
+        # Bulk datasets are useful for training but can make evaluation look
+        # falsely strong when their visual style leaks into every split.
+        train_only = [path for path in unique_files if path.name.startswith(TRAIN_ONLY_PREFIXES)]
+        independent = [path for path in unique_files if not path.name.startswith(TRAIN_ONLY_PREFIXES)]
+        independent = sorted(independent, key=stable_key)[:MAX_INDEPENDENT_ORIGINALS_PER_CLASS]
+        train_only = sorted(train_only, key=stable_key)[:MAX_TRAIN_ONLY_SOURCE_IMAGES_PER_CLASS]
 
-        for split, files in split_files(unique_files).items():
+        split_map = split_files(independent)
+        split_map["train"].extend(train_only)
+        for split, files in split_map.items():
             manifest[split][class_name] = []
             for index, source in enumerate(files):
-                destination = OUTPUT_ROOT / split / class_name / f"{index:04d}_{source.stem}.jpg"
+                destination = output_root / split / class_name / f"{index:04d}_{source.stem}.jpg"
                 image = source
                 if source.suffix.lower() not in {".jpg", ".jpeg"}:
                     # Ultralytics/Pillow can read these, but standardize the
@@ -124,9 +139,14 @@ def main() -> None:
                         opened.convert("RGB").save(destination, format="JPEG", quality=92)
                 else:
                     shutil.copy2(image, destination)
-                manifest[split][class_name].append(str(destination.relative_to(ROOT)))
+                try:
+                    manifest_path_value = str(destination.relative_to(ROOT))
+                except ValueError:
+                    manifest_path_value = str(destination)
+                manifest[split][class_name].append(manifest_path_value)
 
-    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     for split in ("train", "val", "test"):
         counts = {class_name: len(manifest[split].get(class_name, [])) for class_name in CLASSES}
         print(split, counts)

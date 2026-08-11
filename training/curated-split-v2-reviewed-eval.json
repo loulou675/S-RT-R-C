@@ -1,0 +1,455 @@
+{
+  "val": {
+    "aerosol_can": [
+      "training/dataset_curated_v2/val/aerosol_can/0000_commons_train_91849736.jpg",
+      "training/dataset_curated_v2/val/aerosol_can/0001_commons_train_24293939.jpg",
+      "training/dataset_curated_v2/val/aerosol_can/0002_commons_train_24293992.jpg"
+    ],
+    "aluminium_drink_can": [
+      "training/dataset_curated_v2/val/aluminium_drink_can/0000_commons_train_95827530.jpg",
+      "training/dataset_curated_v2/val/aluminium_drink_can/0001_trashnet_metal_005.jpg",
+      "training/dataset_curated_v2/val/aluminium_drink_can/0002_commons_train_77734648.jpg",
+      "training/dataset_curated_v2/val/aluminium_drink_can/0003_trashnet_metal_011.jpg",
+      "training/dataset_curated_v2/val/aluminium_drink_can/0004_commons_train_90150848.jpg"
+    ],
+    "battery": [
+      "training/dataset_curated_v2/val/battery/0000_commons_train_4882244.jpg",
+      "training/dataset_curated_v2/val/battery/0001_commons_train_39657222.jpg",
+      "training/dataset_curated_v2/val/battery/0002_hf_battery_0045.jpg",
+      "training/dataset_curated_v2/val/battery/0003_hf_battery_0057.jpg",
+      "training/dataset_curated_v2/val/battery/0004_hf_battery_0048.jpg",
+      "training/dataset_curated_v2/val/battery/0005_hf_battery_0026.jpg",
+      "training/dataset_curated_v2/val/battery/0006_hf_battery_0058.jpg"
+    ],
+    "cardboard_box": [
+      "training/dataset_curated_v2/val/cardboard_box/0000_trashnet_cardboard_006.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0001_hf_cardboard_0012.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0002_hf_cardboard_0019.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0003_hf_cardboard_0021.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0004_trashnet_cardboard_024.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0005_hf_cardboard_0018.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0006_hf_cardboard_0016.jpg",
+      "training/dataset_curated_v2/val/cardboard_box/0007_trashnet_cardboard_014.jpg"
+    ],
+    "chemical_container": [
+      "training/dataset_curated_v2/val/chemical_container/0000_commons_train_9105641.jpg",
+      "training/dataset_curated_v2/val/chemical_container/0001_commons_train_38047217.jpg",
+      "training/dataset_curated_v2/val/chemical_container/0002_commons_train_99682421.jpg",
+      "training/dataset_curated_v2/val/chemical_container/0003_commons_train_117956360.jpg"
+    ],
+    "disposable_diaper": [
+      "training/dataset_curated_v2/val/disposable_diaper/0000_commons_train_46958041.jpg",
+      "training/dataset_curated_v2/val/disposable_diaper/0001_commons_train_94784681.jpg",
+      "training/dataset_curated_v2/val/disposable_diaper/0002_commons_train_73017591.jpg"
+    ],
+    "drink_carton": [
+      "training/dataset_curated_v2/val/drink_carton/0000_commons_train_38351046.jpg",
+      "training/dataset_curated_v2/val/drink_carton/0001_taco_field_v2_12_36.jpg",
+      "training/dataset_curated_v2/val/drink_carton/0002_taco_field_v2_1121_3424.jpg"
+    ],
+    "electronic_cable": [
+      "training/dataset_curated_v2/val/electronic_cable/0000_commons_train_157451534.jpg",
+      "training/dataset_curated_v2/val/electronic_cable/0001_commons_train_145735065.jpg",
+      "training/dataset_curated_v2/val/electronic_cable/0002_commons_train_127418360.jpg",
+      "training/dataset_curated_v2/val/electronic_cable/0003_commons_train_145735085.jpg",
+      "training/dataset_curated_v2/val/electronic_cable/0004_commons_train_145735072.jpg",
+      "training/dataset_curated_v2/val/electronic_cable/0005_commons_train_6454069.jpg"
+    ],
+    "food_waste": [
+      "training/dataset_curated_v2/val/food_waste/0000_hf_biological_0001.jpg",
+      "training/dataset_curated_v2/val/food_waste/0001_hf_biological_0025.jpg",
+      "training/dataset_curated_v2/val/food_waste/0002_hf_biological_0049.jpg",
+      "training/dataset_curated_v2/val/food_waste/0003_hf_biological_0052.jpg",
+      "training/dataset_curated_v2/val/food_waste/0004_hf_biological_0057.jpg",
+      "training/dataset_curated_v2/val/food_waste/0005_hf_biological_0024.jpg",
+      "training/dataset_curated_v2/val/food_waste/0006_hf_biological_0055.jpg"
+    ],
+    "fruit_peel": [
+      "training/dataset_curated_v2/val/fruit_peel/0000_commons_train_49531104.jpg",
+      "training/dataset_curated_v2/val/fruit_peel/0001_commons_train_116901355.jpg",
+      "training/dataset_curated_v2/val/fruit_peel/0002_commons_train_100001334.jpg",
+      "training/dataset_curated_v2/val/fruit_peel/0003_commons_train_19133279.jpg",
+      "training/dataset_curated_v2/val/fruit_peel/0004_commons_train_100001338.jpg",
+      "training/dataset_curated_v2/val/fruit_peel/0005_commons_train_56853365.jpg"
+    ],
+    "glass_drink_bottle": [
+      "training/dataset_curated_v2/val/glass_drink_bottle/0000_commons_train_7675495.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0001_hf_glass_0037.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0002_hf_glass_0047.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0003_hf_glass_0046.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0004_hf_glass_0026.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0005_commons_train_10915280.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0006_commons_train_45494780.jpg",
+      "training/dataset_curated_v2/val/glass_drink_bottle/0007_hf_glass_0019.jpg"
+    ],
+    "light_bulb": [
+      "training/dataset_curated_v2/val/light_bulb/0000_commons_train_37739087.jpg",
+      "training/dataset_curated_v2/val/light_bulb/0001_commons_train_143222835.jpg",
+      "training/dataset_curated_v2/val/light_bulb/0002_commons_train_182846657.jpg",
+      "training/dataset_curated_v2/val/light_bulb/0003_commons_train_173797383.jpg",
+      "training/dataset_curated_v2/val/light_bulb/0004_commons_train_163150097.jpg",
+      "training/dataset_curated_v2/val/light_bulb/0005_commons_train_143224343.jpg"
+    ],
+    "medical_mask": [
+      "training/dataset_curated_v2/val/medical_mask/0000_commons_train_90106864.jpg",
+      "training/dataset_curated_v2/val/medical_mask/0001_commons_train_95902651.jpg",
+      "training/dataset_curated_v2/val/medical_mask/0002_commons_train_92913122.jpg",
+      "training/dataset_curated_v2/val/medical_mask/0003_commons_train_89237121.jpg",
+      "training/dataset_curated_v2/val/medical_mask/0004_commons_train_114431187.jpg",
+      "training/dataset_curated_v2/val/medical_mask/0005_commons_train_90106340.jpg"
+    ],
+    "medicine_blister_pack": [
+      "training/dataset_curated_v2/val/medicine_blister_pack/0000_commons_train_131966092.jpg",
+      "training/dataset_curated_v2/val/medicine_blister_pack/0001_commons_train_6203902.jpg",
+      "training/dataset_curated_v2/val/medicine_blister_pack/0002_commons_train_65024917.jpg",
+      "training/dataset_curated_v2/val/medicine_blister_pack/0003_commons_train_921462.jpg",
+      "training/dataset_curated_v2/val/medicine_blister_pack/0004_commons_train_95724711.jpg"
+    ],
+    "mobile_phone": [
+      "training/dataset_curated_v2/val/mobile_phone/0000_commons_train_9303488.jpg",
+      "training/dataset_curated_v2/val/mobile_phone/0001_commons_train_11204649.jpg",
+      "training/dataset_curated_v2/val/mobile_phone/0002_commons_train_94919792.jpg"
+    ],
+    "newspaper": [
+      "training/dataset_curated_v2/val/newspaper/0000_commons_train_47105253.jpg",
+      "training/dataset_curated_v2/val/newspaper/0001_from_unknown_trashnet_paper_027.jpg",
+      "training/dataset_curated_v2/val/newspaper/0002_from_unknown_trashnet_paper_000.jpg"
+    ],
+    "paper_bag": [
+      "training/dataset_curated_v2/val/paper_bag/0000_commons_train_112280923.jpg",
+      "training/dataset_curated_v2/val/paper_bag/0001_taco_field_v2_58_142.jpg",
+      "training/dataset_curated_v2/val/paper_bag/0002_commons_train_88559023.jpg"
+    ],
+    "paper_cup": [
+      "training/dataset_curated_v2/val/paper_cup/0000_commons_train_193266921.jpg",
+      "training/dataset_curated_v2/val/paper_cup/0001_commons_train_61840541.jpg",
+      "training/dataset_curated_v2/val/paper_cup/0002_commons_train_113508015.jpg",
+      "training/dataset_curated_v2/val/paper_cup/0003_commons_train_148754309.jpg",
+      "training/dataset_curated_v2/val/paper_cup/0004_commons_train_78593293.jpg",
+      "training/dataset_curated_v2/val/paper_cup/0005_commons_train_102415457.jpg"
+    ],
+    "paper_plate": [
+      "training/dataset_curated_v2/val/paper_plate/0000_commons_train_17446622.jpg",
+      "training/dataset_curated_v2/val/paper_plate/0001_commons_train_87540303.jpg",
+      "training/dataset_curated_v2/val/paper_plate/0002_commons_train_115304699.jpg",
+      "training/dataset_curated_v2/val/paper_plate/0003_commons_train_81509603.jpg",
+      "training/dataset_curated_v2/val/paper_plate/0004_commons_train_10214244.jpg"
+    ],
+    "paperboard_packaging": [
+      "training/dataset_curated_v2/val/paperboard_packaging/0000_commons_train_110769759.jpg",
+      "training/dataset_curated_v2/val/paperboard_packaging/0001_rhw_cardboard_packaging_real_08c63e67c915.jpg",
+      "training/dataset_curated_v2/val/paperboard_packaging/0002_taco_field_v2_232_769.jpg"
+    ],
+    "plastic_bag": [
+      "training/dataset_curated_v2/val/plastic_bag/0000_commons_train_114045116.jpg",
+      "training/dataset_curated_v2/val/plastic_bag/0001_commons_train_34936239.jpg",
+      "training/dataset_curated_v2/val/plastic_bag/0002_commons_train_62643947.jpg",
+      "training/dataset_curated_v2/val/plastic_bag/0003_commons_train_62643948.jpg",
+      "training/dataset_curated_v2/val/plastic_bag/0004_commons_train_114045099.jpg",
+      "training/dataset_curated_v2/val/plastic_bag/0005_commons_train_114045105.jpg"
+    ],
+    "plastic_food_container": [
+      "training/dataset_curated_v2/val/plastic_food_container/0000_commons_train_84041469.jpg",
+      "training/dataset_curated_v2/val/plastic_food_container/0001_commons_train_45933033.jpg",
+      "training/dataset_curated_v2/val/plastic_food_container/0002_rhw_plastic_food_containers_default_0e0ea5fe4f36.jpg"
+    ],
+    "plastic_takeaway_cup": [
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0000_commons_train_85187009.jpg",
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0001_commons_train_21707980.jpg",
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0002_commons_train_158682489.jpg",
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0003_commons_train_176577009.jpg",
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0004_commons_train_16068288.jpg",
+      "training/dataset_curated_v2/val/plastic_takeaway_cup/0005_commons_train_141487414.jpg"
+    ],
+    "plastic_water_bottle": [
+      "training/dataset_curated_v2/val/plastic_water_bottle/0000_commons_train_16354121.jpg",
+      "training/dataset_curated_v2/val/plastic_water_bottle/0001_commons_train_15627033.jpg",
+      "training/dataset_curated_v2/val/plastic_water_bottle/0002_rhw_plastic_soda_bottles_real_1422ec481ffd.jpg"
+    ],
+    "power_bank": [
+      "training/dataset_curated_v2/val/power_bank/0000_commons_train_80409700.jpg",
+      "training/dataset_curated_v2/val/power_bank/0001_commons_train_165293833.jpg",
+      "training/dataset_curated_v2/val/power_bank/0002_commons_train_54674705.jpg",
+      "training/dataset_curated_v2/val/power_bank/0003_commons_train_130563808.jpg"
+    ],
+    "printing_paper": [
+      "training/dataset_curated_v2/val/printing_paper/0000_from_unknown_trashnet_paper_028.jpg",
+      "training/dataset_curated_v2/val/printing_paper/0001_from_unknown_trashnet_paper_020.jpg",
+      "training/dataset_curated_v2/val/printing_paper/0002_rhw_office_paper_default_0b6574f697d8.jpg"
+    ],
+    "sanitary_pad": [
+      "training/dataset_curated_v2/val/sanitary_pad/0000_commons_train_116487035.jpg",
+      "training/dataset_curated_v2/val/sanitary_pad/0001_commons_train_116487038.jpg",
+      "training/dataset_curated_v2/val/sanitary_pad/0002_commons_train_104708802.jpg",
+      "training/dataset_curated_v2/val/sanitary_pad/0003_commons_train_116487041.jpg",
+      "training/dataset_curated_v2/val/sanitary_pad/0004_commons_train_156300925.jpg",
+      "training/dataset_curated_v2/val/sanitary_pad/0005_commons_train_116123431.jpg"
+    ],
+    "snack_wrapper": [
+      "training/dataset_curated_v2/val/snack_wrapper/0000_commons_train_44968997.jpg",
+      "training/dataset_curated_v2/val/snack_wrapper/0001_commons_train_1631222.jpg",
+      "training/dataset_curated_v2/val/snack_wrapper/0002_commons_train_107692616.jpg",
+      "training/dataset_curated_v2/val/snack_wrapper/0003_commons_train_33549801.jpg",
+      "training/dataset_curated_v2/val/snack_wrapper/0004_commons_train_108328023.jpg",
+      "training/dataset_curated_v2/val/snack_wrapper/0005_commons_train_148028725.jpg"
+    ],
+    "steel_food_can": [
+      "training/dataset_curated_v2/val/steel_food_can/0000_commons_train_24751267.jpg",
+      "training/dataset_curated_v2/val/steel_food_can/0001_commons_train_24751268.jpg",
+      "training/dataset_curated_v2/val/steel_food_can/0002_commons_train_58250761.jpg",
+      "training/dataset_curated_v2/val/steel_food_can/0003_from_aluminium_drink_can_trashnet_metal_008.jpg",
+      "training/dataset_curated_v2/val/steel_food_can/0004_from_aluminium_drink_can_trashnet_metal_000.jpg",
+      "training/dataset_curated_v2/val/steel_food_can/0005_commons_train_149329232.jpg"
+    ],
+    "styrofoam_container": [
+      "training/dataset_curated_v2/val/styrofoam_container/0000_commons_train_4350599.jpg",
+      "training/dataset_curated_v2/val/styrofoam_container/0001_commons_train_176159322.jpg",
+      "training/dataset_curated_v2/val/styrofoam_container/0002_commons_train_17187092.jpg"
+    ],
+    "tissue": [
+      "training/dataset_curated_v2/val/tissue/0000_commons_train_98922949.jpg",
+      "training/dataset_curated_v2/val/tissue/0001_taco_field_v2_652_2105.jpg",
+      "training/dataset_curated_v2/val/tissue/0002_commons_train_37641347.jpg"
+    ],
+    "unknown": [
+      "training/dataset_curated_v2/val/unknown/0000_from_glass_drink_bottle_hf_glass_0007.jpg",
+      "training/dataset_curated_v2/val/unknown/0001_trashnet_trash_003.jpg",
+      "training/dataset_curated_v2/val/unknown/0002_trashnet_glass_003.jpg",
+      "training/dataset_curated_v2/val/unknown/0003_from_vegetable_scraps_commons_train_42121070.jpg",
+      "training/dataset_curated_v2/val/unknown/0004_from_glass_drink_bottle_hf_glass_0027.jpg",
+      "training/dataset_curated_v2/val/unknown/0005_from_printing_paper_commons_train_123933520.jpg",
+      "training/dataset_curated_v2/val/unknown/0006_trashnet_glass_022.jpg",
+      "training/dataset_curated_v2/val/unknown/0007_from_glass_drink_bottle_hf_glass_0042.jpg"
+    ],
+    "vegetable_scraps": [
+      "training/dataset_curated_v2/val/vegetable_scraps/0000_from_food_waste_hf_biological_0005.jpg",
+      "training/dataset_curated_v2/val/vegetable_scraps/0001_from_food_waste_hf_biological_0059.jpg",
+      "training/dataset_curated_v2/val/vegetable_scraps/0002_from_food_waste_hf_biological_0018.jpg"
+    ]
+  },
+  "test": {
+    "aerosol_can": [
+      "training/dataset_curated_v2/test/aerosol_can/0000_commons_train_24293969.jpg",
+      "training/dataset_curated_v2/test/aerosol_can/0001_commons_train_62244013.jpg",
+      "training/dataset_curated_v2/test/aerosol_can/0002_commons_train_18813296.jpg"
+    ],
+    "aluminium_drink_can": [
+      "training/dataset_curated_v2/test/aluminium_drink_can/0000_trashnet_metal_001.jpg",
+      "training/dataset_curated_v2/test/aluminium_drink_can/0001_commons_train_115607601.jpg",
+      "training/dataset_curated_v2/test/aluminium_drink_can/0002_trashnet_metal_027.jpg"
+    ],
+    "battery": [
+      "training/dataset_curated_v2/test/battery/0000_hf_battery_0036.jpg",
+      "training/dataset_curated_v2/test/battery/0001_hf_battery_0044.jpg",
+      "training/dataset_curated_v2/test/battery/0002_hf_battery_0049.jpg",
+      "training/dataset_curated_v2/test/battery/0003_hf_battery_0053.jpg",
+      "training/dataset_curated_v2/test/battery/0004_hf_battery_0021.jpg",
+      "training/dataset_curated_v2/test/battery/0005_hf_battery_0041.jpg",
+      "training/dataset_curated_v2/test/battery/0006_hf_battery_0029.jpg"
+    ],
+    "cardboard_box": [
+      "training/dataset_curated_v2/test/cardboard_box/0000_hf_cardboard_0031.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0001_hf_cardboard_0023.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0002_trashnet_cardboard_019.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0003_hf_cardboard_0049.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0004_hf_cardboard_0041.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0005_hf_cardboard_0025.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0006_trashnet_cardboard_008.jpg",
+      "training/dataset_curated_v2/test/cardboard_box/0007_hf_cardboard_0043.jpg"
+    ],
+    "chemical_container": [
+      "training/dataset_curated_v2/test/chemical_container/0000_commons_train_104976786.jpg",
+      "training/dataset_curated_v2/test/chemical_container/0001_commons_train_395979.jpg",
+      "training/dataset_curated_v2/test/chemical_container/0002_commons_train_154516411.jpg",
+      "training/dataset_curated_v2/test/chemical_container/0003_commons_train_109174372.jpg"
+    ],
+    "disposable_diaper": [
+      "training/dataset_curated_v2/test/disposable_diaper/0000_commons_train_73017589.jpg",
+      "training/dataset_curated_v2/test/disposable_diaper/0001_commons_train_76650235.jpg",
+      "training/dataset_curated_v2/test/disposable_diaper/0002_commons_train_3855443.jpg"
+    ],
+    "drink_carton": [
+      "training/dataset_curated_v2/test/drink_carton/0000_commons_train_151468120.jpg",
+      "training/dataset_curated_v2/test/drink_carton/0001_commons_train_78625371.jpg",
+      "training/dataset_curated_v2/test/drink_carton/0002_taco_field_v2_426_1532.jpg"
+    ],
+    "electronic_cable": [
+      "training/dataset_curated_v2/test/electronic_cable/0000_commons_train_135090255.jpg",
+      "training/dataset_curated_v2/test/electronic_cable/0001_commons_train_151315016.jpg",
+      "training/dataset_curated_v2/test/electronic_cable/0002_commons_train_160013062.jpg",
+      "training/dataset_curated_v2/test/electronic_cable/0003_commons_train_151315018.jpg",
+      "training/dataset_curated_v2/test/electronic_cable/0004_commons_train_41208571.jpg",
+      "training/dataset_curated_v2/test/electronic_cable/0005_commons_train_145735097.jpg"
+    ],
+    "food_waste": [
+      "training/dataset_curated_v2/test/food_waste/0000_hf_biological_0046.jpg",
+      "training/dataset_curated_v2/test/food_waste/0001_hf_biological_0004.jpg",
+      "training/dataset_curated_v2/test/food_waste/0002_hf_biological_0037.jpg",
+      "training/dataset_curated_v2/test/food_waste/0003_hf_biological_0011.jpg",
+      "training/dataset_curated_v2/test/food_waste/0004_hf_biological_0007.jpg",
+      "training/dataset_curated_v2/test/food_waste/0005_hf_biological_0054.jpg",
+      "training/dataset_curated_v2/test/food_waste/0006_hf_biological_0028.jpg"
+    ],
+    "fruit_peel": [
+      "training/dataset_curated_v2/test/fruit_peel/0000_commons_train_173247686.jpg",
+      "training/dataset_curated_v2/test/fruit_peel/0001_commons_train_34190474.jpg",
+      "training/dataset_curated_v2/test/fruit_peel/0002_commons_train_68232914.jpg",
+      "training/dataset_curated_v2/test/fruit_peel/0003_commons_train_34083272.jpg",
+      "training/dataset_curated_v2/test/fruit_peel/0004_commons_train_38383206.jpg",
+      "training/dataset_curated_v2/test/fruit_peel/0005_commons_train_118494337.jpg"
+    ],
+    "glass_drink_bottle": [
+      "training/dataset_curated_v2/test/glass_drink_bottle/0000_commons_train_41123126.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0001_commons_train_117088613.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0002_commons_train_64723247.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0003_hf_glass_0011.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0004_commons_train_65640489.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0005_commons_train_31109159.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0006_hf_glass_0058.jpg",
+      "training/dataset_curated_v2/test/glass_drink_bottle/0007_hf_glass_0031.jpg"
+    ],
+    "light_bulb": [
+      "training/dataset_curated_v2/test/light_bulb/0000_commons_train_167663582.jpg",
+      "training/dataset_curated_v2/test/light_bulb/0001_commons_train_14473307.jpg",
+      "training/dataset_curated_v2/test/light_bulb/0002_commons_train_11771871.jpg",
+      "training/dataset_curated_v2/test/light_bulb/0003_commons_train_143224328.jpg",
+      "training/dataset_curated_v2/test/light_bulb/0004_commons_train_128169485.jpg",
+      "training/dataset_curated_v2/test/light_bulb/0005_commons_train_46918820.jpg"
+    ],
+    "medical_mask": [
+      "training/dataset_curated_v2/test/medical_mask/0000_commons_train_114431193.jpg",
+      "training/dataset_curated_v2/test/medical_mask/0001_commons_train_95902653.jpg",
+      "training/dataset_curated_v2/test/medical_mask/0002_commons_train_90106349.jpg",
+      "training/dataset_curated_v2/test/medical_mask/0003_commons_train_89015148.jpg",
+      "training/dataset_curated_v2/test/medical_mask/0004_commons_train_19675080.jpg",
+      "training/dataset_curated_v2/test/medical_mask/0005_commons_train_91012234.jpg"
+    ],
+    "medicine_blister_pack": [
+      "training/dataset_curated_v2/test/medicine_blister_pack/0000_commons_train_149434055.jpg",
+      "training/dataset_curated_v2/test/medicine_blister_pack/0001_commons_train_149434054.jpg",
+      "training/dataset_curated_v2/test/medicine_blister_pack/0002_commons_train_151518903.jpg",
+      "training/dataset_curated_v2/test/medicine_blister_pack/0003_commons_train_150852683.jpg",
+      "training/dataset_curated_v2/test/medicine_blister_pack/0004_commons_train_3228181.jpg"
+    ],
+    "mobile_phone": [
+      "training/dataset_curated_v2/test/mobile_phone/0000_commons_train_110866514.jpg",
+      "training/dataset_curated_v2/test/mobile_phone/0001_commons_train_124720293.jpg",
+      "training/dataset_curated_v2/test/mobile_phone/0002_commons_train_115613009.jpg"
+    ],
+    "newspaper": [
+      "training/dataset_curated_v2/test/newspaper/0000_from_unknown_trashnet_paper_015.jpg",
+      "training/dataset_curated_v2/test/newspaper/0001_from_unknown_trashnet_paper_017.jpg",
+      "training/dataset_curated_v2/test/newspaper/0002_commons_train_40329459.jpg"
+    ],
+    "paper_bag": [
+      "training/dataset_curated_v2/test/paper_bag/0000_commons_train_77107300.jpg",
+      "training/dataset_curated_v2/test/paper_bag/0001_commons_train_157558742.jpg",
+      "training/dataset_curated_v2/test/paper_bag/0002_commons_train_88559022.jpg"
+    ],
+    "paper_cup": [
+      "training/dataset_curated_v2/test/paper_cup/0000_commons_train_78593297.jpg",
+      "training/dataset_curated_v2/test/paper_cup/0001_commons_train_119343838.jpg",
+      "training/dataset_curated_v2/test/paper_cup/0002_commons_train_80890901.jpg",
+      "training/dataset_curated_v2/test/paper_cup/0003_commons_train_80890647.jpg",
+      "training/dataset_curated_v2/test/paper_cup/0004_commons_train_78593295.jpg",
+      "training/dataset_curated_v2/test/paper_cup/0005_commons_train_148931329.jpg"
+    ],
+    "paper_plate": [
+      "training/dataset_curated_v2/test/paper_plate/0000_commons_train_25924531.jpg",
+      "training/dataset_curated_v2/test/paper_plate/0001_commons_train_93839822.jpg",
+      "training/dataset_curated_v2/test/paper_plate/0002_commons_train_77249462.jpg",
+      "training/dataset_curated_v2/test/paper_plate/0003_commons_train_186626169.jpg",
+      "training/dataset_curated_v2/test/paper_plate/0004_commons_train_16686617.jpg"
+    ],
+    "paperboard_packaging": [
+      "training/dataset_curated_v2/test/paperboard_packaging/0000_commons_train_116592668.jpg",
+      "training/dataset_curated_v2/test/paperboard_packaging/0001_rhw_cardboard_packaging_default_07ad523f5336.jpg",
+      "training/dataset_curated_v2/test/paperboard_packaging/0002_taco_field_v2_689_2209.jpg"
+    ],
+    "plastic_bag": [
+      "training/dataset_curated_v2/test/plastic_bag/0000_commons_train_76615949.jpg",
+      "training/dataset_curated_v2/test/plastic_bag/0001_commons_train_78594926.jpg",
+      "training/dataset_curated_v2/test/plastic_bag/0002_commons_train_76615944.jpg",
+      "training/dataset_curated_v2/test/plastic_bag/0003_commons_train_114045102.jpg",
+      "training/dataset_curated_v2/test/plastic_bag/0004_commons_train_76615948.jpg",
+      "training/dataset_curated_v2/test/plastic_bag/0005_commons_train_114045106.jpg"
+    ],
+    "plastic_food_container": [
+      "training/dataset_curated_v2/test/plastic_food_container/0000_commons_train_157093447.jpg",
+      "training/dataset_curated_v2/test/plastic_food_container/0001_commons_train_31420383.jpg",
+      "training/dataset_curated_v2/test/plastic_food_container/0002_rhw_plastic_food_containers_real_0550bd7cfba7.jpg"
+    ],
+    "plastic_takeaway_cup": [
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0000_commons_train_141487420.jpg",
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0001_commons_train_95789592.jpg",
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0002_commons_train_25650269.jpg",
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0003_commons_train_9431233.jpg",
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0004_commons_train_63205030.jpg",
+      "training/dataset_curated_v2/test/plastic_takeaway_cup/0005_commons_train_194795020.jpg"
+    ],
+    "plastic_water_bottle": [
+      "training/dataset_curated_v2/test/plastic_water_bottle/0000_commons_train_148898066.jpg",
+      "training/dataset_curated_v2/test/plastic_water_bottle/0001_commons_train_44972630.jpg",
+      "training/dataset_curated_v2/test/plastic_water_bottle/0002_rhw_plastic_water_bottles_default_0f2ae704d7b2.jpg"
+    ],
+    "power_bank": [
+      "training/dataset_curated_v2/test/power_bank/0000_commons_train_194505173.jpg",
+      "training/dataset_curated_v2/test/power_bank/0001_commons_train_90790584.jpg",
+      "training/dataset_curated_v2/test/power_bank/0002_commons_train_130594706.jpg"
+    ],
+    "printing_paper": [
+      "training/dataset_curated_v2/test/printing_paper/0000_from_unknown_trashnet_paper_012.jpg",
+      "training/dataset_curated_v2/test/printing_paper/0001_from_unknown_trashnet_paper_029.jpg",
+      "training/dataset_curated_v2/test/printing_paper/0002_rhw_office_paper_default_1473d2d44a42.jpg"
+    ],
+    "sanitary_pad": [
+      "training/dataset_curated_v2/test/sanitary_pad/0000_commons_train_94903928.jpg",
+      "training/dataset_curated_v2/test/sanitary_pad/0001_commons_train_36530661.jpg",
+      "training/dataset_curated_v2/test/sanitary_pad/0002_commons_train_114913290.jpg",
+      "training/dataset_curated_v2/test/sanitary_pad/0003_commons_train_146558147.jpg",
+      "training/dataset_curated_v2/test/sanitary_pad/0004_commons_train_104708797.jpg",
+      "training/dataset_curated_v2/test/sanitary_pad/0005_commons_train_69798365.jpg"
+    ],
+    "snack_wrapper": [
+      "training/dataset_curated_v2/test/snack_wrapper/0000_commons_train_11766132.jpg",
+      "training/dataset_curated_v2/test/snack_wrapper/0001_commons_train_99645837.jpg",
+      "training/dataset_curated_v2/test/snack_wrapper/0002_commons_train_62103829.jpg",
+      "training/dataset_curated_v2/test/snack_wrapper/0003_commons_train_81389299.jpg",
+      "training/dataset_curated_v2/test/snack_wrapper/0004_commons_train_132699027.jpg",
+      "training/dataset_curated_v2/test/snack_wrapper/0005_commons_train_132699026.jpg"
+    ],
+    "steel_food_can": [
+      "training/dataset_curated_v2/test/steel_food_can/0000_commons_train_30590789.jpg",
+      "training/dataset_curated_v2/test/steel_food_can/0001_commons_train_121123551.jpg",
+      "training/dataset_curated_v2/test/steel_food_can/0002_from_aluminium_drink_can_trashnet_metal_019.jpg",
+      "training/dataset_curated_v2/test/steel_food_can/0003_commons_train_3613779.jpg",
+      "training/dataset_curated_v2/test/steel_food_can/0004_commons_train_1358828.jpg",
+      "training/dataset_curated_v2/test/steel_food_can/0005_commons_train_33029427.jpg"
+    ],
+    "styrofoam_container": [
+      "training/dataset_curated_v2/test/styrofoam_container/0000_commons_train_30423056.jpg",
+      "training/dataset_curated_v2/test/styrofoam_container/0001_commons_train_190429834.jpg",
+      "training/dataset_curated_v2/test/styrofoam_container/0002_commons_train_26061621.jpg"
+    ],
+    "tissue": [
+      "training/dataset_curated_v2/test/tissue/0000_commons_train_138633177.jpg",
+      "training/dataset_curated_v2/test/tissue/0001_taco_field_v2_685_2196.jpg",
+      "training/dataset_curated_v2/test/tissue/0002_commons_train_138176959.jpg"
+    ],
+    "unknown": [
+      "training/dataset_curated_v2/test/unknown/0000_trashnet_trash_007.jpg",
+      "training/dataset_curated_v2/test/unknown/0001_from_chemical_container_commons_train_85616358.jpg",
+      "training/dataset_curated_v2/test/unknown/0002_from_aluminium_drink_can_commons_train_163119832.jpg",
+      "training/dataset_curated_v2/test/unknown/0003_from_chemical_container_commons_train_190549880.jpg",
+      "training/dataset_curated_v2/test/unknown/0004_from_printing_paper_commons_train_83189396.jpg",
+      "training/dataset_curated_v2/test/unknown/0005_from_aluminium_drink_can_commons_train_16161509.jpg",
+      "training/dataset_curated_v2/test/unknown/0006_from_printing_paper_commons_train_10383800.jpg",
+      "training/dataset_curated_v2/test/unknown/0007_trashnet_glass_016.jpg"
+    ],
+    "vegetable_scraps": [
+      "training/dataset_curated_v2/test/vegetable_scraps/0000_from_food_waste_hf_biological_0020.jpg",
+      "training/dataset_curated_v2/test/vegetable_scraps/0001_from_food_waste_hf_biological_0010.jpg",
+      "training/dataset_curated_v2/test/vegetable_scraps/0002_from_food_waste_hf_biological_0006.jpg"
+    ]
+  }
+}

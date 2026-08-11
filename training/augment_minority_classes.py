@@ -10,7 +10,7 @@ from PIL import Image, ImageEnhance, ImageOps
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TRAIN_ROOT = ROOT / "training" / "dataset_curated" / "train"
+DEFAULT_TRAIN_ROOT = ROOT / "training" / "dataset_curated" / "train"
 SEED = 20260805
 
 
@@ -35,9 +35,11 @@ def augment(image: Image.Image, rng: random.Random) -> Image.Image:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", type=int, default=60, help="Balanced train images per class after augmentation")
+    parser.add_argument("--data", type=Path, default=DEFAULT_TRAIN_ROOT)
     args = parser.parse_args()
+    train_root = args.data.resolve()
     rng = random.Random(SEED)
-    for class_dir in sorted(TRAIN_ROOT.iterdir()):
+    for class_dir in sorted(train_root.iterdir()):
         if not class_dir.is_dir():
             continue
         originals = sorted(path for path in class_dir.glob("*.jpg") if not path.name.startswith("aug_"))

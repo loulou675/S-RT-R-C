@@ -20,6 +20,8 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--device", default=None, help="Examples: cpu, mps, 0")
+    parser.add_argument("--name", default="waste-classifier")
+    parser.add_argument("--install", action="store_true", help="Replace the model used by the web app")
     args = parser.parse_args()
 
     runs = ROOT / "training" / "runs"
@@ -31,7 +33,7 @@ def main() -> None:
         "batch": args.batch,
         "patience": 20,
         "project": str(runs),
-        "name": "waste-classifier",
+        "name": args.name,
         "seed": 42,
         "deterministic": True,
         "pretrained": True,
@@ -40,7 +42,7 @@ def main() -> None:
         train_options["device"] = args.device
     trainer.train(**train_options)
 
-    best_path = runs / "waste-classifier" / "weights" / "best.pt"
+    best_path = runs / args.name / "weights" / "best.pt"
     if not best_path.exists():
         raise SystemExit(f"Training finished but best checkpoint is missing: {best_path}")
 
@@ -57,16 +59,23 @@ def main() -> None:
     if ordered_names != expected:
         raise SystemExit(f"Class order mismatch. Model: {ordered_names}. Dataset folders: {expected}")
 
-    model_dir = ROOT / "public" / "models"
-    model_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(exported_path, model_dir / "waste_classifier.onnx")
     labels = {"labels": [{"index": index, "code": code} for index, code in enumerate(ordered_names)]}
-    (model_dir / "labels.json").write_text(json.dumps(labels, indent=2) + "\n", encoding="utf-8")
+    run_dir = best_path.parents[1]
+    (run_dir / "labels.json").write_text(json.dumps(labels, indent=2) + "\n", encoding="utf-8")
 
-    print("\nInstalled:")
-    print(model_dir / "waste_classifier.onnx")
-    print(model_dir / "labels.json")
-    print("Run the frontend build and test with untouched test images before publishing.")
+    print("\nCandidate model:")
+    print(exported_path)
+    print(run_dir / "labels.json")
+    if args.install:
+        model_dir = ROOT / "public" / "models"
+        model_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(exported_path, model_dir / "waste_classifier.onnx")
+        shutil.copy2(run_dir / "labels.json", model_dir / "labels.json")
+        print("\nInstalled in the web app:")
+        print(model_dir / "waste_classifier.onnx")
+        print(model_dir / "labels.json")
+    else:
+        print("Model was not installed. Evaluate it first, then rerun with --install if it improves.")
 
 
 if __name__ == "__main__":

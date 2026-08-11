@@ -38,6 +38,25 @@ source URL, local class and license for each downloaded candidate.
 - Limitation: source labels are broad. Keep only examples that match the target
   app class; do not map broad paper, plastic or metal folders automatically.
 
+### Drinking Waste Classification
+
+- Source: <https://www.kaggle.com/datasets/arkadiyhacks/drinking-waste-classification>
+- License: CC0, as declared by the dataset page
+- Use: phone-camera aluminium-can candidates with YOLO boxes
+- Limitation: the archive contains long sequences of the same physical cans.
+  Sample sparsely, keep these images in training only, and do not use them to
+  inflate validation or test scores.
+
+### Recyclable and Household Waste Classification
+
+- Source: <https://www.kaggle.com/datasets/alistairking/recyclable-and-household-waste-classification>
+- License: MIT, as declared by the dataset page
+- Use: balanced household-item coverage for cans, bottles, paper, cardboard,
+  food waste, bags, food containers and styrofoam
+- Limitation: default and real-world subsets share a strong source style. Files
+  prefixed with `rhw_` are training-only; independent sources must provide the
+  validation and test images.
+
 ### Bower waste annotations
 
 - Source: <https://huggingface.co/datasets/BowerApp/bower-waste-annotations>

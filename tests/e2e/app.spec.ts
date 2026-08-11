@@ -4,9 +4,6 @@ import { deflateSync } from 'node:zlib'
 test('successful uploaded-image flow in mock mode', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('sot-rac-mock-item', 'plastic_takeaway_cup'))
   await uploadMockImage(page)
-  await expect(page).toHaveURL(/\/$/)
-  await page.getByRole('button', { name: /use photo/i }).click()
-  await expect(page).toHaveURL(/\/$/)
 
   await expect(page.getByText(/Plastic takeaway cup/i).first()).toBeVisible()
   await expect(page.getByText(/Clean Plastic/).first()).toBeVisible()
@@ -16,9 +13,8 @@ test('AI failure followed by retake', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('sot-rac-mock-item', 'force_error'))
   await page.goto('/')
   await setImageFile(page)
-  await page.getByRole('button', { name: /use photo/i }).click()
 
-  await expect(page.getByText(/We could not clearly identify this item/i)).toBeVisible()
+  await expect(page.getByText(/this image matched Unknown/i)).toBeVisible()
   await expect(page).toHaveURL(/\/$/)
 })
 
@@ -32,7 +28,7 @@ test('manual search to disposal result', async ({ page }) => {
 })
 
 test('plastic cup condition flow', async ({ page }) => {
-  await page.goto('/search')
+  await page.goto('/#/search')
   await page.getByPlaceholder(/Search for an item/i).fill('plastic cup')
   await page.getByRole('button', { name: /Plastic takeaway cup/i }).click()
   await page.getByRole('button', { name: /Cannot be cleaned/i }).click()
@@ -41,7 +37,7 @@ test('plastic cup condition flow', async ({ page }) => {
 })
 
 test('special-handling item flow', async ({ page }) => {
-  await page.goto('/search')
+  await page.goto('/#/search')
   await page.getByPlaceholder(/Search for an item/i).fill('battery')
   await page.getByRole('button', { name: /^Battery/i }).click()
 
@@ -87,7 +83,6 @@ async function setImageFile(page: Page) {
     mimeType: 'image/png',
     buffer: createPng(320, 320),
   })
-  await expect(page.getByAltText(/Captured waste item preview/i)).toBeVisible()
 }
 
 function createPng(width: number, height: number) {
