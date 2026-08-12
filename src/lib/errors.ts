@@ -8,6 +8,7 @@ export type AppErrorCode =
   | 'MODEL_LOAD_FAILED'
   | 'INFERENCE_FAILED'
   | 'INFERENCE_TIMEOUT'
+  | 'SCAN_TIMEOUT'
   | 'ITEM_NOT_RECOGNISED'
   | 'ITEM_AMBIGUOUS'
   | 'MULTIPLE_ITEMS_DETECTED'
@@ -64,6 +65,10 @@ export function messageForError(code?: AppErrorCode) {
 
   if (code === 'INFERENCE_TIMEOUT') {
     return 'AI recognition took too long. Try a smaller image or reload the page.'
+  }
+
+  if (code === 'SCAN_TIMEOUT') {
+    return 'We could not get a clear scan. Try brighter, even light, move one item closer, and use a plain background.'
   }
 
   if (code === 'ITEM_NOT_RECOGNISED') {

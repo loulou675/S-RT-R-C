@@ -10,6 +10,11 @@ interface CameraCaptureProps {
 const SAMPLE_SIZE = 48
 const STABLE_DIFFERENCE = 7.5
 const REQUIRED_STABLE_SAMPLES = 3
+const SCAN_SESSION_TIMEOUT_MS = 25_000
+const MAX_FAILED_ATTEMPTS = 3
+const DARK_LUMINANCE = 52
+const GLARE_LUMINANCE = 222
+const FAILURE_HINT_MS = 2_400
 
 export function CameraCapture({ onCapture, onCancel, onError }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -18,6 +23,10 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
   const stableSamplesRef = useRef(0)
   const busyRef = useRef(false)
   const mountedRef = useRef(true)
+  const scanStartedAtRef = useRef(0)
+  const failedAttemptsRef = useRef(0)
+  const failureHintUntilRef = useRef(0)
+  const timeoutHandledRef = useRef(false)
   const [facingMode] = useState<'environment' | 'user'>(() =>
     window.matchMedia('(max-width: 860px)').matches ? 'environment' : 'user',
   )
@@ -37,10 +46,36 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
     async function scanWhenStable() {
       const video = videoRef.current
-      if (!video || busyRef.current || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return
+      if (!video || timeoutHandledRef.current || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return
+
+      const now = Date.now()
+      const elapsed = now - scanStartedAtRef.current
+
+      if (!busyRef.current && elapsed >= SCAN_SESSION_TIMEOUT_MS) {
+        timeoutHandledRef.current = true
+        onError('SCAN_TIMEOUT')
+        return
+      }
+
+      if (busyRef.current || now < failureHintUntilRef.current) return
 
       const sample = sampleCenter(video)
       if (!sample) return
+
+      const luminance = averageLuminance(sample)
+      if (luminance < DARK_LUMINANCE) {
+        stableSamplesRef.current = 0
+        previousSampleRef.current = undefined
+        setStatus('Too dark. Move to brighter, even light.')
+        return
+      }
+
+      if (luminance > GLARE_LUMINANCE) {
+        stableSamplesRef.current = 0
+        previousSampleRef.current = undefined
+        setStatus('Too much glare. Tilt the item or soften the light.')
+        return
+      }
 
       const previous = previousSampleRef.current
       previousSampleRef.current = sample
@@ -52,7 +87,13 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
       const difference = averagePixelDifference(previous, sample)
       stableSamplesRef.current = difference < STABLE_DIFFERENCE ? stableSamplesRef.current + 1 : 0
-      setStatus(stableSamplesRef.current > 0 ? 'Hold still. Scanning automatically...' : 'Center one item and hold it still.')
+      setStatus(
+        stableSamplesRef.current > 0
+          ? 'Hold still. Scanning automatically...'
+          : elapsed > 12_000
+            ? 'Move one item closer and keep the background clear.'
+            : 'Center one item and hold it still.',
+      )
 
       if (stableSamplesRef.current < REQUIRED_STABLE_SAMPLES) return
 
@@ -72,9 +113,21 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
       if (!recognised) {
         previousSampleRef.current = undefined
-        setStatus('Not sure yet. Show one item clearly and hold still.')
+        failedAttemptsRef.current += 1
+
+        if (
+          failedAttemptsRef.current >= MAX_FAILED_ATTEMPTS
+          || Date.now() - scanStartedAtRef.current >= SCAN_SESSION_TIMEOUT_MS
+        ) {
+          timeoutHandledRef.current = true
+          onError('SCAN_TIMEOUT')
+          return
+        }
+
+        failureHintUntilRef.current = Date.now() + FAILURE_HINT_MS
+        setStatus('Not clear yet. Add light, move closer, and show only one item.')
         window.setTimeout(() => {
-          busyRef.current = false
+          if (mountedRef.current) busyRef.current = false
         }, 900)
       }
     }
@@ -111,6 +164,10 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
         }
 
         setStatus('Place one item inside the frame.')
+        scanStartedAtRef.current = Date.now()
+        failedAttemptsRef.current = 0
+        failureHintUntilRef.current = 0
+        timeoutHandledRef.current = false
         window.setTimeout(() => {
           if (!cancelled) sampleTimer = window.setInterval(scanWhenStable, 320)
         }, 900)
@@ -213,4 +270,16 @@ function averagePixelDifference(previous: Uint8ClampedArray, current: Uint8Clamp
     difference += Math.abs(current[index + 2] - previous[index + 2])
   }
   return difference / ((current.length / 4) * 3)
+}
+
+function averageLuminance(sample: Uint8ClampedArray) {
+  let luminance = 0
+
+  for (let index = 0; index < sample.length; index += 4) {
+    luminance += sample[index] * 0.2126
+    luminance += sample[index + 1] * 0.7152
+    luminance += sample[index + 2] * 0.0722
+  }
+
+  return luminance / (sample.length / 4)
 }
