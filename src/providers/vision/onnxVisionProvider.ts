@@ -13,10 +13,37 @@ interface LabelRecord {
 export class OnnxVisionProvider implements VisionProvider {
   private sessionPromise?: Promise<ort.InferenceSession>
   private labelsPromise?: Promise<LabelRecord[]>
+  private componentProviderPromise?: Promise<import('./onnxComponentProvider').OnnxComponentProvider>
+  private warmupPromise?: Promise<void>
 
   async identify(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
     const timeoutMs = Number(import.meta.env.VITE_AI_TIMEOUT_MS ?? 10000)
     return withTimeout(this.runInference(image), timeoutMs)
+  }
+
+  async prepare() {
+    if (!this.warmupPromise) {
+      this.warmupPromise = Promise.all([this.loadSession(), this.loadLabels()]).then(async ([session]) => {
+        const inputName = session.inputNames[0]
+        if (!inputName) return
+        const input = new ort.Tensor('float32', new Float32Array(3 * 224 * 224), [1, 3, 224, 224])
+        await session.run({ [inputName]: input })
+      })
+    }
+    await this.warmupPromise
+  }
+
+  async identifyComponents(image: Blob | string | HTMLCanvasElement, itemCode: string) {
+    if (import.meta.env.VITE_COMPONENT_MODEL_ENABLED === 'false') return undefined
+
+    try {
+      const componentProvider = await this.loadComponentProvider()
+      const componentTimeoutMs = Number(import.meta.env.VITE_COMPONENT_TIMEOUT_MS ?? 2500)
+      return await withTimeout(componentProvider.detect(image, itemCode), componentTimeoutMs)
+    } catch (error) {
+      console.warn('Component detection was skipped; sorting rules will provide the component guide.', error)
+      return undefined
+    }
   }
 
   private async runInference(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
@@ -85,16 +112,19 @@ export class OnnxVisionProvider implements VisionProvider {
     return { itemCode: top.label.code }
   }
 
+  private loadComponentProvider() {
+    if (!this.componentProviderPromise) {
+      this.componentProviderPromise = import('./onnxComponentProvider').then(
+        ({ OnnxComponentProvider }) => new OnnxComponentProvider(),
+      )
+    }
+    return this.componentProviderPromise
+  }
+
   private loadSession() {
     if (!this.sessionPromise) {
       const modelPath = import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
-      this.sessionPromise = fetch(modelPath, { method: 'HEAD' })
-        .then((response) => {
-          if (!response.ok) {
-            throw new AppError('MODEL_NOT_CONFIGURED', 'AI model is not configured.')
-          }
-          return ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
-        })
+      this.sessionPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
         .catch((error) => {
           if (error instanceof AppError) throw error
           throw new AppError('MODEL_LOAD_FAILED', 'Model failed to load', error)

@@ -12,7 +12,7 @@ import { AppError, messageForError, toAppError } from '../lib/errors'
 import { createVisionProvider } from '../providers/vision'
 import { saveScanHistory } from '../services/history'
 import type { AppErrorCode } from '../lib/errors'
-import type { InputMethod, RuleEngineResult } from '../types/domain'
+import type { DetectedComponent, InputMethod, RuleEngineResult } from '../types/domain'
 
 type RecognitionStage = 'idle' | 'camera' | 'processing'
 
@@ -38,8 +38,17 @@ export function LandingPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [resultCollapsed, setResultCollapsed] = useState(false)
   const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
+  const recognitionIdRef = useRef(0)
   const searchedItemCode = searchParams.get('item')
   const searchedSource = searchParams.get('source')
+
+  useEffect(() => {
+    const prepareModel = () => {
+      void createVisionProvider().then((provider) => provider.prepare?.()).catch(() => undefined)
+    }
+    const idleId = window.setTimeout(prepareModel, 150)
+    return () => window.clearTimeout(idleId)
+  }, [])
 
   useEffect(() => {
     if (!searchedItemCode) return
@@ -61,6 +70,7 @@ export function LandingPage() {
   }, [searchedItemCode, searchedSource])
 
   function closeResult() {
+    recognitionIdRef.current += 1
     setResult(undefined)
     setResultCollapsed(false)
     setErrorCode(undefined)
@@ -84,6 +94,8 @@ export function LandingPage() {
   }
 
   const recogniseImage = useCallback(async (dataUrl: string, method: InputMethod, keepCameraOpen = false) => {
+    const recognitionId = recognitionIdRef.current + 1
+    recognitionIdRef.current = recognitionId
     setFeedbackDelivery(undefined)
     setImagePreview(dataUrl)
     setInputMethod(method)
@@ -95,6 +107,7 @@ export function LandingPage() {
       setStatus('Identifying item...')
       const provider = await createVisionProvider()
       const visionResult = await provider.identify(dataUrl)
+      if (recognitionId !== recognitionIdRef.current) return false
       setPredictedItemCode(visionResult.itemCode)
 
       setStatus('Checking disposal guidance...')
@@ -105,6 +118,14 @@ export function LandingPage() {
       saveScanHistory(disposal, method)
       setStage('idle')
       setStatus(undefined)
+
+      if (provider.identifyComponents) {
+        void provider.identifyComponents(dataUrl, visionResult.itemCode).then((components) => {
+          if (recognitionId === recognitionIdRef.current && components?.length) {
+            setResult(getDisposalForItem(visionResult.itemCode, components))
+          }
+        })
+      }
       return true
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -121,6 +142,7 @@ export function LandingPage() {
   }, [])
 
   const resetRecognition = useCallback(() => {
+    recognitionIdRef.current += 1
     setResult(undefined)
     setImagePreview(undefined)
     setErrorCode(undefined)
@@ -358,7 +380,7 @@ function UploadDialog({
   )
 }
 
-function getDisposalForItem(itemCode: string) {
+function getDisposalForItem(itemCode: string, detectedComponents?: DetectedComponent[]) {
   const condition = getDefaultConditionForItem(itemCode)
 
   return evaluateDisposal({
@@ -373,5 +395,6 @@ function getDisposalForItem(itemCode: string) {
       paper_condition: condition,
     },
     locale: 'en',
+    detectedComponents,
   })
 }

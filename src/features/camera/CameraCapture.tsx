@@ -9,7 +9,7 @@ interface CameraCaptureProps {
 
 const SAMPLE_SIZE = 48
 const STABLE_DIFFERENCE = 7.5
-const REQUIRED_STABLE_SAMPLES = 3
+const REQUIRED_STABLE_SAMPLES = 2
 const SCAN_SESSION_TIMEOUT_MS = 25_000
 const MAX_FAILED_ATTEMPTS = 3
 const DARK_LUMINANCE = 52
@@ -169,8 +169,8 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
         failureHintUntilRef.current = 0
         timeoutHandledRef.current = false
         window.setTimeout(() => {
-          if (!cancelled) sampleTimer = window.setInterval(scanWhenStable, 320)
-        }, 900)
+          if (!cancelled) sampleTimer = window.setInterval(scanWhenStable, 220)
+        }, 350)
       } catch (error) {
         const appError = toAppError(
           error,

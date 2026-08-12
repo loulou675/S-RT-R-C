@@ -114,6 +114,7 @@ export interface ConditionQuestion {
 }
 
 export interface ComponentAction {
+  code: string
   componentVi: string
   componentEn: string
   materialVi?: string
@@ -121,6 +122,12 @@ export interface ComponentAction {
   disposalNoteVi?: string
   disposalNoteEn?: string
   destinationBinCode: BinCode
+}
+
+export interface DetectedComponent {
+  code: string
+  confidence: number
+  areaRatio: number
 }
 
 export interface DisposalRule {
@@ -136,6 +143,7 @@ export interface DisposalRule {
   whyCategoryEn?: string
   preparationStepsVi: string[]
   preparationStepsEn: string[]
+  preparationComponentCodes: string[][]
   warningVi?: string
   warningEn?: string
   componentActions: ComponentAction[]
@@ -171,6 +179,12 @@ export interface RuleEngineInput {
   itemCode: string
   conditionAnswers: Record<string, ConditionKey>
   locale?: Locale
+  detectedComponents?: DetectedComponent[]
+}
+
+export interface PreparationStepResult {
+  text: string
+  components: Array<ComponentAction & { destinationBin: Bin }>
 }
 
 export interface RuleEngineResult {
@@ -180,6 +194,7 @@ export interface RuleEngineResult {
   detailedInstruction: string
   whyCategory: string
   preparationSteps: string[]
+  preparationActions: PreparationStepResult[]
   componentActions: Array<ComponentAction & { destinationBin: Bin }>
   warning?: string
   reuseSuggestions: ReuseSuggestion[]

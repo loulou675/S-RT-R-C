@@ -1,0 +1,27 @@
+{
+  "classes": [
+    "carton_body",
+    "container",
+    "cup",
+    "lid",
+    "paper_cup_body",
+    "paper_sleeve",
+    "plastic_cap",
+    "remaining_liquid",
+    "straw"
+  ],
+  "modelClasses": [
+    "closure",
+    "straw"
+  ],
+  "ruleOnlyClasses": [
+    "carton_body",
+    "container",
+    "cup",
+    "lid",
+    "paper_cup_body",
+    "paper_sleeve",
+    "plastic_cap",
+    "remaining_liquid"
+  ]
+}

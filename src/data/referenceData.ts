@@ -493,42 +493,37 @@ export const conditionQuestions: ConditionQuestion[] = [
   })),
 ]
 
-const liquidFromContainer: ComponentAction[] = [
-  component('Chất lỏng còn lại', 'Remaining liquid', 'organic'),
-  component('Vỏ rỗng', 'Empty container', 'bottle_can'),
-]
-
 const foodFromPlastic: ComponentAction[] = [
-  component('Thức ăn hoặc chất lỏng', 'Food or liquid', 'organic', {
+  component('remaining_liquid', 'Thức ăn hoặc chất lỏng', 'Food or liquid', 'organic', {
     materialVi: 'Thức ăn / chất lỏng',
     materialEn: 'Food / liquid',
   }),
-  component('Phần nhựa đã rửa sạch', 'Cleaned plastic item', 'clean_plastic', {
+  component('container', 'Phần nhựa đã rửa sạch', 'Cleaned plastic item', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
   }),
 ]
 
 const plasticCupComponents: ComponentAction[] = [
-  component('Ly', 'Cup', 'clean_plastic', {
+  component('cup', 'Ly', 'Cup', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Nhựa Sạch',
     disposalNoteEn: 'Clean Plastic',
   }),
-  component('Nắp', 'Lid', 'clean_plastic', {
+  component('lid', 'Nắp', 'Lid', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Kiểm tra quy định tái chế tại điểm bỏ rác',
     disposalNoteEn: 'Check local recycling rules',
   }),
-  component('Ống hút', 'Straw', 'landfill', {
+  component('straw', 'Ống hút', 'Straw', 'landfill', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Chất Thải Chôn Lấp',
     disposalNoteEn: 'Landfill',
   }),
-  component('Ống bọc giấy', 'Paper sleeve', 'paper_cardboard', {
+  component('paper_sleeve', 'Ống bọc giấy', 'Paper sleeve', 'paper_cardboard', {
     materialVi: 'Giấy',
     materialEn: 'Paper',
     disposalNoteVi: 'Giấy & Bìa Carton',
@@ -537,8 +532,38 @@ const plasticCupComponents: ComponentAction[] = [
 ]
 
 const splitPizzaBox: ComponentAction[] = [
-  component('Phần giấy sạch và khô', 'Clean and dry section', 'paper_cardboard'),
-  component('Phần dính dầu mỡ', 'Greasy section', 'landfill'),
+  component('clean_section', 'Phần giấy sạch và khô', 'Clean and dry section', 'paper_cardboard'),
+  component('greasy_section', 'Phần dính dầu mỡ', 'Greasy section', 'landfill'),
+]
+
+const paperCupComponents: ComponentAction[] = [
+  component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+    materialVi: 'Chất lỏng',
+    materialEn: 'Liquid',
+  }),
+  component('paper_cup_body', 'Thân ly', 'Cup body', 'landfill', {
+    materialVi: 'Giấy có lớp phủ',
+    materialEn: 'Lined paper',
+  }),
+  component('lid', 'Nắp nhựa', 'Plastic lid', 'clean_plastic', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+  }),
+]
+
+const drinkCartonComponents: ComponentAction[] = [
+  component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+    materialVi: 'Chất lỏng',
+    materialEn: 'Liquid',
+  }),
+  component('carton_body', 'Thân hộp', 'Carton body', 'paper_cardboard', {
+    materialVi: 'Giấy ghép nhiều lớp',
+    materialEn: 'Paper composite',
+  }),
+  component('plastic_cap', 'Nắp nhựa', 'Plastic cap', 'clean_plastic', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+  }),
 ]
 
 export const disposalRules: DisposalRule[] = [
@@ -594,9 +619,11 @@ export const disposalRules: DisposalRule[] = [
     en: 'Empty remaining liquid into Organic Waste, then place the paper cup in Landfill.',
     stepsVi: ['Đổ chất lỏng còn lại.', 'Không bỏ ly giấy vào Giấy & Bìa Carton.', 'Đặt ly vào Chất Thải Chôn Lấp.'],
     stepsEn: ['Empty remaining liquid.', 'Do not place the cup in Paper & Cardboard.', 'Place the cup in Landfill.'],
-    components: [
-      component('Chất lỏng còn lại', 'Remaining liquid', 'organic'),
-      component('Ly giấy', 'Paper cup', 'landfill'),
+    components: paperCupComponents,
+    stepComponentCodes: [
+      ['remaining_liquid'],
+      ['paper_cup_body'],
+      ['paper_cup_body', 'lid'],
     ],
     warningVi: 'Ly giấy thường có lớp phủ và không thuộc nhóm giấy sạch.',
     warningEn: 'Paper cups usually have a lining and are not clean paper.',
@@ -606,6 +633,13 @@ export const disposalRules: DisposalRule[] = [
     en: 'Empty, rinse and dry the carton before placing it in Paper & Cardboard.',
     stepsVi: ['Đổ hết chất lỏng còn lại.', 'Tráng sạch hộp.', 'Để hộp ráo và khô.', 'Đặt vào Giấy & Bìa Carton.'],
     stepsEn: ['Empty any remaining liquid.', 'Rinse the carton.', 'Let it drain and dry.', 'Place it in Paper & Cardboard.'],
+    components: drinkCartonComponents,
+    stepComponentCodes: [
+      ['remaining_liquid'],
+      ['carton_body'],
+      ['carton_body', 'plastic_cap'],
+      ['carton_body', 'plastic_cap'],
+    ],
     warningVi: 'Hộp đồ uống có nhiều lớp vật liệu; chỉ bỏ hộp rỗng, sạch và khô vào dòng này.',
     warningEn: 'Drink cartons contain multiple material layers; use this stream only for empty, clean and dry cartons.',
   }),
@@ -731,12 +765,13 @@ function option(value: ConditionKey, labelVi: string, labelEn: string) {
 }
 
 function component(
+  code: string,
   componentVi: string,
   componentEn: string,
   destinationBinCode: BinCode,
   metadata: Pick<ComponentAction, 'materialVi' | 'materialEn' | 'disposalNoteVi' | 'disposalNoteEn'> = {},
 ): ComponentAction {
-  return { componentVi, componentEn, destinationBinCode, ...metadata }
+  return { code, componentVi, componentEn, destinationBinCode, ...metadata }
 }
 
 function rule(
@@ -753,6 +788,7 @@ function rule(
     whyVi?: string
     whyEn?: string
     components?: ComponentAction[]
+    stepComponentCodes?: string[][]
   },
   priority = 100,
 ): DisposalRule {
@@ -769,6 +805,7 @@ function rule(
     whyCategoryEn: text.whyEn ?? defaultWhyForBin(destinationBinCode, 'en'),
     preparationStepsVi: text.stepsVi,
     preparationStepsEn: text.stepsEn,
+    preparationComponentCodes: text.stepsEn.map((_, index) => text.stepComponentCodes?.[index] ?? []),
     warningVi: text.warningVi,
     warningEn: text.warningEn,
     componentActions: text.components ?? [],
@@ -811,19 +848,42 @@ function defaultWhyForBin(destinationBinCode: BinCode, locale: 'vi' | 'en') {
 }
 
 function containerToBottleCanRules(itemCode: string, viName: string, enName: string): DisposalRule[] {
+  const components = [
+    component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+      materialVi: 'Chất lỏng',
+      materialEn: 'Liquid',
+    }),
+    component('container', 'Thân chai / lon', 'Bottle or can body', 'bottle_can'),
+    component('plastic_cap', 'Nắp nhựa', 'Plastic cap', 'clean_plastic', {
+      materialVi: 'Nhựa',
+      materialEn: 'Plastic',
+    }),
+  ]
+
   return [
     rule(itemCode, 'empty', 'bottle_can', {
       vi: `Đặt ${viName} rỗng vào thùng Chai & Lon.`,
       en: `Place the empty ${enName} in Bottle & Can.`,
       stepsVi: ['Đổ bỏ chất lỏng còn lại nếu có.', 'Đảm bảo vật phẩm rỗng.', 'Đặt vào Chai & Lon.'],
       stepsEn: ['Empty any remaining liquid.', 'Make sure the item is empty.', 'Place it in Bottle & Can.'],
+      components,
+      stepComponentCodes: [
+        ['remaining_liquid'],
+        ['container'],
+        ['container', 'plastic_cap'],
+      ],
     }),
     rule(itemCode, 'contains_liquid', 'bottle_can', {
       vi: `Đổ chất lỏng còn lại, sau đó đặt ${viName} rỗng vào Chai & Lon.`,
       en: `Pour out the remaining liquid, then place the empty ${enName} in Bottle & Can.`,
       stepsVi: ['Đổ chất lỏng còn lại vào Hữu Cơ.', 'Để vật phẩm rỗng.', 'Đặt vỏ rỗng vào Chai & Lon.'],
       stepsEn: ['Pour remaining liquid into Organic Waste.', 'Keep the container empty.', 'Place the empty container in Bottle & Can.'],
-      components: liquidFromContainer,
+      components,
+      stepComponentCodes: [
+        ['remaining_liquid'],
+        ['container'],
+        ['container', 'plastic_cap'],
+      ],
     }),
   ]
 }
@@ -833,6 +893,13 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
   const cupWhyEn = 'This cup is made from recyclable plastic, but food or liquid contamination may prevent it from being recycled.'
   const cupStepsVi = ['Đổ chất lỏng còn lại.', 'Rửa ly.', 'Tháo nắp và ống hút.', 'Để khô.', 'Đặt từng phần vào đúng thùng.']
   const cupStepsEn = ['Empty remaining liquid.', 'Rinse the cup.', 'Remove the lid and straw.', 'Let it dry.', 'Place each component in the correct bin.']
+  const cupStepComponentCodes = [
+    ['remaining_liquid'],
+    ['cup'],
+    ['lid', 'straw'],
+    ['cup', 'lid', 'paper_sleeve'],
+    ['cup', 'lid', 'straw', 'paper_sleeve'],
+  ]
 
   return [
     rule(itemCode, 'clean_empty', 'clean_plastic', {
@@ -843,6 +910,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: plasticCupComponents,
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'contains_food_liquid', 'clean_plastic', {
       vi: `Đổ thức ăn hoặc chất lỏng, rửa ${viName}, rồi đặt vào Nhựa Sạch.`,
@@ -852,6 +920,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: [foodFromPlastic[0], ...plasticCupComponents],
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'empty_dirty_cleanable', 'clean_plastic', {
       vi: `Rửa sạch ${viName}, để ráo, rồi đặt vào Nhựa Sạch.`,
@@ -861,6 +930,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: plasticCupComponents,
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'cannot_clean', 'landfill', {
       vi: `Nếu ${viName} không thể làm sạch, đặt vào Chất Thải Chôn Lấp.`,

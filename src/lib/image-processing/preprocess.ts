@@ -4,6 +4,7 @@ export interface ImagePreprocessOptions {
   width?: number
   height?: number
   normalization?: 'imagenet' | 'zero-one'
+  resizeMode?: 'cover' | 'contain'
 }
 
 export async function preprocessImageToTensor(
@@ -13,6 +14,7 @@ export async function preprocessImageToTensor(
   const width = options.width ?? 224
   const height = options.height ?? 224
   const normalization = options.normalization ?? 'imagenet'
+  const resizeMode = options.resizeMode ?? 'cover'
   const image = await loadImage(source)
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d', { willReadFrequently: true })
@@ -24,11 +26,22 @@ export async function preprocessImageToTensor(
   canvas.width = width
   canvas.height = height
 
-  const size = Math.min(image.naturalWidth || image.width, image.naturalHeight || image.height)
-  const sx = ((image.naturalWidth || image.width) - size) / 2
-  const sy = ((image.naturalHeight || image.height) - size) / 2
+  const sourceWidth = image.naturalWidth || image.width
+  const sourceHeight = image.naturalHeight || image.height
 
-  context.drawImage(image, sx, sy, size, size, 0, 0, width, height)
+  if (resizeMode === 'contain') {
+    const scale = Math.min(width / sourceWidth, height / sourceHeight)
+    const targetWidth = sourceWidth * scale
+    const targetHeight = sourceHeight * scale
+    context.fillStyle = 'rgb(114, 114, 114)'
+    context.fillRect(0, 0, width, height)
+    context.drawImage(image, (width - targetWidth) / 2, (height - targetHeight) / 2, targetWidth, targetHeight)
+  } else {
+    const size = Math.min(sourceWidth, sourceHeight)
+    const sx = (sourceWidth - size) / 2
+    const sy = (sourceHeight - size) / 2
+    context.drawImage(image, sx, sy, size, size, 0, 0, width, height)
+  }
 
   const imageData = context.getImageData(0, 0, width, height)
   const channels = 3

@@ -30,7 +30,11 @@ describe('rule engine', () => {
     const result = evaluate('plastic_water_bottle', 'contains_liquid')
 
     expect(result.destinationBin.code).toBe('bottle_can')
-    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'bottle_can'])
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual([
+      'organic',
+      'bottle_can',
+      'clean_plastic',
+    ])
   })
 
   it('routes a plastic bottle with liquid through component sorting', () => {
@@ -84,7 +88,46 @@ describe('rule engine', () => {
     const result = evaluate('paper_cup')
 
     expect(result.destinationBin.code).toBe('landfill')
-    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'landfill'])
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual([
+      'organic',
+      'landfill',
+      'clean_plastic',
+    ])
+  })
+
+  it('uses the largest detected component for the main category', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'drink_carton',
+      conditionAnswers: answers('default'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'plastic_cap', confidence: 0.91, areaRatio: 0.61 },
+        { code: 'carton_body', confidence: 0.96, areaRatio: 0.39 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.componentActions.map((action) => action.code)).toEqual([
+      'remaining_liquid',
+      'carton_body',
+      'plastic_cap',
+    ])
+  })
+
+  it('keeps the body category when the detected body is largest', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'drink_carton',
+      conditionAnswers: answers('default'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'carton_body', confidence: 0.95, areaRatio: 0.86 },
+        { code: 'plastic_cap', confidence: 0.89, areaRatio: 0.14 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('paper_cardboard')
   })
 
   it('routes food waste to Organic Waste', () => {

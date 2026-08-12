@@ -57,18 +57,41 @@ export function evaluateDisposal(input: RuleEngineInput): RuleEngineResult {
     throw new AppError('RULE_NOT_FOUND', `No verified rule exists for ${item.code}`)
   }
 
-  const destinationBin = getBin(selectedRule.destinationBinCode)
+  let destinationBin = getBin(selectedRule.destinationBinCode)
 
   if (!destinationBin) {
     throw new AppError('RULE_NOT_FOUND', `Rule destination is missing for ${item.code}`)
   }
 
-  const componentActions = selectedRule.componentActions.map((action) => {
+  let componentActions = selectedRule.componentActions.map((action) => {
     const destination = getBin(action.destinationBinCode)
     if (!destination) {
       throw new AppError('RULE_NOT_FOUND', `Component destination is missing for ${item.code}`)
     }
     return { ...action, destinationBin: destination }
+  })
+
+  if (input.detectedComponents?.length) {
+    const detectedByCode = new Map(input.detectedComponents.map((component) => [component.code, component]))
+    const detectedActions = componentActions
+      .filter((action) => detectedByCode.has(action.code))
+      .sort(
+        (left, right) =>
+          (detectedByCode.get(right.code)?.areaRatio ?? 0) - (detectedByCode.get(left.code)?.areaRatio ?? 0),
+      )
+
+    if (detectedActions.length) {
+      destinationBin = detectedActions[0].destinationBin
+    }
+  }
+
+  const preparationSteps = locale === 'vi' ? selectedRule.preparationStepsVi : selectedRule.preparationStepsEn
+  const preparationActions = preparationSteps.map((text, index) => {
+    const codes = selectedRule.preparationComponentCodes[index] ?? []
+    return {
+      text,
+      components: componentActions.filter((component) => codes.includes(component.code)),
+    }
   })
 
   return {
@@ -79,7 +102,8 @@ export function evaluateDisposal(input: RuleEngineInput): RuleEngineResult {
     whyCategory:
       (locale === 'vi' ? selectedRule.whyCategoryVi : selectedRule.whyCategoryEn) ??
       (locale === 'vi' ? selectedRule.instructionDetailedVi : selectedRule.instructionDetailedEn),
-    preparationSteps: locale === 'vi' ? selectedRule.preparationStepsVi : selectedRule.preparationStepsEn,
+    preparationSteps,
+    preparationActions,
     componentActions,
     warning: locale === 'vi' ? selectedRule.warningVi : selectedRule.warningEn,
     reuseSuggestions: filterReuseSuggestions(item.code, item.primaryMaterialCode, conditionKey).slice(0, 2),

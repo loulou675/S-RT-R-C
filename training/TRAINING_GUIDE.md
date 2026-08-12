@@ -107,3 +107,47 @@ Build the app again after replacing the model. For GitHub Pages, commit the rebu
 ## When classification is no longer enough
 
 This classifier is correct for the current one-object-in-a-square interaction. If the product later needs to find several objects anywhere in a camera scene, train an object-detection model with bounding boxes instead of expanding this classifier.
+
+## Component detection
+
+The result UI and rule engine can also accept detected parts. The supported
+part codes are stored in `training/component_classes.json`. The first installed
+model is intentionally narrow: the object classifier supplies the dominant
+body and the detector looks only for detachable closures. This performs better
+than asking a small detector to relearn the whole object from limited data.
+
+To build a closure-and-straw candidate from the reviewed public boxes, run:
+
+```text
+python training/build_component_dataset.py --output training/component_dataset_parts --negative-images 80
+python training/augment_component_crops.py --dataset training/component_dataset_parts --scale 3.2 --splits train
+python training/train_component_detector.py --data training/component_dataset_parts/data.yaml --epochs 45 --batch 32 --imgsz 416 --export-imgsz 416
+```
+
+For later versions, annotate each visible part with a bounding box and keep all
+parts from one photo in the same train, validation, or test split. Add a class
+only after it has enough reviewed boxes and an independent test set. Remaining
+liquid is a state, not a reliable bounding-box class, so keep it in sorting
+rules or train a separate state classifier.
+
+Export a detection ONNX model whose post-NMS output is shaped `[1, N, 6]`, with
+each row containing `[x1, y1, x2, y2, confidence, class_index]` in the exported
+image coordinates. Place the model and labels in `public/models/`, then set:
+
+```text
+VITE_COMPONENT_MODEL_PATH=/models/waste_components.onnx
+VITE_COMPONENT_LABELS_PATH=/models/component_labels.json
+VITE_COMPONENT_INPUT_SIZE=640
+VITE_COMPONENT_MIN_ACCEPTANCE=0.50
+```
+
+Without these variables, the app uses the reviewed component breakdown stored
+in the disposal rules. The object classifier supplies the dominant body and
+main bin immediately. The component detector runs afterwards and enriches the
+part guidance without delaying the main result.
+
+The August 2026 two-class experiment for closure and straw was rejected:
+precision 0.221, recall 0.184 and mAP50 0.112 on the untouched test set. Straw
+precision and recall were both zero. Do not install that candidate. Collect at
+least 300 diverse, reviewed real-camera straw boxes before trying that class
+again; synthetic close-up crops alone were not sufficient.
