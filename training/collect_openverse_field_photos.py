@@ -9,6 +9,7 @@ candidate is perfect; manually review them before rebuilding the curated split.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import time
 from io import BytesIO
@@ -37,6 +38,51 @@ TARGETS: dict[str, list[str]] = {
     "battery": ["single AA battery", "single AAA battery", "single 9V battery", "battery litter"],
     "paper_cup": ["single paper coffee cup", "paper cup on table", "paper cup litter", "disposable paper cup"],
     "plastic_takeaway_cup": ["single plastic cup", "disposable plastic cup", "plastic takeaway cup", "plastic cup litter"],
+    "drink_carton": [
+        "single milk carton held in hand",
+        "juice carton on table",
+        "drink carton outdoors",
+        "crushed milk carton",
+        "empty beverage carton",
+        "tetra pak package",
+    ],
+    "steel_food_can": [
+        "single food can on table",
+        "opened tin can",
+        "empty canned food tin",
+        "crushed food can",
+        "food can held in hand",
+    ],
+    "tissue": [
+        "single used tissue on table",
+        "crumpled facial tissue",
+        "paper napkin waste",
+        "discarded tissue paper",
+    ],
+    "snack_wrapper": [
+        "single snack wrapper",
+        "empty chip packet held in hand",
+        "crumpled candy wrapper",
+        "discarded snack packet",
+    ],
+    "light_bulb": [
+        "single light bulb held in hand",
+        "used LED bulb on table",
+        "broken light bulb waste",
+        "discarded fluorescent bulb",
+    ],
+    "styrofoam_container": [
+        "single styrofoam takeaway box",
+        "used foam food container",
+        "polystyrene food tray",
+        "foam cup litter",
+    ],
+    "medical_mask": [
+        "single used surgical mask",
+        "discarded face mask outdoors",
+        "medical mask on table",
+        "crumpled disposable mask",
+    ],
 }
 
 ALLOWED_LICENSES = {"by", "by-sa", "cc0", "pdm"}
@@ -63,6 +109,19 @@ def existing_ids() -> set[str]:
     return ids
 
 
+def existing_hashes() -> set[str]:
+    hashes: set[str] = set()
+    for path in (ROOT / "training").glob("*-sources.jsonl"):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            try:
+                value = json.loads(line).get("sha256")
+                if isinstance(value, str):
+                    hashes.add(value)
+            except json.JSONDecodeError:
+                continue
+    return hashes
+
+
 def search(query: str) -> list[dict]:
     response = requests.get(
         API_URL,
@@ -86,7 +145,15 @@ def suitable(result: dict) -> bool:
     )
 
 
-def collect_class(class_name: str, queries: list[str], target: int, seen: set[str], session: requests.Session, log) -> int:
+def collect_class(
+    class_name: str,
+    queries: list[str],
+    target: int,
+    seen: set[str],
+    hashes: set[str],
+    session: requests.Session,
+    log,
+) -> int:
     destination = DATASET_ROOT / class_name
     destination.mkdir(parents=True, exist_ok=True)
     added = 0
@@ -111,6 +178,9 @@ def collect_class(class_name: str, queries: list[str], target: int, seen: set[st
             try:
                 response = session.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
                 response.raise_for_status()
+                content_hash = hashlib.sha256(response.content).hexdigest()
+                if content_hash in hashes:
+                    continue
                 image = Image.open(BytesIO(response.content)).convert("RGB")
                 if min(image.size) < 224:
                     continue
@@ -135,10 +205,13 @@ def collect_class(class_name: str, queries: list[str], target: int, seen: set[st
                 "license_version": result.get("license_version"),
                 "license_url": result.get("license_url"),
                 "local_file": str(output.relative_to(ROOT)),
+                "sha256": content_hash,
+                "review_status": "candidate",
             }
             log.write(json.dumps(record, ensure_ascii=False) + "\n")
             log.flush()
             seen.add(result_id)
+            hashes.add(content_hash)
             added += 1
             print(f"  added {output.name} ({result.get('license')} {result.get('license_version')})", flush=True)
             time.sleep(0.15)
@@ -152,11 +225,20 @@ def main() -> None:
     args = parser.parse_args()
     selected = set(args.class_names or TARGETS)
     seen = existing_ids()
+    hashes = existing_hashes()
     with requests.Session() as session, SOURCES_PATH.open("a", encoding="utf-8") as log:
         for class_name, queries in TARGETS.items():
             if class_name not in selected:
                 continue
-            added = collect_class(class_name, queries, target=args.target, seen=seen, session=session, log=log)
+            added = collect_class(
+                class_name,
+                queries,
+                target=args.target,
+                seen=seen,
+                hashes=hashes,
+                session=session,
+                log=log,
+            )
             print(f"{class_name}: added {added} candidate photos", flush=True)
 
 

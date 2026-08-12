@@ -22,6 +22,9 @@ training/dataset/**
 !training/dataset/**/.gitkeep
 training/dataset_curated/
 training/dataset_curated_v2/
+training/dataset_curated_v3/
+training/dataset_curated_v4/
+training/dataset_curated_v5/
 training/review_sheets/
 training/review_sheets_taco/
 training/review_rejected/
@@ -33,6 +36,8 @@ training/.venv/
 training/models/
 training/component_dataset/
 training/component_dataset_*/
+training/openimages_component_straw/
+training/packwise_component_closure/
 training/__pycache__/
 .training-venv/
 yolo26n-cls.pt

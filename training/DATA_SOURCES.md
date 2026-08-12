@@ -65,6 +65,35 @@ source URL, local class and license for each downloaded candidate.
 - Limitation: the publisher describes this as a validation dataset. Do not mix
   it into training splits; use it to measure generalisation after training.
 
+### TACO
+
+- Source: <https://github.com/pedropro/TACO>
+- Use: labelled object crops from litter photographed on roads, grass, beaches
+  and other cluttered outdoor scenes
+- Requirement: keep the original Flickr page in `taco-field-sources.jsonl` and
+  manually review every crop. TACO metadata and code do not replace the terms
+  attached to each original photograph.
+
+### PackWISE v2
+
+- Source: <https://fordatis.fraunhofer.de/handle/fordatis/463.2>
+- License: CC BY 4.0
+- Use: difficult conveyor scenes with instance boxes and masks; reviewed crops
+  for beverage cartons, blister packs, cans, tissue, foam and paper cups; lid
+  boxes for the component detector
+- Limitation: broad source categories such as `plastic-bottle` and
+  `plastic-foil/bag` are not mapped to narrower app classes. PackWISE validation
+  and test images remain outside classifier training.
+
+### Open Images V7
+
+- Source: <https://storage.googleapis.com/openimages/web/index.html>
+- Use: independently split bounding boxes for straws and reviewed household
+  objects
+- Limitation: Open Images labels visible objects rather than disposal rules.
+  Only mappings listed in `build_classifier_candidate_v3.py` passed the local
+  contact-sheet review; broad Bottle, Milk and Snack mappings are excluded.
+
 ## Excluded source
 
 `TrashBox` remains excluded because its upstream repository does not provide

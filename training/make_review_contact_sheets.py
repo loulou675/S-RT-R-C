@@ -63,7 +63,10 @@ def main() -> None:
             continue
         output = args.output / f"{class_name}.jpg"
         make_sheet(class_name, selected, output)
-        print(output.relative_to(ROOT))
+        try:
+            print(output.relative_to(ROOT))
+        except ValueError:
+            print(output)
 
 
 if __name__ == "__main__":
