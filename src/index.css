@@ -2027,10 +2027,17 @@ button:disabled {
     margin-top: 0.55rem;
   }
 
+  .recognition-layout,
   .recognition-layout.has-result {
     grid-template-columns: 1fr;
     width: auto;
-    padding-bottom: calc(6.7rem + env(safe-area-inset-bottom));
+    align-items: center;
+    min-height: 100svh;
+    padding: 4.8rem 1.25rem calc(7.2rem + env(safe-area-inset-bottom));
+  }
+
+  .recognition-layout.has-result {
+    padding-bottom: calc(7.2rem + env(safe-area-inset-bottom));
   }
 
   .app-shell:has(.recognition-layout.has-result) .top-bar {
@@ -2048,27 +2055,19 @@ button:disabled {
     max-width: 19rem;
   }
 
-  .recognition-layout:not(.has-result) {
-    align-items: center;
-    min-height: 100svh;
-    padding: 4.8rem 1.25rem calc(7.2rem + env(safe-area-inset-bottom));
-  }
-
-  .recognition-layout:not(.has-result) .recognition-pane {
+  .recognition-layout .recognition-pane,
+  .recognition-layout.has-result .recognition-pane {
     display: grid;
     place-items: center;
     width: 100%;
     min-height: calc(100svh - 12rem - env(safe-area-inset-bottom));
   }
 
-  .recognition-layout:not(.has-result) .recognition-copy {
-    width: min(100%, 21rem);
+  .recognition-layout .recognition-copy,
+  .recognition-layout.has-result .recognition-copy {
+    width: min(100%, 19rem);
+    max-width: 19rem;
     margin: auto;
-  }
-
-  .recognition-layout.has-result .hero-copy,
-  .recognition-layout.has-result .recognition-pane {
-    min-height: 100vh;
   }
 
   .hero-copy h1 {
@@ -2077,7 +2076,13 @@ button:disabled {
   }
 
   .recognition-layout.has-result .hero-copy h1 {
-    font-size: clamp(1.55rem, 6.5vw, 2rem);
+    font-size: clamp(1.7rem, 7.4vw, 2.25rem);
+  }
+
+  .recognition-layout.has-result .hero-copy > p {
+    max-width: 18rem;
+    font-size: 0.9rem;
+    line-height: 1.16;
   }
 
   .headline-line {
@@ -2140,6 +2145,7 @@ button:disabled {
   }
 
   .bin-panel.result-panel {
+    --sheet-peek-height: 144px;
     position: fixed;
     z-index: 22;
     top: auto;
@@ -2177,7 +2183,7 @@ button:disabled {
     animation: none;
     overflow: hidden;
     border-radius: 1.35rem 1.35rem 0 0;
-    transform: translateY(calc(100% - 4.9rem - env(safe-area-inset-bottom)));
+    transform: translateY(calc(100% - var(--sheet-peek-height)));
   }
 
   .bin-panel.result-panel.dragging {
@@ -2239,6 +2245,7 @@ button:disabled {
     transform: translateX(-50%);
     cursor: grab;
     touch-action: none;
+    z-index: 3;
   }
 
   .sheet-handle:active {
@@ -2271,10 +2278,6 @@ button:disabled {
     height: 0.28rem;
     border-radius: 999px;
     background: rgba(0, 0, 0, 0.48);
-  }
-
-  .recognition-layout.has-result.result-collapsed .hero-copy h1 {
-    font-size: clamp(1.7rem, 7.4vw, 2.25rem);
   }
 
   .bin-panel.result-panel .panel-card-stack,

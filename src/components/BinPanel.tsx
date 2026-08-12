@@ -28,8 +28,12 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
   const heading = result?.specialHandling ? 'Hazardous' : bin.nameEn
 
   function collapsedOffset() {
-    const panelHeight = panelRef.current?.getBoundingClientRect().height ?? window.innerHeight
-    return Math.max(0, panelHeight - 78)
+    const panel = panelRef.current
+    const panelHeight = panel?.getBoundingClientRect().height ?? window.innerHeight
+    const peekHeight = panel
+      ? Number.parseFloat(window.getComputedStyle(panel).getPropertyValue('--sheet-peek-height')) || 144
+      : 144
+    return Math.max(0, panelHeight - peekHeight)
   }
 
   function beginDrag(event: ReactPointerEvent<HTMLButtonElement>) {
