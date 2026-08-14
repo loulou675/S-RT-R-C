@@ -64,6 +64,7 @@
       "disposable_diaper",
       "drink_carton",
       "medical_mask",
+      "medicine_blister_pack",
       "paper_cup",
       "paper_plate",
       "sanitary_pad",
@@ -75,7 +76,6 @@
       "chemical_container",
       "electronic_cable",
       "light_bulb",
-      "medicine_blister_pack",
       "mobile_phone",
       "power_bank"
     ],

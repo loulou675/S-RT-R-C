@@ -59,6 +59,8 @@ nên có một vật thể chính, nhưng phải đa dạng về sản phẩm, g
 - [ ] A - `drink_carton`: hộp sữa, nước trái cây, Tetra Pak; hộp nhỏ/lớn,
   có nắp, có ống hút, móp và đã mở.
 - [ ] A - `medical_mask`: khẩu trang y tế một chiếc; phẳng, gập, nhàu, mặt trước/sau.
+- [ ] C - `medicine_blister_pack`: vỉ hoặc gói thuốc **rỗng**, bạc/nhựa,
+  nguyên và đã cắt. Không dùng ảnh còn thuốc cho lớp vỏ rỗng này.
 - [ ] C - `paper_cup`: cốc cà phê giấy; có/không nắp nhựa, có sleeve, móp.
 - [ ] C - `paper_plate`: đĩa giấy trắng/màu, sâu/nông, nguyên và gập.
 - [ ] B - `sanitary_pad`: băng vệ sinh mới/chưa sử dụng; còn gói, bóc gói và gập lại.
@@ -73,7 +75,6 @@ nên có một vật thể chính, nhưng phải đa dạng về sản phẩm, g
   chỉ dùng vỏ rỗng, đóng kín và an toàn.
 - [ ] C - `electronic_cable`: cáp USB, sạc, HDMI, tai nghe có dây; cuộn và duỗi.
 - [ ] B - `light_bulb`: bóng LED, sợi đốt, compact; nguyên vẹn, không cần làm vỡ.
-- [ ] C - `medicine_blister_pack`: vỉ thuốc đầy/rỗng, bạc/nhựa, nguyên và đã cắt.
 - [ ] B - `mobile_phone`: điện thoại cảm ứng, điện thoại phím bấm; có/không ốp.
 - [ ] C - `power_bank`: pin sạc dự phòng nhiều màu, dáng và kích thước.
 

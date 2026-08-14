@@ -39,7 +39,7 @@ export function evaluateDisposal(input: RuleEngineInput): RuleEngineResult {
     throw new AppError('ITEM_NOT_RECOGNISED', `Unknown item: ${input.itemCode}`)
   }
 
-  const conditionKey = resolveConditionKey(item.code, input.conditionAnswers)
+  const conditionKey = resolveConditionKey(item.code, input.conditionAnswers, input.detectedComponents)
   const selectedRule = disposalRules
     .filter((rule) => {
       const matchesItem = rule.itemCode === item.code
@@ -111,7 +111,21 @@ export function evaluateDisposal(input: RuleEngineInput): RuleEngineResult {
   }
 }
 
-function resolveConditionKey(itemCode: string, conditionAnswers: Record<string, ConditionKey>): ConditionKey {
+function resolveConditionKey(
+  itemCode: string,
+  conditionAnswers: Record<string, ConditionKey>,
+  detectedComponents?: RuleEngineInput['detectedComponents'],
+): ConditionKey {
+  const containsFood = detectedComponents?.some((component) => component.code === 'remaining_liquid')
+  if (containsFood) {
+    if (['plastic_takeaway_cup', 'milk_tea_cup', 'plastic_food_container', 'plastic_takeaway_box'].includes(itemCode)) {
+      return 'contains_food_liquid'
+    }
+    if (['plastic_water_bottle', 'plastic_soft_drink_bottle', 'aluminium_drink_can', 'glass_drink_bottle'].includes(itemCode)) {
+      return 'contains_liquid'
+    }
+  }
+
   const question = getQuestionForItem(itemCode)
 
   if (!question) {

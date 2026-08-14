@@ -18,7 +18,6 @@ HAZARDOUS_CLASSES = {
     "chemical_container",
     "electronic_cable",
     "light_bulb",
-    "medicine_blister_pack",
     "mobile_phone",
     "power_bank",
 }
@@ -36,7 +35,7 @@ CLASS_TO_BIN = {
     "glass_drink_bottle": "bottle_can",
     "light_bulb": "hazardous",
     "medical_mask": "landfill",
-    "medicine_blister_pack": "hazardous",
+    "medicine_blister_pack": "landfill",
     "mobile_phone": "hazardous",
     "newspaper": "paper_cardboard",
     "paper_bag": "paper_cardboard",
@@ -64,9 +63,9 @@ def main() -> None:
     parser.add_argument(
         "--model",
         type=Path,
-        default=ROOT / "training" / "runs" / "waste-classifier" / "weights" / "best.pt",
+        default=ROOT / "training" / "checkpoints" / "waste_classifier.pt",
     )
-    parser.add_argument("--data", type=Path, default=ROOT / "training" / "dataset_curated" / "test")
+    parser.add_argument("--data", type=Path, default=ROOT / "training" / "classifier_dataset" / "test")
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--device", default=None)
     args = parser.parse_args()

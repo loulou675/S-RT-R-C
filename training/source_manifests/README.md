@@ -1,8 +1,8 @@
 # Training data sources
 
 Only data with a traceable source and reuse terms should enter a training run.
-The local image folders are ignored by Git; the JSONL manifests preserve the
-source URL, local class and license for each downloaded candidate.
+The JSONL manifests in this folder preserve the source URL, local class and
+license. Keep this folder for traceability; it does not need routine review.
 
 ## Approved sources
 
@@ -93,6 +93,10 @@ source URL, local class and license for each downloaded candidate.
 - Limitation: Open Images labels visible objects rather than disposal rules.
   Only mappings listed in `build_classifier_candidate_v3.py` passed the local
   contact-sheet review; broad Bottle, Milk and Snack mappings are excluded.
+- Organic extension: `collect_openimages_organic.py` uses human-verified
+  validation bounding boxes for visible food, fruit and vegetables. It creates
+  balanced classifier crops and collapses the same boxes to the component class
+  `food`; source records are kept in `openimages-organic-sources.jsonl`.
 
 ## Excluded source
 

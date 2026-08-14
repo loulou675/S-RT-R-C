@@ -14,6 +14,7 @@ describe('component detection output', () => {
         { index: 1, code: 'plastic_cap' },
       ],
       0.45,
+      640,
     )
 
     expect(result.map((component) => component.code)).toEqual(['carton_body', 'plastic_cap'])

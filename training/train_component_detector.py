@@ -23,7 +23,13 @@ def main() -> None:
     parser.add_argument("--imgsz", type=int, default=512)
     parser.add_argument("--export-imgsz", type=int, default=416)
     parser.add_argument("--device", default="mps")
-    parser.add_argument("--name", default="component-detector-v1")
+    parser.add_argument("--name", default="component-detector-next")
+    parser.add_argument("--optimizer", default="auto")
+    parser.add_argument("--lr0", type=float, default=0.01)
+    parser.add_argument("--lrf", type=float, default=0.01)
+    parser.add_argument("--warmup-epochs", type=float, default=3.0)
+    parser.add_argument("--mosaic", type=float, default=1.0)
+    parser.add_argument("--close-mosaic", type=int, default=10)
     parser.add_argument("--install", action="store_true")
     args = parser.parse_args()
 
@@ -41,7 +47,12 @@ def main() -> None:
         deterministic=True,
         pretrained=True,
         device=args.device,
-        close_mosaic=10,
+        optimizer=args.optimizer,
+        lr0=args.lr0,
+        lrf=args.lrf,
+        warmup_epochs=args.warmup_epochs,
+        mosaic=args.mosaic,
+        close_mosaic=args.close_mosaic,
         degrees=8,
         translate=0.12,
         scale=0.35,

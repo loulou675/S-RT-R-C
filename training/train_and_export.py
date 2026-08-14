@@ -15,12 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=Path, default=ROOT / "training" / "dataset")
+    parser.add_argument("--data", type=Path, default=ROOT / "training" / "classifier_dataset")
     parser.add_argument("--model", default="yolo26n-cls.pt")
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--device", default=None, help="Examples: cpu, mps, 0")
-    parser.add_argument("--name", default="waste-classifier")
+    parser.add_argument("--name", default="waste-classifier-next")
     parser.add_argument("--install", action="store_true", help="Replace the model used by the web app")
     args = parser.parse_args()
 

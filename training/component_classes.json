@@ -3,6 +3,7 @@
     "carton_body",
     "container",
     "cup",
+    "food",
     "lid",
     "paper_cup_body",
     "paper_sleeve",
@@ -12,7 +13,7 @@
   ],
   "modelClasses": [
     "closure",
-    "straw"
+    "food"
   ],
   "ruleOnlyClasses": [
     "carton_body",
@@ -22,6 +23,7 @@
     "paper_cup_body",
     "paper_sleeve",
     "plastic_cap",
-    "remaining_liquid"
+    "remaining_liquid",
+    "straw"
   ]
 }

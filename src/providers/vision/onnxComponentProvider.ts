@@ -13,7 +13,7 @@ export class OnnxComponentProvider {
 
   async detect(image: Blob | string | HTMLCanvasElement, itemCode: string): Promise<DetectedComponent[]> {
     const [session, labels] = await Promise.all([this.loadSession(), this.loadLabels()])
-    const inputSize = Number(import.meta.env.VITE_COMPONENT_INPUT_SIZE ?? 640)
+    const inputSize = Number(import.meta.env.VITE_COMPONENT_INPUT_SIZE ?? 416)
     const tensor = await preprocessImageToTensor(image, {
       width: inputSize,
       height: inputSize,
@@ -40,8 +40,9 @@ export class OnnxComponentProvider {
       return code ? [{ ...part, code }] : []
     })
     const bodyCode = bodyCodeForItem(itemCode)
+    const detectedArea = mappedParts.reduce((total, part) => total + part.areaRatio, 0)
     return bodyCode
-      ? [{ code: bodyCode, confidence: 1, areaRatio: 1 }, ...mappedParts]
+      ? [{ code: bodyCode, confidence: 1, areaRatio: Math.max(0.05, 1 - Math.min(0.95, detectedArea)) }, ...mappedParts]
       : mappedParts
   }
 
@@ -73,6 +74,7 @@ export class OnnxComponentProvider {
 
 function componentCodeForDetection(detectionCode: string, itemCode: string) {
   if (detectionCode === 'closure') return closureCodeForItem(itemCode)
+  if (detectionCode === 'food') return 'remaining_liquid'
   if (detectionCode === 'straw') return 'straw'
   if (detectionCode === 'carton_body') return 'carton_body'
   if (detectionCode === 'cup_body') {
@@ -107,7 +109,7 @@ export function parseComponentDetections(
   dimensions: number[],
   labels: ComponentLabel[],
   minAcceptance: number,
-  inputSize = 640,
+  inputSize = 416,
 ): DetectedComponent[] {
   const columns = dimensions.at(-1)
   if (columns !== 6 || values.length % columns !== 0) return []

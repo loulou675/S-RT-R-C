@@ -366,10 +366,12 @@ export const wasteItems: WasteItem[] = [
     'bình xịt',
     'lon xịt',
   ], ['aerosol can', 'spray can', 'pressurised can']),
-  item('medicine_blister_pack', 'Vỉ thuốc', 'Medicine blister pack', 'mixed_material', 'packaging', 'Special Handling', true, true, [
+  item('medicine_blister_pack', 'Vỏ thuốc rỗng', 'Empty medicine packaging', 'mixed_material', 'packaging', 'Landfill', false, false, [
     'vỉ thuốc',
     'bao bì thuốc',
-  ], ['medicine blister pack', 'pill blister', 'tablet pack']),
+    'gói thuốc rỗng',
+    'vỏ thuốc rỗng',
+  ], ['medicine blister pack', 'pill blister', 'tablet pack', 'empty medicine sachet', 'empty medicine packaging']),
   item('loose_medicine', 'Thuốc không sử dụng', 'Unused medicine', 'hazardous', 'small_waste', 'Special Handling', true, true, [
     'thuốc thừa',
     'thuốc hết hạn',
@@ -649,6 +651,14 @@ export const disposalRules: DisposalRule[] = [
     stepsVi: ['Không bỏ vào thùng tái chế.', 'Đặt vào Chất Thải Chôn Lấp.'],
     stepsEn: ['Do not place it in a recycling bin.', 'Place it in Landfill.'],
   }),
+  rule('medicine_blister_pack', 'default', 'landfill', {
+    vi: 'Đặt vỏ thuốc rỗng vào thùng Chất Thải Chôn Lấp.',
+    en: 'Place empty medicine packaging in Landfill.',
+    stepsVi: ['Kiểm tra để chắc chắn vỏ không còn thuốc.', 'Đặt vỏ thuốc rỗng vào Chất Thải Chôn Lấp.'],
+    stepsEn: ['Make sure no medicine remains in the packaging.', 'Place the empty packaging in Landfill.'],
+    warningVi: 'Nếu còn thuốc hoặc thuốc đã hết hạn, không bỏ vào Landfill; hãy dùng điểm thu gom thuốc phù hợp.',
+    warningEn: 'If medicine remains or has expired, do not use Landfill; use an appropriate medicine collection point.',
+  }),
   ...defaultRules(
     ['food_waste', 'leftover_rice', 'leftover_noodles', 'fruit_peel', 'vegetable_scraps', 'egg_shell', 'coffee_grounds', 'tea_bag', 'leftover_drink'],
     'organic',
@@ -661,7 +671,7 @@ export const disposalRules: DisposalRule[] = [
       warningEn: 'Any packaging should be sorted separately.',
     },
   ),
-  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container', 'paint_container', 'pesticide_container', 'aerosol_can', 'medicine_blister_pack', 'loose_medicine', 'used_syringe', 'power_bank', 'small_e_waste'], 'special_handling', {
+  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container', 'paint_container', 'pesticide_container', 'aerosol_can', 'loose_medicine', 'used_syringe', 'power_bank', 'small_e_waste'], 'special_handling', {
     vi: 'Vật phẩm này cần xử lý riêng.',
     en: 'Special handling is required for this item.',
     stepsVi: ['Không bỏ vào năm thùng rác thông thường.', 'Dùng điểm thu gom được phê duyệt hoặc hỏi nhân viên phụ trách.'],

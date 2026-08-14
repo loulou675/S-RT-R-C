@@ -1,38 +1,42 @@
-# SỌRT RÁC training workspace
+# SỌRT RÁC - AI training
 
-This folder contains the class contract, data preparation utilities, source manifests and the browser-model training workflow.
+Chỉ cần quan tâm các mục sau:
 
-Start with the detailed Vietnamese handoff guide in
-[HUONG_DAN_TRAIN_AI.md](./HUONG_DAN_TRAIN_AI.md). The short path is:
+- `PHOTO_COLLECTION_CHECKLIST.md`: danh sách và cách chụp ảnh mới.
+- `dataset/`: ảnh gốc đã thu thập. Thêm ảnh mới vào đúng lớp trong
+  `dataset/train/<class_code>/`.
+- `classifier_dataset/`: dữ liệu đã chia sẵn để train model nhận diện vật thể.
+- `component_dataset/`: ảnh và nhãn khung của model nhận diện nắp và phần thức
+  ăn nhìn thấy được.
+- `checkpoints/`: hai checkpoint tốt nhất hiện tại để đánh giá hoặc train tiếp.
+- `classes.json` và `component_classes.json`: tên lớp chính thức, không tự đổi
+  thứ tự.
+- `source_manifests/`: nguồn gốc dữ liệu. Không cần đọc thường xuyên nhưng phải
+  giữ lại.
 
-User-correction review is documented in
-[REVIEW_USER_FEEDBACK.md](./REVIEW_USER_FEEDBACK.md).
+Model website đang sử dụng nằm tại `public/models/`. Không thay các file ở đó
+cho đến khi model mới được kiểm tra tốt hơn model hiện tại.
 
-```bash
-python training/curate_single_item_dataset.py
-python training/prepare_curated_splits.py
-python training/augment_minority_classes.py --target 60
-python training/validate_dataset.py --data training/dataset_curated --minimum 300
-python training/train_and_export.py --data training/dataset_curated --epochs 100 --batch 32
-python training/evaluate_per_class.py
-```
+## Khi có ảnh điện thoại mới
 
-The dataset layout follows the Ultralytics image-classification contract:
+1. Đổi ảnh sang JPG/JPEG và đặt vào đúng folder lớp trong `dataset/train/`.
+2. Không đưa hai ảnh gần giống nhau của cùng một vật thể vào cả train và test.
+3. Tạo lại `classifier_dataset/` có tách theo `objectID` trước khi train.
+4. Chạy kiểm tra dữ liệu, train model mới rồi đánh giá trên ảnh test chưa từng
+   dùng để train.
+5. Chỉ cài model mới vào website khi độ chính xác phân loại thùng và các lớp yếu
+   đều tăng.
 
-```text
-training/dataset/
-├── train/<class_code>/
-├── val/<class_code>/
-└── test/<class_code>/
-```
+Chi tiết cách chụp và đặt tên ảnh nằm trong `PHOTO_COLLECTION_CHECKLIST.md`.
 
-The canonical phase-one classes and their six disposal groups are in `training/classes.json`. Raw images, curated images, experiment runs and exports are intentionally ignored by Git. Source manifests remain tracked for review and licensing.
+## Tái tạo phần Organic
 
-The deployed browser files are:
-
-```text
-public/models/waste_classifier.onnx
-public/models/labels.json
-```
-
-Do not manually reorder `labels.json`. `training/train_and_export.py` generates it from the trained checkpoint so its indexes match the model output.
+1. Chạy `collect_openimages_organic.py` để bổ sung crop cho classifier và box
+   `food` cho component detector. Script có thể chạy lại an toàn.
+2. Train classifier bằng `train_and_export.py`, sau đó dùng
+   `evaluate_per_class.py` để kiểm tra riêng ba lớp Organic.
+3. Nếu box component mất cân bằng, chạy
+   `oversample_component_class.py --class-id 0 --copies 3`. Chỉ train được nhân
+   bản; validation và test phải giữ nguyên.
+4. Fine-tune component detector bằng `train_component_detector.py`. Với model
+   đã học food, dùng learning rate thấp để tránh quên lớp cũ.

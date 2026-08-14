@@ -72,6 +72,23 @@ describe('rule engine', () => {
     expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'clean_plastic'])
   })
 
+  it('uses detected food to override the default clean-container condition', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'plastic_food_container',
+      conditionAnswers: answers('clean_empty'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'container', confidence: 1, areaRatio: 0.65 },
+        { code: 'remaining_liquid', confidence: 0.91, areaRatio: 0.35 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.preparationSteps[0]).toContain('Empty leftover food')
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'clean_plastic'])
+  })
+
   it('routes clean cardboard to Paper & Cardboard', () => {
     const result = evaluate('cardboard_box', 'clean_dry')
 
@@ -93,6 +110,14 @@ describe('rule engine', () => {
       'landfill',
       'clean_plastic',
     ])
+  })
+
+  it('routes empty medicine packaging to Landfill', () => {
+    const result = evaluate('medicine_blister_pack')
+
+    expect(result.destinationBin.code).toBe('landfill')
+    expect(result.specialHandling).toBe(false)
+    expect(result.warning).toContain('medicine remains')
   })
 
   it('uses the largest detected component for the main category', () => {
