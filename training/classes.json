@@ -5,6 +5,7 @@
     "battery",
     "cardboard_box",
     "chemical_container",
+    "dirty_plastic_bag",
     "disposable_diaper",
     "drink_carton",
     "electronic_cable",
@@ -21,6 +22,8 @@
     "paper_plate",
     "paperboard_packaging",
     "plastic_bag",
+    "plastic_cosmetic_container",
+    "plastic_cup_lid",
     "plastic_food_container",
     "plastic_takeaway_cup",
     "plastic_water_bottle",
@@ -48,6 +51,8 @@
     ],
     "clean_plastic": [
       "plastic_bag",
+      "plastic_cosmetic_container",
+      "plastic_cup_lid",
       "plastic_food_container",
       "plastic_takeaway_cup",
       "snack_wrapper",
@@ -55,6 +60,7 @@
     ],
     "paper_cardboard": [
       "cardboard_box",
+      "drink_carton",
       "newspaper",
       "paper_bag",
       "paperboard_packaging",
@@ -62,7 +68,7 @@
     ],
     "landfill": [
       "disposable_diaper",
-      "drink_carton",
+      "dirty_plastic_bag",
       "medical_mask",
       "medicine_blister_pack",
       "paper_cup",
@@ -85,6 +91,6 @@
     "These are visually distinguishable phase-one classes, not every searchable item in the app.",
     "Use each code as the name of a class folder.",
     "Keep unknown as a large, varied class containing non-target waste, non-waste objects, empty frames, hands, faces and clutter.",
-    "Do not split clean and dirty versions into separate visual classes. The rule layer handles condition-dependent disposal."
+    "Only split a condition into a visual class when the condition is consistently visible and has a dedicated disposal rule."
   ]
 }

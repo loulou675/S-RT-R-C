@@ -13,7 +13,7 @@ nên có một vật thể chính, nhưng phải đa dạng về sản phẩm, g
 - C - củng cố: 25-35 ảnh/lớp, từ ít nhất 3-5 vật thể khác nhau.
 - Unknown: 150-250 ảnh, càng nhiều loại vật thể không được hỗ trợ càng tốt.
 
-## Toàn bộ 33 lớp cần chụp
+## Toàn bộ 36 lớp cần chụp
 
 ### Bottle & Can
 
@@ -35,6 +35,8 @@ nên có một vật thể chính, nhưng phải đa dạng về sản phẩm, g
 ### Clean Plastic
 
 - [ ] C - `plastic_bag`: túi mua sắm, túi nilon trong, túi màu, túi cuộn và túi nhàu.
+- [ ] B - `plastic_cup_lid`: nắp ly nhựa trong/màu, nắp phẳng/vòm, có và không có lỗ ống hút.
+- [ ] B - `plastic_cosmetic_container`: hũ, chai và tuýp mỹ phẩm bằng nhựa; nhiều hình dáng và nhãn hiệu.
 - [ ] C - `plastic_food_container`: hộp thực phẩm cứng, khay nhựa, hộp takeaway
   có/không nắp.
 - [ ] A - `plastic_takeaway_cup`: ly nhựa trong/màu, ly trà sữa, ly cà phê lạnh,
@@ -54,6 +56,7 @@ nên có một vật thể chính, nhưng phải đa dạng về sản phẩm, g
 
 ### Landfill
 
+- [ ] B - `dirty_plastic_bag`: túi nhựa dính dầu mỡ hoặc thức ăn; nhiều loại túi và mức bẩn khác nhau.
 - [ ] B - `disposable_diaper`: bỉm mới/chưa sử dụng, mở và cuộn lại; không cần
   chụp chất thải thật.
 - [ ] A - `drink_carton`: hộp sữa, nước trái cây, Tetra Pak; hộp nhỏ/lớn,

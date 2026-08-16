@@ -27,6 +27,7 @@ CLASS_TO_BIN = {
     "battery": "hazardous",
     "cardboard_box": "paper_cardboard",
     "chemical_container": "hazardous",
+    "dirty_plastic_bag": "landfill",
     "disposable_diaper": "landfill",
     "drink_carton": "paper_cardboard",
     "electronic_cable": "hazardous",
@@ -40,9 +41,11 @@ CLASS_TO_BIN = {
     "newspaper": "paper_cardboard",
     "paper_bag": "paper_cardboard",
     "paper_cup": "landfill",
-    "paper_plate": "paper_cardboard",
+    "paper_plate": "landfill",
     "paperboard_packaging": "paper_cardboard",
     "plastic_bag": "clean_plastic",
+    "plastic_cosmetic_container": "clean_plastic",
+    "plastic_cup_lid": "clean_plastic",
     "plastic_food_container": "clean_plastic",
     "plastic_takeaway_cup": "clean_plastic",
     "plastic_water_bottle": "bottle_can",
@@ -154,6 +157,19 @@ def main() -> None:
     known_bin_rows = [row for row in bin_rows if row["bin"] != "unknown"]
     known_images = sum(row["total"] for row in known_bin_rows)
     known_correct = sum(row["correct"] for row in known_bin_rows)
+    hazardous_macro_recall = (
+        round(sum(row["recall"] for row in hazardous_rows) / len(hazardous_rows), 4)
+        if hazardous_rows
+        else None
+    )
+    known_item_bin_accuracy = (
+        round(known_correct / known_images, 4) if known_images else None
+    )
+    known_bin_macro_recall = (
+        round(sum(row["recall"] for row in known_bin_rows) / len(known_bin_rows), 4)
+        if known_bin_rows
+        else None
+    )
     report = {
         "model": str(args.model),
         "test_data": str(args.data),
@@ -161,14 +177,10 @@ def main() -> None:
         "classes": len(class_rows),
         "top1_accuracy": round(total_correct / len(samples), 4),
         "macro_recall": round(macro_recall, 4),
-        "hazardous_macro_recall": round(
-            sum(row["recall"] for row in hazardous_rows) / len(hazardous_rows), 4
-        ),
+        "hazardous_macro_recall": hazardous_macro_recall,
         "bin_accuracy_including_unknown": round(bin_total_correct / len(samples), 4),
-        "known_item_bin_accuracy": round(known_correct / known_images, 4),
-        "known_bin_macro_recall": round(
-            sum(row["recall"] for row in known_bin_rows) / len(known_bin_rows), 4
-        ),
+        "known_item_bin_accuracy": known_item_bin_accuracy,
+        "known_bin_macro_recall": known_bin_macro_recall,
         "per_bin": bin_rows,
         "per_class": class_rows,
         "top_confusions": [
@@ -182,9 +194,22 @@ def main() -> None:
 
     print(f"Top-1 accuracy: {report['top1_accuracy']:.1%}")
     print(f"Macro recall: {report['macro_recall']:.1%}")
-    print(f"Hazardous macro recall: {report['hazardous_macro_recall']:.1%}")
-    print(f"Known-item bin accuracy: {report['known_item_bin_accuracy']:.1%}")
-    print(f"Known-bin macro recall: {report['known_bin_macro_recall']:.1%}")
+    hazardous_display = (
+        f"{hazardous_macro_recall:.1%}" if hazardous_macro_recall is not None else "n/a"
+    )
+    known_accuracy_display = (
+        f"{known_item_bin_accuracy:.1%}"
+        if known_item_bin_accuracy is not None
+        else "n/a"
+    )
+    known_macro_display = (
+        f"{known_bin_macro_recall:.1%}"
+        if known_bin_macro_recall is not None
+        else "n/a"
+    )
+    print(f"Hazardous macro recall: {hazardous_display}")
+    print(f"Known-item bin accuracy: {known_accuracy_display}")
+    print(f"Known-bin macro recall: {known_macro_display}")
     print("\nPer bin:")
     for row in sorted(bin_rows, key=lambda item: item["bin"]):
         print(f"  {row['bin']:<20} {row['correct']:>3}/{row['total']:<3} {row['recall']:>6.1%}")

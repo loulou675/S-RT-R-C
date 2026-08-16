@@ -167,6 +167,11 @@ export const wasteItems: WasteItem[] = [
     'hộp cơm nhựa',
     'hộp thức ăn',
   ], ['plastic food container', 'food container', 'takeaway container']),
+  item('plastic_cosmetic_container', 'Vỏ mỹ phẩm nhựa', 'Plastic cosmetic container', 'rigid_plastic', 'container', 'Clean Plastic', false, false, [
+    'vỏ mỹ phẩm',
+    'hộp mỹ phẩm nhựa',
+    'tuýp mỹ phẩm',
+  ], ['plastic cosmetic container', 'cosmetic jar', 'cosmetic tube']),
   item('plastic_takeaway_box', 'Hộp nhựa mang đi', 'Plastic takeaway box', 'rigid_plastic', 'container', 'Clean Plastic', false, false, [
     'hộp mang đi',
     'hộp nhựa takeaway',
@@ -441,7 +446,7 @@ export const conditionQuestions: ConditionQuestion[] = [
     sortOrder: 1,
     isActive: true,
   })),
-  ...['plastic_food_container', 'plastic_takeaway_box'].map((itemCode) => ({
+  ...['plastic_food_container', 'plastic_cosmetic_container', 'plastic_takeaway_box'].map((itemCode) => ({
     itemCode,
     questionKey: 'container_condition',
     questionVi: 'Hộp đang ở tình trạng nào?',
@@ -582,6 +587,7 @@ export const disposalRules: DisposalRule[] = [
   ...plasticCupRules('plastic_takeaway_cup', 'ly nhựa', 'plastic cup'),
   ...plasticCupRules('milk_tea_cup', 'ly trà sữa', 'milk tea cup'),
   ...plasticContainerRules('plastic_food_container', 'hộp nhựa', 'plastic food container'),
+  ...plasticContainerRules('plastic_cosmetic_container', 'vỏ mỹ phẩm nhựa', 'plastic cosmetic container'),
   ...plasticContainerRules('plastic_takeaway_box', 'hộp nhựa mang đi', 'plastic takeaway box'),
   ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork']),
   ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container']),
