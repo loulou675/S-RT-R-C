@@ -17,6 +17,25 @@ Chỉ cần quan tâm các mục sau:
 Model website đang sử dụng nằm tại `public/models/`. Không thay các file ở đó
 cho đến khi model mới được kiểm tra tốt hơn model hiện tại.
 
+## Lấy feedback đã duyệt từ Supabase
+
+Tạo file `.env.reviewer` ở thư mục gốc. Key này chỉ dùng ở máy reviewer, không
+đặt tên bắt đầu bằng `VITE_` và không commit lên Git:
+
+```dotenv
+SUPABASE_REVIEWER_KEY=your_secret_or_service_role_key
+```
+
+Sau đó chạy:
+
+```bash
+python3 training/import_supabase_feedback.py
+```
+
+Ảnh `pending` chỉ được tải vào `training/feedback_review/` để duyệt. Chỉ ảnh có
+trạng thái `accepted` hoặc `relabeled` mới được sao chép vào đúng class trong
+`training/dataset/train/`. Script không đưa ghi chú của người dùng vào manifest.
+
 ## Khi có ảnh điện thoại mới
 
 1. Đổi ảnh sang JPG/JPEG và đặt vào đúng folder lớp trong `dataset/train/`.
