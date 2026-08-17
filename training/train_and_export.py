@@ -20,6 +20,8 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--lr0", type=float, default=None)
+    parser.add_argument("--warmup-epochs", type=float, default=None)
+    parser.add_argument("--warmup-bias-lr", type=float, default=None)
     parser.add_argument(
         "--optimizer",
         default=None,
@@ -49,6 +51,10 @@ def main() -> None:
         train_options["device"] = args.device
     if args.lr0 is not None:
         train_options["lr0"] = args.lr0
+    if args.warmup_epochs is not None:
+        train_options["warmup_epochs"] = args.warmup_epochs
+    if args.warmup_bias_lr is not None:
+        train_options["warmup_bias_lr"] = args.warmup_bias_lr
     if args.optimizer is not None:
         train_options["optimizer"] = args.optimizer
     if args.freeze is not None:

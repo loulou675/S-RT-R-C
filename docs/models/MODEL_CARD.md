@@ -2,7 +2,7 @@
 
 ## Summary
 
-This browser model is a 33-class image classifier for a single waste item placed
+This browser model is a 36-class image classifier for a single waste item placed
 inside the camera guide. It predicts an item class; the application then maps
 that class to one of six disposal groups and applies the relevant preparation
 rules.
@@ -15,25 +15,31 @@ instead of forcing every image into a bin.
 
 - Architecture: Ultralytics YOLO26n classification checkpoint, fine-tuned for
   the project taxonomy.
-- Browser format: ONNX, 33 outputs.
+- Browser format: ONNX, 36 outputs.
 - Input: one RGB image, center-cropped and resized to 224 x 224.
 - Output order: `labels.json` is the authoritative index-to-code mapping.
 - Intended scene: one item occupying most of the center camera guide.
 
 ## Dataset
 
-The training set combines reviewed samples from TrashNet, Wikimedia Commons and
-the project manifests listed in `training/DATA_SOURCES.md`. Wikimedia files are
-accepted only when their metadata reports CC0, CC BY, CC BY-SA, public-domain or
-equivalent reuse terms. Source URL, author and license metadata are stored in
-the JSONL manifests.
+The training set combines reviewed samples from TrashNet, Wikimedia Commons,
+Open Images V7 and project camera feedback listed in `training/DATA_SOURCES.md`.
+Source metadata is stored in the JSONL manifests. The Open Images extension
+adds balanced negative examples such as people, furniture, clothing, toys,
+plants, animals, electronics, transport and signage to improve rejection of
+objects outside the waste taxonomy.
 
 The current curated split contains:
 
-- 1,980 training images after train-only augmentation;
-- 153 validation images;
-- 153 untouched test images;
-- 33 classes, including `unknown`.
+- 5,197 training images after train-only augmentation;
+- 368 validation images;
+- 323 test images;
+- 36 classes, including `unknown`.
+
+The latest real-camera import adds 32 independently reviewed photos of clean
+and visibly dirty packaging, paper cups, bottles, bags, food trays and used
+masks. Clean/dirty/used status is retained as manifest metadata; it is not a
+separate classifier output.
 
 Several classes still contain too few independent original photographs.
 Augmentation improves robustness but does not replace new real images.
@@ -42,26 +48,29 @@ Augmentation improves robustness but does not replace new real images.
 
 Checkpoint evaluated on the untouched test split:
 
-- top-1 accuracy: 58.2%;
-- top-5 accuracy: 85.0%;
-- macro recall: 58.0%;
-- hazardous-class macro recall: 59.1%.
-- correct six-bin destination for known items: 67.4%;
-- macro recall across the six bins: 67.7%.
+- top-1 accuracy: 67.2%;
+- macro recall: 56.2%;
+- hazardous-class macro recall: 60.7%;
+- correct six-bin destination for known items: 72.3%;
+- macro recall across the six known bins: 70.0%.
 
-Per-bin recall was 78.3% for Clean Plastic, 73.3% for Organic, 67.6% for
-Hazardous, 64.0% for Paper & Cardboard, 61.9% for Bottle & Can, and 60.9% for
-Landfill. The `unknown` recall was 22.2%, so rejecting uncertain predictions is
-still essential.
+With the browser acceptance thresholds (confidence 0.55, prediction margin
+0.15 and hazardous confidence 0.80), known-item coverage is 71.9%, accepted
+item precision is 74.6%, accepted bin precision is 89.9%, and 92.1% of the
+dedicated unknown test images are rejected. There are 17 confidently accepted
+wrong-bin predictions in the current test split.
 
-Strong test classes included `plastic_bag` and `plastic_food_container` at
-100%, `glass_drink_bottle` at 87.5%, and `food_waste` at 85.7%. These values are
-based on small per-class test counts and therefore have wide uncertainty.
+Per-bin top-1 recall is 80.0% for Bottle & Can, 86.8% for Organic, 57.6% for
+Clean Plastic, 67.7% for Paper & Cardboard, 62.5% for Landfill and 65.6% for
+Hazardous. Direct `unknown` top-1 recall is 88.6%; threshold rejection is higher
+because uncertain non-unknown predictions are also withheld from the user.
 
-The weakest classes were `steel_food_can` and `tissue` at 0%, `unknown` at
-22.2%, and `light_bulb`, `newspaper`, and `styrofoam_container` at 33.3%.
-These classes require more independent, correctly labelled camera-like images
-before release.
+Strong test classes include `battery`, `medicine_blister_pack` and
+`plastic_water_bottle` at 100%, `dirty_plastic_bag` at 100%, and `food_waste`
+at 81.5%. The weakest classes are `tissue` at 0%, `drink_carton` and
+`plastic_takeaway_cup` at 16.7%, and several low-sample classes at 33.3%.
+These values are based on small per-class test counts and therefore have wide
+uncertainty.
 
 ## Safety and limitations
 
@@ -72,8 +81,8 @@ before release.
 - The model does not reliably infer whether an item is dirty, wet, empty or made
   from a hidden composite material. The result screen must ask for these
   conditions where disposal depends on them.
-- Faces, hands, cluttered scenes and items outside the taxonomy should be
-  rejected, but the current `unknown` performance is not yet sufficient.
+- Faces, hands, cluttered scenes and items outside the taxonomy are represented
+  in the negative set, but rejection still needs real-device testing.
 - Confirm the upstream checkpoint license is compatible with the intended
   distribution before public or commercial release.
 

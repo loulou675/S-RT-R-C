@@ -48,6 +48,40 @@ trạng thái `accepted` hoặc `relabeled` mới được sao chép vào đúng
 
 Chi tiết cách chụp và đặt tên ảnh nằm trong `PHOTO_COLLECTION_CHECKLIST.md`.
 
+Tên nhóm ảnh thật có thể bắt đầu bằng `clean_`, `dirty_` hoặc `used_`. Script
+`import_real_images.py` ghi trạng thái nhìn thấy này vào trường
+`visibleCondition` của manifest nhưng vẫn train theo loại vật thể. Muốn nhận
+diện sạch/bẩn như một kết quả riêng cần một dataset cân bằng, trong đó cùng một
+loại vật thể có đủ cả ảnh sạch và bẩn chụp trong nhiều bối cảnh.
+
+## Nhập nhãn parts từ ảnh thật
+
+Các box đã duyệt nằm trong `real_component_annotations.json`. Nhập chúng vào
+dataset detector bằng lệnh:
+
+```bash
+.training-venv/bin/python training/import_real_component_images.py
+```
+
+Script chỉ thay các file có tiền tố `real_component_`, giữ nguyên dữ liệu cũ và
+ghi lại danh sách nguồn tại `source_manifests/real-component-import.json`.
+Bộ nhãn hiện tại có 70 ảnh: 23 box `closure`, 26 box `food` và 21 ảnh
+hard-negative. Tất cả nằm trong train vì nhiều ảnh chụp lặp cùng một vật thể;
+không dùng chúng để báo cáo điểm test.
+
+## Bổ sung lớp Unknown
+
+Chạy collector Open Images để tạo crop các vật thể không thuộc hệ thống
+phân loại:
+
+```bash
+.training-venv/bin/python training/collect_openimages_unknown.py
+```
+
+Mặc định script tạo tối đa 660 ảnh cân bằng theo 10 nhóm, loại nhãn rác
+mục tiêu, crop quanh vật thể và loại ảnh gần trùng. Script chỉ thay các file
+có tiền tố `openimages_unknown_`.
+
 ## Tái tạo phần Organic
 
 1. Chạy `collect_openimages_organic.py` để bổ sung crop cho classifier và box

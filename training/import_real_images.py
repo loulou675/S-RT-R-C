@@ -66,6 +66,15 @@ def object_group_from_path(path: Path) -> str | None:
     return None
 
 
+def visible_condition_from_group(group: str | None) -> str | None:
+    if not group:
+        return None
+    for condition in ("clean", "dirty", "used"):
+        if group.startswith(f"{condition}_"):
+            return condition
+    return None
+
+
 def classify_source(path: Path, configured_class: str) -> tuple[str, str]:
     relative_parent = path.parent.relative_to(SOURCE).as_posix()
     object_group = object_group_from_path(path)
@@ -198,6 +207,7 @@ def main() -> None:
                 continue
             target_class, split = classify_source(path, configured_class)
             destination, digest = save_normalized(path, target_class, split)
+            object_group = object_group_from_path(path)
             records.append(
                 {
                     "source": str(path.relative_to(ROOT)),
@@ -205,7 +215,8 @@ def main() -> None:
                     "class": target_class,
                     "split": split,
                     "sha256": digest,
-                    "objectGroup": object_group_from_path(path),
+                    "objectGroup": object_group,
+                    "visibleCondition": visible_condition_from_group(object_group),
                 }
             )
 

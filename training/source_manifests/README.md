@@ -97,6 +97,10 @@ license. Keep this folder for traceability; it does not need routine review.
   validation bounding boxes for visible food, fruit and vegetables. It creates
   balanced classifier crops and collapses the same boxes to the component class
   `food`; source records are kept in `openimages-organic-sources.jsonl`.
+- Unknown extension: `collect_openimages_unknown.py` samples ten balanced groups
+  of non-target objects, rejects images annotated with target waste families,
+  crops around the selected object and removes near-duplicates. Source records
+  are kept in `openimages-unknown-sources.jsonl`.
 
 ## Excluded source
 
