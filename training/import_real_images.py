@@ -15,6 +15,7 @@ from PIL import Image, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "real image"
 DATASET = ROOT / "training" / "classifier_dataset"
+CONDITION_DATASET = ROOT / "training" / "condition_dataset"
 MANIFEST = ROOT / "training" / "source_manifests" / "real-image-import.jsonl"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
@@ -66,12 +67,22 @@ def object_group_from_path(path: Path) -> str | None:
     return None
 
 
-def visible_condition_from_group(group: str | None) -> str | None:
-    if not group:
-        return None
-    for condition in ("clean", "dirty", "used"):
-        if group.startswith(f"{condition}_"):
-            return condition
+def visible_condition_from_path(path: Path, group: str | None) -> str | None:
+    aliases = {
+        "clean": "clean_empty",
+        "clean_empty": "clean_empty",
+        "clean_empty_with_lid": "clean_empty",
+        "dirty": "dirty_residue",
+        "dirty_residue": "dirty_residue",
+        "used": "used",
+    }
+    for token in path.stem.split("__")[1:]:
+        if token in aliases:
+            return aliases[token]
+    if group:
+        for prefix, condition in aliases.items():
+            if group.startswith(f"{prefix}_"):
+                return condition
     return None
 
 
@@ -194,6 +205,11 @@ def main() -> None:
         for pattern in ("*/real_*.jpg", "*/oversample_*"):
             for path in (DATASET / split).glob(pattern):
                 path.unlink()
+        for condition in ("clean_empty", "dirty_residue"):
+            directory = CONDITION_DATASET / split / condition
+            directory.mkdir(parents=True, exist_ok=True)
+            for path in directory.glob("real_condition_*.jpg"):
+                path.unlink()
 
     records: list[dict[str, object]] = []
     skipped: list[str] = []
@@ -208,6 +224,16 @@ def main() -> None:
             target_class, split = classify_source(path, configured_class)
             destination, digest = save_normalized(path, target_class, split)
             object_group = object_group_from_path(path)
+            visible_condition = visible_condition_from_path(path, object_group)
+            condition_destination = None
+            if visible_condition in {"clean_empty", "dirty_residue"}:
+                condition_destination = (
+                    CONDITION_DATASET
+                    / split
+                    / visible_condition
+                    / f"real_condition_{digest[:16]}.jpg"
+                )
+                shutil.copy2(destination, condition_destination)
             records.append(
                 {
                     "source": str(path.relative_to(ROOT)),
@@ -216,7 +242,10 @@ def main() -> None:
                     "split": split,
                     "sha256": digest,
                     "objectGroup": object_group,
-                    "visibleCondition": visible_condition_from_group(object_group),
+                    "visibleCondition": visible_condition,
+                    "conditionDestination": (
+                        str(condition_destination.relative_to(ROOT)) if condition_destination else None
+                    ),
                 }
             )
 

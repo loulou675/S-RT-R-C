@@ -26,6 +26,12 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
     .filter(Boolean)
     .join(' ')
   const heading = result?.specialHandling ? 'Hazardous' : bin.nameEn
+  const visibleSteps = result?.preparationActions.slice(0, 5) ?? []
+  const lastStepForComponent = new Map<string, number>()
+
+  visibleSteps.forEach((step, index) => {
+    step.components.forEach((component) => lastStepForComponent.set(component.code, index))
+  })
 
   function collapsedOffset() {
     const panel = panelRef.current
@@ -139,50 +145,42 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
 
         {result ? (
           <div className="panel-card-stack steps-only">
-            {result.componentActions.length ? (
-              <section className="components-section" aria-labelledby="components-title">
-                <div className="section-heading-row">
-                  <h3 id="components-title">Parts to separate</h3>
-                  <span>{result.componentActions.length} parts</span>
-                </div>
-                <div className="component-card-grid">
-                  {result.componentActions.map((component) => (
-                    <article
-                      className="component-card"
-                      key={component.code}
-                      style={{ '--component-color': component.destinationBin.colorHex } as CSSProperties}
-                    >
-                      <i aria-hidden="true" />
-                      <h4>{component.componentEn}</h4>
-                      <p>{component.materialEn ?? 'Mixed material'}</p>
-                      <strong>{component.destinationBin.nameEn}</strong>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null}
             <section className="steps-section">
               <h3>Preparation steps</h3>
               <ol className="numbered-step-list">
-                {result.preparationActions.slice(0, 5).map((step, index) => (
-                  <li key={step.text}>
-                    <span aria-hidden="true">{index + 1}</span>
-                    <div>
-                      <p>{step.text}</p>
-                      {step.components.length ? (
-                        <ul className="step-component-tags" aria-label="Parts for this step">
-                          {step.components.map((component) => (
-                            <li key={component.code}>
-                              <i style={{ '--tag-color': component.destinationBin.colorHex } as CSSProperties} />
-                              {component.componentEn}
-                              <small>{component.destinationBin.nameEn}</small>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
+                {visibleSteps.map((step, index) => {
+                  const partsToRoute = step.components.filter(
+                    (component) => lastStepForComponent.get(component.code) === index,
+                  )
+
+                  return (
+                    <li key={`${index}-${step.text}`}>
+                      <span className="step-number" aria-hidden="true">{index + 1}</span>
+                      <div className="step-copy">
+                        <p>{step.text}</p>
+                        {partsToRoute.length ? (
+                          <ul className="step-part-routes" aria-label="Separate these parts">
+                            {partsToRoute.map((component) => (
+                              <li key={component.code}>
+                                <i
+                                  aria-hidden="true"
+                                  style={{ '--route-color': component.destinationBin.colorHex } as CSSProperties}
+                                />
+                                <span>
+                                  <strong>{component.componentEn}</strong>
+                                  <small>
+                                    {result.componentActions.length > 1 ? 'Separate into' : 'Place in'}{' '}
+                                    {component.destinationBin.nameEn}
+                                  </small>
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </div>
+                    </li>
+                  )
+                })}
               </ol>
             </section>
           </div>

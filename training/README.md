@@ -54,6 +54,13 @@ Tên nhóm ảnh thật có thể bắt đầu bằng `clean_`, `dirty_` hoặc 
 diện sạch/bẩn như một kết quả riêng cần một dataset cân bằng, trong đó cùng một
 loại vật thể có đủ cả ảnh sạch và bẩn chụp trong nhiều bối cảnh.
 
+Với ảnh paired của cùng một vật thể, dùng một `objectID` chung trước dấu `__`
+và đặt trạng thái ở token tiếp theo, ví dụ
+`obj_paper_cup_pair_a__clean_empty__IMG_0001.heic` và
+`obj_paper_cup_pair_a__dirty_residue__IMG_0002.heic`. Importer giữ toàn bộ pair
+trong cùng split, đồng thời tạo ảnh chuẩn hóa tại
+`condition_dataset/<split>/<condition>/` để chuẩn bị cho model condition riêng.
+
 ## Nhập nhãn parts từ ảnh thật
 
 Các box đã duyệt nằm trong `real_component_annotations.json`. Nhập chúng vào
