@@ -39,12 +39,7 @@ export const trainingTargetClassCodes = [
 ] as const
 
 /** Classes currently present in public/models/waste_classifier.onnx. */
-export const deployedModelClassCodes = trainingTargetClassCodes.filter(
-  (code) =>
-    code !== 'dirty_plastic_bag' &&
-    code !== 'plastic_cosmetic_container' &&
-    code !== 'plastic_cup_lid',
-)
+export const deployedModelClassCodes = trainingTargetClassCodes
 
 // Backwards-compatible name used by the existing training feedback UI.
 export const yoloClassCodes = deployedModelClassCodes

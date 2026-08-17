@@ -22,114 +22,126 @@
     },
     {
       "index": 5,
-      "code": "disposable_diaper"
+      "code": "dirty_plastic_bag"
     },
     {
       "index": 6,
-      "code": "drink_carton"
+      "code": "disposable_diaper"
     },
     {
       "index": 7,
-      "code": "electronic_cable"
+      "code": "drink_carton"
     },
     {
       "index": 8,
-      "code": "food_waste"
+      "code": "electronic_cable"
     },
     {
       "index": 9,
-      "code": "fruit_peel"
+      "code": "food_waste"
     },
     {
       "index": 10,
-      "code": "glass_drink_bottle"
+      "code": "fruit_peel"
     },
     {
       "index": 11,
-      "code": "light_bulb"
+      "code": "glass_drink_bottle"
     },
     {
       "index": 12,
-      "code": "medical_mask"
+      "code": "light_bulb"
     },
     {
       "index": 13,
-      "code": "medicine_blister_pack"
+      "code": "medical_mask"
     },
     {
       "index": 14,
-      "code": "mobile_phone"
+      "code": "medicine_blister_pack"
     },
     {
       "index": 15,
-      "code": "newspaper"
+      "code": "mobile_phone"
     },
     {
       "index": 16,
-      "code": "paper_bag"
+      "code": "newspaper"
     },
     {
       "index": 17,
-      "code": "paper_cup"
+      "code": "paper_bag"
     },
     {
       "index": 18,
-      "code": "paper_plate"
+      "code": "paper_cup"
     },
     {
       "index": 19,
-      "code": "paperboard_packaging"
+      "code": "paper_plate"
     },
     {
       "index": 20,
-      "code": "plastic_bag"
+      "code": "paperboard_packaging"
     },
     {
       "index": 21,
-      "code": "plastic_food_container"
+      "code": "plastic_bag"
     },
     {
       "index": 22,
-      "code": "plastic_takeaway_cup"
+      "code": "plastic_cosmetic_container"
     },
     {
       "index": 23,
-      "code": "plastic_water_bottle"
+      "code": "plastic_cup_lid"
     },
     {
       "index": 24,
-      "code": "power_bank"
+      "code": "plastic_food_container"
     },
     {
       "index": 25,
-      "code": "printing_paper"
+      "code": "plastic_takeaway_cup"
     },
     {
       "index": 26,
-      "code": "sanitary_pad"
+      "code": "plastic_water_bottle"
     },
     {
       "index": 27,
-      "code": "snack_wrapper"
+      "code": "power_bank"
     },
     {
       "index": 28,
-      "code": "steel_food_can"
+      "code": "printing_paper"
     },
     {
       "index": 29,
-      "code": "styrofoam_container"
+      "code": "sanitary_pad"
     },
     {
       "index": 30,
-      "code": "tissue"
+      "code": "snack_wrapper"
     },
     {
       "index": 31,
-      "code": "unknown"
+      "code": "steel_food_can"
     },
     {
       "index": 32,
+      "code": "styrofoam_container"
+    },
+    {
+      "index": 33,
+      "code": "tissue"
+    },
+    {
+      "index": 34,
+      "code": "unknown"
+    },
+    {
+      "index": 35,
       "code": "vegetable_scraps"
     }
   ]

@@ -19,6 +19,13 @@ def main() -> None:
     parser.add_argument("--model", default="yolo26n-cls.pt")
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch", type=int, default=32)
+    parser.add_argument("--lr0", type=float, default=None)
+    parser.add_argument(
+        "--optimizer",
+        default=None,
+        help="Ultralytics optimizer name, for example AdamW or SGD. Defaults to auto.",
+    )
+    parser.add_argument("--freeze", type=int, default=None)
     parser.add_argument("--device", default=None, help="Examples: cpu, mps, 0")
     parser.add_argument("--name", default="waste-classifier-next")
     parser.add_argument("--install", action="store_true", help="Replace the model used by the web app")
@@ -40,6 +47,12 @@ def main() -> None:
     }
     if args.device:
         train_options["device"] = args.device
+    if args.lr0 is not None:
+        train_options["lr0"] = args.lr0
+    if args.optimizer is not None:
+        train_options["optimizer"] = args.optimizer
+    if args.freeze is not None:
+        train_options["freeze"] = args.freeze
     trainer.train(**train_options)
 
     best_path = runs / args.name / "weights" / "best.pt"

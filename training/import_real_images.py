@@ -17,38 +17,63 @@ SOURCE = ROOT / "real image"
 DATASET = ROOT / "training" / "classifier_dataset"
 MANIFEST = ROOT / "training" / "source_manifests" / "real-image-import.jsonl"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
-IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".heic", ".heif"}
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
 
 SOURCE_TO_CLASS = {
     "Bottle & Can_/aluminium_drink_can": "aluminium_drink_can",
+    "Bottle & Can_/glass_drink_bottle": "glass_drink_bottle",
+    "Bottle & Can_/plastic_water_bottle": "plastic_water_bottle",
     "Bottle & Can_/steel_food_can": "steel_food_can",
     "Clean Plastic/Plastic_lid": "plastic_cup_lid",
     "Clean Plastic/bubble_wrap": "unknown",
     "Clean Plastic/plastic_bag": "plastic_bag",
     "Clean Plastic/plastic_cosmetic_container ": "plastic_cosmetic_container",
     "Clean Plastic/plastic_food_container": "plastic_food_container",
+    "Clean Plastic/plastic_takeaway_cup": "plastic_takeaway_cup",
+    "Clean Plastic/snack_wrapper": "snack_wrapper",
+    "Clean Plastic/styrofoam_container": "styrofoam_container",
     "Landfill_/Dirty_plastic": "dirty_plastic_bag",
     "Landfill_/birthday_candle": "unknown",
     "Landfill_/clothing_foam_padding": "unknown",
     "Landfill_/fabric": "unknown",
     "Landfill_/medical_mask": "medical_mask",
     "Landfill_/medicine_blister_pack": "medicine_blister_pack",
+    "Landfill_/paper_cup": "paper_cup",
     "Landfill_/paper_plate": "paper_plate",
+    "Landfill_/sanitary_pad": "sanitary_pad",
     "Landfill_/tissue": "tissue",
     "Organic_/food_waste": "food_waste",
     "Organic_/fruit_peel": "fruit_peel",
+    "Organic_/vegetable_scraps": "vegetable_scraps",
     "Paper & Cardboard/Greyboard": "paperboard_packaging",
     "Paper & Cardboard/Paper_food_container": "paperboard_packaging",
     "Paper & Cardboard/cardboard_box": "cardboard_box",
+    "Paper & Cardboard/drink_carton": "drink_carton",
+    "Paper & Cardboard/newspaper`": "newspaper",
     "Paper & Cardboard/paper_bag": "paper_bag",
     "Paper & Cardboard/paperboard_packaging": "paperboard_packaging",
+    "Paper & Cardboard/printing_paper": "printing_paper",
+    "Special Handling/aerosol_can": "aerosol_can",
+    "Special Handling/battery": "battery",
     "Special Handling/power_adapter": "unknown",
     "Unknown": "unknown",
 }
 
 
+def object_group_from_path(path: Path) -> str | None:
+    if path.stem.startswith("obj_") and "__" in path.stem:
+        return path.stem.split("__", 1)[0].removeprefix("obj_")
+    return None
+
+
 def classify_source(path: Path, configured_class: str) -> tuple[str, str]:
     relative_parent = path.parent.relative_to(SOURCE).as_posix()
+    object_group = object_group_from_path(path)
+    if object_group:
+        bucket = int(hashlib.sha256(object_group.encode("utf-8")).hexdigest()[:8], 16) % 100
+        split = "train" if bucket < 70 else "val" if bucket < 85 else "test"
+        return configured_class, split
+
     stem_number = int(path.stem.removeprefix("IMG_")) if path.stem.startswith("IMG_") and path.stem[4:].isdigit() else None
 
     if relative_parent == "Landfill_/Dirty_plastic":
@@ -117,7 +142,11 @@ def relabel_existing_lids(records: list[dict[str, object]]) -> None:
 
     current = []
     for split in ("train", "val", "test"):
-        current.extend((path, split) for path in (DATASET / split / "plastic_cup_lid").glob("*plastic_cup_lids*"))
+        current.extend(
+            (path, split)
+            for path in (DATASET / split / "plastic_cup_lid").glob("*plastic_cup_lids*")
+            if not path.name.startswith("oversample_")
+        )
     for path, old_split in current:
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         bucket = int(digest[:2], 16)
@@ -132,6 +161,8 @@ def relabel_existing_lids(records: list[dict[str, object]]) -> None:
     for split in ("train", "val", "test"):
         directory = DATASET / split / "plastic_cup_lid"
         for path in sorted(directory.glob("*plastic_cup_lids*")):
+            if path.name.startswith("oversample_"):
+                continue
             records.append(
                 {
                     "source": "Recyclable Household Waste/plastic_cup_lids",
@@ -151,8 +182,9 @@ def main() -> None:
     for split in ("train", "val", "test"):
         for class_name in CLASSES:
             (DATASET / split / class_name).mkdir(parents=True, exist_ok=True)
-        for path in (DATASET / split).glob("*/real_*.jpg"):
-            path.unlink()
+        for pattern in ("*/real_*.jpg", "*/oversample_*"):
+            for path in (DATASET / split).glob(pattern):
+                path.unlink()
 
     records: list[dict[str, object]] = []
     skipped: list[str] = []
@@ -173,6 +205,7 @@ def main() -> None:
                     "class": target_class,
                     "split": split,
                     "sha256": digest,
+                    "objectGroup": object_group_from_path(path),
                 }
             )
 
