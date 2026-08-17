@@ -17,12 +17,12 @@ import type { DetectedComponent, InputMethod, RuleEngineResult } from '../types/
 type RecognitionStage = 'idle' | 'camera' | 'processing'
 
 const demoItems = [
-  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#d98b52' },
-  { itemCode: 'fruit_peel', label: 'Organic', color: '#7fa36b' },
-  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#d9675e' },
-  { itemCode: 'cardboard_box', label: 'Paper', color: '#7896d2' },
-  { itemCode: 'paper_cup', label: 'Landfill', color: '#a86e50' },
-  { itemCode: 'battery', label: 'Hazardous', color: '#e8c35a' },
+  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#f08c21', ink: '#171411' },
+  { itemCode: 'fruit_peel', label: 'Organic', color: '#b4b534', ink: '#171411' },
+  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#d14c18', ink: '#171411' },
+  { itemCode: 'cardboard_box', label: 'Paper', color: '#6698cc', ink: '#171411' },
+  { itemCode: 'paper_cup', label: 'Landfill', color: '#673c33', ink: '#fffaf4' },
+  { itemCode: 'battery', label: 'Hazardous', color: '#f4d68c', ink: '#171411' },
 ]
 
 export function LandingPage() {
@@ -228,7 +228,7 @@ export function LandingPage() {
                   <button
                     type="button"
                     key={item.itemCode}
-                    style={{ '--demo-color': item.color } as CSSProperties}
+                    style={{ '--demo-color': item.color, '--demo-ink': item.ink } as CSSProperties}
                     onClick={() => showDemoResult(item.itemCode)}
                   >
                     <i aria-hidden="true" />

@@ -2,6 +2,7 @@
 
 Chỉ cần quan tâm các mục sau:
 
+- `TEAMMATE_SETUP.md`: cách khôi phục dataset/checkpoint trên một máy mới.
 - `PHOTO_COLLECTION_CHECKLIST.md`: danh sách và cách chụp ảnh mới.
 - `dataset/`: ảnh gốc đã thu thập. Thêm ảnh mới vào đúng lớp trong
   `dataset/train/<class_code>/`.
