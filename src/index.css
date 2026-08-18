@@ -1972,6 +1972,84 @@ button:disabled {
   font-size: 0.75rem;
 }
 
+.survey-question legend b {
+  margin-left: auto;
+  color: #d84a3f;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.survey-scale {
+  margin-top: 0.85rem;
+}
+
+.survey-scale-numbers {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: min(14rem, 46%);
+  margin: 0 auto 0.48rem;
+  color: var(--ink);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.survey-scale-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 14rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.survey-scale-anchor {
+  color: var(--muted-ink);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.survey-scale-anchor-right {
+  text-align: right;
+}
+
+.survey-scale-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+}
+
+.survey-scale-option {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  cursor: pointer;
+}
+
+.survey-scale-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.survey-scale-option > span {
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 3px solid #6c7072;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.survey-scale-option.selected > span {
+  border-color: #16801c;
+  box-shadow: inset 0 0 0 0.28rem var(--surface), inset 0 0 0 0.8rem #16801c;
+}
+
+.survey-scale-option:focus-within > span {
+  outline: 3px solid color-mix(in srgb, var(--tangerine) 42%, transparent);
+  outline-offset: 3px;
+}
+
 .survey-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2190,6 +2268,26 @@ button:disabled {
 
   .survey-options {
     grid-template-columns: 1fr;
+  }
+
+  .survey-scale-row {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .survey-scale-numbers {
+    width: min(14rem, 80%);
+  }
+
+  .survey-scale-anchor,
+  .survey-scale-anchor-right {
+    text-align: left;
+  }
+
+  .survey-scale-options {
+    order: 2;
+    width: min(14rem, 80%);
+    margin: 0 auto;
   }
 
   .survey-question {

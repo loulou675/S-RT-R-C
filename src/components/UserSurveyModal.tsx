@@ -10,9 +10,7 @@ interface UserSurveyModalProps {
   onClose: () => void
 }
 
-const easeOptions = ['Very easy', 'Easy', 'Difficult', 'Very difficult']
-const clarityOptions = ['Very clear', 'Clear', 'Unclear', 'Very unclear']
-const trustOptions = ['Fully trust', 'Mostly trust', 'Not sure', 'Do not trust']
+const scaleOptions = ['1', '2', '3', '4', '5']
 const confusionOptions = ['Scanning', 'Result category', 'Preparation steps', 'Parts separation', 'Nothing']
 const improvementOptions = ['Recognition accuracy', 'Scanning speed', 'Result explanation', 'Visual design', 'Other']
 
@@ -69,17 +67,50 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
             </header>
 
             <div className="survey-question-list">
-              <SurveyQuestion number="1" label="How easy was it to scan this item?" value={scanningEase} options={easeOptions} onChange={setScanningEase} />
-              <SurveyQuestion number="2" label="Was the disposal guidance clear?" value={guidanceClarity} options={clarityOptions} onChange={setGuidanceClarity} />
-              <SurveyQuestion number="3" label="How much do you trust this result?" value={resultTrust} options={trustOptions} onChange={setResultTrust} />
-              <SurveyQuestion number="4" label="What was the most confusing part?" value={confusionPoint} options={confusionOptions} onChange={setConfusionPoint} />
+              <SurveyScaleQuestion
+                number="1"
+                label="How easy was it to scan this item? (Bạn thấy việc quét vật thể này dễ đến mức nào?)"
+                value={scanningEase}
+                leftLabel="Very difficult (Rất khó)"
+                rightLabel="Very easy (Rất dễ)"
+                onChange={setScanningEase}
+              />
+              <SurveyScaleQuestion
+                number="2"
+                label="How clear was the disposal guidance? (Hướng dẫn phân loại rõ ràng đến mức nào?)"
+                value={guidanceClarity}
+                leftLabel="Very unclear (Rất khó hiểu)"
+                rightLabel="Very clear (Rất rõ ràng)"
+                onChange={setGuidanceClarity}
+              />
+              <SurveyScaleQuestion
+                number="3"
+                label="How much do you trust this result? (Bạn tin kết quả này đến mức nào?)"
+                value={resultTrust}
+                leftLabel="Do not trust (Không tin)"
+                rightLabel="Fully trust (Hoàn toàn tin)"
+                onChange={setResultTrust}
+              />
+              <SurveyQuestion
+                number="4"
+                label="What was the most confusing part? (Phần nào gây khó hiểu nhất?)"
+                value={confusionPoint}
+                options={confusionOptions}
+                onChange={setConfusionPoint}
+              />
               {confusionPoint ? (
                 <label className="survey-why">
-                  <span>Why? <small>Optional</small></span>
+                  <span>Why? (Vì sao?) <small>Optional / Không bắt buộc</small></span>
                   <textarea value={confusionDetails} onChange={(event) => setConfusionDetails(event.target.value)} placeholder="Tell us what felt unclear" rows={2} maxLength={500} />
                 </label>
               ) : null}
-              <SurveyQuestion number="5" label="What should we improve first?" value={improvementPriority} options={improvementOptions} onChange={setImprovementPriority} />
+              <SurveyQuestion
+                number="5"
+                label="What should we improve first? (Nên ưu tiên cải thiện điều gì?)"
+                value={improvementPriority}
+                options={improvementOptions}
+                onChange={setImprovementPriority}
+              />
             </div>
 
             <button type="button" className="primary-action survey-submit" onClick={submit} disabled={!canSubmit || saving}>
@@ -93,14 +124,53 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
   )
 }
 
+function SurveyScaleQuestion({
+  number,
+  label,
+  value,
+  leftLabel,
+  rightLabel,
+  onChange,
+}: {
+  number: string
+  label: string
+  value: string
+  leftLabel: string
+  rightLabel: string
+  onChange: (value: string) => void
+}) {
+  return (
+    <fieldset className="survey-question">
+      <legend><span>{number}</span>{label}<b aria-label="Required">*</b></legend>
+      <div className="survey-scale">
+        <div className="survey-scale-numbers" aria-hidden="true">
+          {scaleOptions.map((option) => <span key={option}>{option}</span>)}
+        </div>
+        <div className="survey-scale-row">
+          <span className="survey-scale-anchor">{leftLabel}</span>
+          <div className="survey-scale-options">
+            {scaleOptions.map((option) => (
+              <label className={value === option ? 'survey-scale-option selected' : 'survey-scale-option'} key={option}>
+                <input type="radio" name={`survey-${number}`} value={option} checked={value === option} onChange={() => onChange(option)} required />
+                <span aria-hidden="true" />
+              </label>
+            ))}
+          </div>
+          <span className="survey-scale-anchor survey-scale-anchor-right">{rightLabel}</span>
+        </div>
+      </div>
+    </fieldset>
+  )
+}
+
 function SurveyQuestion({ number, label, value, options, onChange }: { number: string; label: string; value: string; options: string[]; onChange: (value: string) => void }) {
   return (
     <fieldset className="survey-question">
-      <legend><span>{number}</span>{label}</legend>
+      <legend><span>{number}</span>{label}<b aria-label="Required">*</b></legend>
       <div className="survey-options">
         {options.map((option) => (
           <label className={value === option ? 'survey-option selected' : 'survey-option'} key={option}>
-            <input type="radio" name={`survey-${number}`} value={option} checked={value === option} onChange={() => onChange(option)} />
+            <input type="radio" name={`survey-${number}`} value={option} checked={value === option} onChange={() => onChange(option)} required />
             <span>{option}</span>
           </label>
         ))}
