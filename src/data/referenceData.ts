@@ -269,6 +269,27 @@ export const wasteItems: WasteItem[] = [
     'khăn giấy',
     'giấy lau',
   ], ['tissue', 'facial tissue']),
+  item('hair_clip', 'Kẹp tóc', 'Hair clip', 'mixed_plastic', 'accessory', 'Landfill', false, false, [
+    'kẹp tóc',
+    'càng cua tóc',
+    'ghim tóc',
+  ], ['hair clip', 'hair claw', 'barrette']),
+  item('hair_tie', 'Dây buộc tóc', 'Hair tie', 'mixed_material', 'accessory', 'Landfill', false, false, [
+    'dây buộc tóc',
+    'thun buộc tóc',
+    'scrunchie',
+  ], ['hair tie', 'hair elastic', 'scrunchie']),
+  item('pen_marker', 'Bút và bút đánh dấu', 'Pen and marker', 'mixed_material', 'stationery', 'Landfill', false, false, [
+    'bút',
+    'bút bi',
+    'bút dạ',
+    'bút highlight',
+  ], ['pen', 'ballpoint pen', 'marker', 'highlighter']),
+  item('phone_case', 'Ốp điện thoại', 'Phone case', 'mixed_plastic', 'accessory', 'Landfill', false, false, [
+    'ốp điện thoại',
+    'ốp lưng',
+    'vỏ điện thoại',
+  ], ['phone case', 'mobile phone cover', 'smartphone case']),
   item('paper_napkin', 'Khăn ăn giấy', 'Paper napkin', 'paper', 'paper', 'Landfill', false, false, [
     'khăn ăn',
     'khăn giấy ăn',
@@ -657,7 +678,7 @@ export const disposalRules: DisposalRule[] = [
     warningVi: 'Hộp đồ uống có nhiều lớp vật liệu; chỉ bỏ hộp rỗng, sạch và khô vào dòng này.',
     warningEn: 'Drink cartons contain multiple material layers; use this stream only for empty, clean and dry cartons.',
   }),
-  ...defaultRules(['tissue', 'paper_napkin', 'wooden_utensil', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
+  ...defaultRules(['tissue', 'hair_clip', 'hair_tie', 'pen_marker', 'phone_case', 'paper_napkin', 'wooden_utensil', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
     vi: 'Đặt vật phẩm này vào thùng Chất Thải Chôn Lấp.',
     en: 'Place this item in Landfill.',
     stepsVi: ['Không bỏ vào thùng tái chế.', 'Đặt vào Chất Thải Chôn Lấp.'],

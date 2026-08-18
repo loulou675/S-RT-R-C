@@ -321,6 +321,20 @@ def main() -> None:
                 print(f"{class_code}: category search failed for {category!r}: {error}")
         for query in config["queries"]:
             try:
+                for page in api_search(query, args.limit_query):
+                    if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
+                        page["sourceName"] = "Wikimedia Commons"
+                        page["license"] = "per_file_review_required"
+                        pages[f"commons-api-{page['pageid']}"] = page
+            except requests.RequestException as error:
+                print(f"{class_code}: Commons search failed for {query!r}: {error}")
+            try:
+                for page in openverse_search(query, args.limit_query):
+                    if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
+                        pages[str(page["pageid"])] = page
+            except requests.RequestException as error:
+                print(f"{class_code}: Openverse search failed for {query!r}: {error}")
+            try:
                 for page in bing_image_search(query, args.limit_query):
                     if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
                         pages[str(page["pageid"])] = page

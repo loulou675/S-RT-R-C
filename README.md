@@ -134,9 +134,14 @@ new `docs/` output.
 
 ## Supabase Setup
 
-For the automatic correction queue only, run
+For the automatic result-feedback queue only, run
 `supabase/migrations/002_training_feedback.sql` in the Supabase SQL Editor. It
 is self-contained and can be run without loading the reference-data seed.
+
+The same queue stores both kinds of result feedback. When
+`predicted_item_code` equals `corrected_item_code`, the user confirmed that the
+AI result was correct. When the values differ, the user selected a correction.
+Every row remains `pending` until a reviewer accepts, relabels, or rejects it.
 
 For post-scan survey responses, also run
 `supabase/migrations/004_user_surveys.sql` once in the Supabase SQL Editor. The

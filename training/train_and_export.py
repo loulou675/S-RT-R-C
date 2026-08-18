@@ -30,6 +30,9 @@ def main() -> None:
     parser.add_argument("--freeze", type=int, default=None)
     parser.add_argument("--device", default=None, help="Examples: cpu, mps, 0")
     parser.add_argument("--name", default="waste-classifier-next")
+    parser.add_argument("--classes-file", type=Path, default=ROOT / "training" / "classes.json")
+    parser.add_argument("--install-model-name", default="waste_classifier.onnx")
+    parser.add_argument("--install-labels-name", default="labels.json")
     parser.add_argument("--install", action="store_true", help="Replace the model used by the web app")
     args = parser.parse_args()
 
@@ -72,7 +75,7 @@ def main() -> None:
     names = best.names
     ordered_names = [names[index] for index in range(len(names))] if isinstance(names, dict) else list(names)
     expected = sorted(path.name for path in (args.data / "train").iterdir() if path.is_dir() and path.name != ".DS_Store")
-    configured = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
+    configured = json.loads(args.classes_file.read_text(encoding="utf-8"))["classes"]
     if expected != sorted(configured):
         raise SystemExit("Dataset class folders do not match training/classes.json. Run sync_class_folders.py and remove obsolete class folders.")
     if ordered_names != expected:
@@ -88,11 +91,11 @@ def main() -> None:
     if args.install:
         model_dir = ROOT / "public" / "models"
         model_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(exported_path, model_dir / "waste_classifier.onnx")
-        shutil.copy2(run_dir / "labels.json", model_dir / "labels.json")
+        shutil.copy2(exported_path, model_dir / args.install_model_name)
+        shutil.copy2(run_dir / "labels.json", model_dir / args.install_labels_name)
         print("\nInstalled in the web app:")
-        print(model_dir / "waste_classifier.onnx")
-        print(model_dir / "labels.json")
+        print(model_dir / args.install_model_name)
+        print(model_dir / args.install_labels_name)
     else:
         print("Model was not installed. Evaluate it first, then rerun with --install if it improves.")
 

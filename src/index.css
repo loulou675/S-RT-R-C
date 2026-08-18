@@ -514,30 +514,61 @@ a {
 }
 
 .feedback-prompt {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 0.8rem;
-  min-height: 3.2rem;
+  min-height: 5rem;
   margin-top: auto;
-  padding: 0.65rem 0.75rem 0.65rem 1rem;
+  padding: 0.85rem 0.9rem 0.85rem 1rem;
   overflow: visible;
   font-size: 0.84rem;
   font-weight: 500;
 }
 
-.feedback-correction-trigger {
+.feedback-verdict-copy {
+  display: grid;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+.feedback-verdict-copy h2,
+.feedback-verdict-copy p {
+  margin: 0;
+  color: #111111;
+}
+
+.feedback-verdict-copy h2 {
+  font-size: 1.02rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.feedback-verdict-copy p {
+  max-width: 28rem;
+  font-size: 0.72rem;
+  font-weight: 430;
+  line-height: 1.3;
+  opacity: 0.7;
+}
+
+.feedback-verdict-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.feedback-verdict-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
   min-height: 2.15rem;
-  min-width: 8.5rem;
+  min-width: 4.5rem;
+  gap: 0.3rem;
   padding: 0.42rem 0.8rem;
-  border: 0;
+  border: 1px solid rgba(17, 17, 17, 0.18);
   border-radius: 999px;
-  color: #ffffff !important;
-  background: #111111 !important;
   cursor: pointer;
   font: inherit;
   font-size: 0.84rem;
@@ -546,10 +577,24 @@ a {
   white-space: nowrap;
 }
 
-.feedback-correction-label {
-  display: block;
+.feedback-verdict-button.yes {
   color: #ffffff !important;
+  border-color: #111111;
+  background: #111111 !important;
   -webkit-text-fill-color: #ffffff;
+}
+
+.feedback-verdict-button.no {
+  color: #111111 !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+  -webkit-text-fill-color: #111111;
+}
+
+.feedback-prompt > .inline-error {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+  font-size: 0.74rem;
 }
 
 .feedback-editor {
@@ -2914,9 +2959,19 @@ button:disabled {
   }
 
   .feedback-prompt {
+    grid-template-columns: minmax(0, 1fr);
     min-height: 3rem;
     margin-top: auto !important;
-    padding: 0.58rem 0.65rem 0.58rem 0.85rem;
+    padding: 0.8rem;
+  }
+
+  .feedback-verdict-actions {
+    width: 100%;
+  }
+
+  .feedback-verdict-button {
+    flex: 1 1 0;
+    min-height: 2.55rem;
   }
 
   .feedback-editor {

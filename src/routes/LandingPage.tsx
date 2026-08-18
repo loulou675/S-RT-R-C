@@ -271,6 +271,7 @@ export function LandingPage() {
                 errorCode={errorCode}
                 inputMethod={inputMethod}
                 submittedStatus={feedbackDelivery}
+                onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
                 onCorrected={(correctedCode, uploaded) => {
                   try {
                     setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
@@ -301,6 +302,7 @@ export function LandingPage() {
               predictedItemCode={predictedItemCode}
               inputMethod={inputMethod}
               submittedStatus={feedbackDelivery}
+              onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
               onCorrected={(correctedCode, uploaded) => {
                 try {
                   setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')

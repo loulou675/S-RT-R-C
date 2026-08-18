@@ -20,6 +20,20 @@ MANIFEST = ROOT / "training" / "source_manifests" / "real-image-import.jsonl"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
 
+# Explicit object-level holdouts for the newly photographed classes. These are
+# separate physical objects, not alternate views of an object used for train.
+OBJECT_SPLIT_OVERRIDES = {
+    "broken_black_clips_session_d": "val",
+    "assorted_clips_session_f": "test",
+    "black_hair_tie_session_a": "train",
+    "white_scrunchie_session_b": "val",
+    "plush_hair_tie_session_c": "test",
+    **{f"pen_{index:02d}": "train" for index in range(1, 7)},
+    **{f"pen_{index:02d}": "val" for index in range(7, 9)},
+    **{f"pen_{index:02d}": "test" for index in range(9, 11)},
+    "phone_case_session_a": "train",
+}
+
 SOURCE_TO_CLASS = {
     "Bottle & Can_/aluminium_drink_can": "aluminium_drink_can",
     "Bottle & Can_/glass_drink_bottle": "glass_drink_bottle",
@@ -94,6 +108,8 @@ def classify_source(path: Path, configured_class: str) -> tuple[str, str]:
     relative_parent = path.parent.relative_to(SOURCE).as_posix()
     object_group = object_group_from_path(path)
     if object_group:
+        if object_group in OBJECT_SPLIT_OVERRIDES:
+            return configured_class, OBJECT_SPLIT_OVERRIDES[object_group]
         bucket = int(hashlib.sha256(object_group.encode("utf-8")).hexdigest()[:8], 16) % 100
         split = "train" if bucket < 70 else "val" if bucket < 85 else "test"
         return configured_class, split
@@ -128,8 +144,20 @@ def open_image(path: Path) -> Image.Image:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        with Image.open(converted) as image:
-            return ImageOps.exif_transpose(image).convert("RGB")
+        try:
+            with Image.open(converted) as image:
+                return ImageOps.exif_transpose(image).convert("RGB")
+        except OSError:
+            # Some recent iPhone HEIC files produce a JPEG that sips reports as
+            # successful but Pillow cannot decode. ffmpeg handles those files.
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(path), "-frames:v", "1", str(converted)],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            with Image.open(converted) as image:
+                return ImageOps.exif_transpose(image).convert("RGB")
 
 
 def save_normalized(path: Path, target_class: str, split: str) -> tuple[Path, str]:

@@ -34,6 +34,8 @@ CLASS_TO_BIN = {
     "food_waste": "organic",
     "fruit_peel": "organic",
     "glass_drink_bottle": "bottle_can",
+    "hair_clip": "landfill",
+    "hair_tie": "landfill",
     "light_bulb": "hazardous",
     "medical_mask": "landfill",
     "medicine_blister_pack": "landfill",
@@ -43,6 +45,8 @@ CLASS_TO_BIN = {
     "paper_cup": "landfill",
     "paper_plate": "landfill",
     "paperboard_packaging": "paper_cardboard",
+    "pen_marker": "landfill",
+    "phone_case": "landfill",
     "plastic_bag": "clean_plastic",
     "plastic_cosmetic_container": "clean_plastic",
     "plastic_cup_lid": "clean_plastic",
@@ -106,6 +110,8 @@ def main() -> None:
     total_correct = 0
     bin_total_correct = 0
     bin_confusion: dict[str, Counter[str]] = defaultdict(Counter)
+    grouped_bin_total_correct = 0
+    grouped_bin_confusion: dict[str, Counter[str]] = defaultdict(Counter)
 
     for (_, expected), result in zip(samples, results, strict=True):
         predicted = model.names[int(result.probs.top1)]
@@ -122,6 +128,15 @@ def main() -> None:
         bin_confusion[expected_bin][predicted_bin] += 1
         if predicted_bin == expected_bin:
             bin_total_correct += 1
+
+        grouped_scores: Counter[str] = Counter()
+        probabilities = result.probs.data.tolist()
+        for class_index, probability in enumerate(probabilities):
+            grouped_scores[CLASS_TO_BIN[model.names[class_index]]] += float(probability)
+        grouped_predicted_bin = grouped_scores.most_common(1)[0][0]
+        grouped_bin_confusion[expected_bin][grouped_predicted_bin] += 1
+        if grouped_predicted_bin == expected_bin:
+            grouped_bin_total_correct += 1
 
     class_rows = []
     for class_name in sorted(per_class):
@@ -170,6 +185,22 @@ def main() -> None:
         if known_bin_rows
         else None
     )
+    grouped_bin_rows = []
+    for bin_name in sorted(grouped_bin_confusion):
+        total = sum(grouped_bin_confusion[bin_name].values())
+        correct = grouped_bin_confusion[bin_name][bin_name]
+        grouped_bin_rows.append(
+            {
+                "bin": bin_name,
+                "correct": correct,
+                "total": total,
+                "recall": round(correct / total, 4),
+                "predictions": dict(grouped_bin_confusion[bin_name].most_common()),
+            }
+        )
+    grouped_known_rows = [row for row in grouped_bin_rows if row["bin"] != "unknown"]
+    grouped_known_images = sum(row["total"] for row in grouped_known_rows)
+    grouped_known_correct = sum(row["correct"] for row in grouped_known_rows)
     report = {
         "model": str(args.model),
         "test_data": str(args.data),
@@ -181,7 +212,10 @@ def main() -> None:
         "bin_accuracy_including_unknown": round(bin_total_correct / len(samples), 4),
         "known_item_bin_accuracy": known_item_bin_accuracy,
         "known_bin_macro_recall": known_bin_macro_recall,
+        "grouped_bin_accuracy_including_unknown": round(grouped_bin_total_correct / len(samples), 4),
+        "grouped_known_item_bin_accuracy": round(grouped_known_correct / grouped_known_images, 4),
         "per_bin": bin_rows,
+        "grouped_per_bin": grouped_bin_rows,
         "per_class": class_rows,
         "top_confusions": [
             {"expected": expected, "predicted": predicted, "count": count}
@@ -210,6 +244,7 @@ def main() -> None:
     print(f"Hazardous macro recall: {hazardous_display}")
     print(f"Known-item bin accuracy: {known_accuracy_display}")
     print(f"Known-bin macro recall: {known_macro_display}")
+    print(f"Grouped known-item bin accuracy: {report['grouped_known_item_bin_accuracy']:.1%}")
     print("\nPer bin:")
     for row in sorted(bin_rows, key=lambda item: item["bin"]):
         print(f"  {row['bin']:<20} {row['correct']:>3}/{row['total']:<3} {row['recall']:>6.1%}")

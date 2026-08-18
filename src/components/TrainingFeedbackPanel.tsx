@@ -1,4 +1,4 @@
-import { Check, Download, MessageSquareWarning, Search, Send } from 'lucide-react'
+import { Check, Download, MessageSquareWarning, Search, Send, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { trainingTargetClassCodes } from '../config/modelClasses'
 import { resultFeedbackEnabled, trainingModeEnabled } from '../config/trainingMode'
@@ -19,15 +19,19 @@ interface TrainingFeedbackPanelProps {
   inputMethod?: InputMethod
   submittedStatus?: 'uploaded' | 'queued'
   onCorrected?: (itemCode: string, uploaded: boolean) => void
+  onSubmitted?: (uploaded: boolean) => void
 }
 
-export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCode, inputMethod, submittedStatus, onCorrected }: TrainingFeedbackPanelProps) {
-  const [open, setOpen] = useState(!predictedItemCode)
+type FeedbackKind = 'confirmation' | 'correction'
+
+export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCode, inputMethod, submittedStatus, onCorrected, onSubmitted }: TrainingFeedbackPanelProps) {
+  const [view, setView] = useState<'prompt' | 'correction'>(predictedItemCode ? 'prompt' : 'correction')
   const [query, setQuery] = useState('')
   const [correctedItemCode, setCorrectedItemCode] = useState('')
   const [note, setNote] = useState('')
   const [consented, setConsented] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submittedKind, setSubmittedKind] = useState<FeedbackKind>()
   const [uploaded, setUploaded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>()
@@ -55,12 +59,11 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
 
   if (!resultFeedbackEnabled || !imagePreview) return null
 
-  const predictedLabel = wasteItems.find((item) => item.code === predictedItemCode)?.nameEn
   const selectedItem = itemOptions.find((item) => item.code === correctedItemCode)
   const feedbackCount = readTrainingFeedback().length
 
-  async function submit() {
-    if (!correctedItemCode || !consented) return
+  async function saveFeedback(itemCode: string, kind: FeedbackKind) {
+    if (!itemCode || (kind === 'correction' && !consented)) return
 
     setSaving(true)
     setSaveError(undefined)
@@ -68,32 +71,44 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       const result = await saveTrainingFeedback({
         imageDataUrl: imagePreview as string,
         predictedItemCode,
-        correctedItemCode,
+        correctedItemCode: itemCode,
         inputMethod,
         errorCode,
         note: note.trim() || undefined,
         consentVersion: 'feedback-v1',
       })
       setUploaded(result.uploaded)
+      setSubmittedKind(kind)
       setSubmitted(true)
-      onCorrected?.(correctedItemCode, result.uploaded)
+      if (kind === 'correction') onCorrected?.(itemCode, result.uploaded)
+      else onSubmitted?.(result.uploaded)
     } catch {
-      setSaveError('Could not save this correction. Please try again.')
+      setSaveError(`Could not save this ${kind === 'confirmation' ? 'feedback' : 'correction'}. Please try again.`)
     } finally {
       setSaving(false)
     }
   }
 
+  function confirmPrediction() {
+    if (predictedItemCode) void saveFeedback(predictedItemCode, 'confirmation')
+  }
+
+  function submitCorrection() {
+    if (correctedItemCode) void saveFeedback(correctedItemCode, 'correction')
+  }
+
   if (submitted || submittedStatus) {
     const wasUploaded = uploaded || submittedStatus === 'uploaded'
     return (
-      <section className="training-feedback feedback-thanks" aria-label="Result correction">
+      <section className="training-feedback feedback-thanks" aria-label="Result feedback">
         <div className="training-feedback-saved" role="status">
           <Check size={18} aria-hidden="true" />
           <span>
             {wasUploaded
-              ? 'Thanks. Your correction was sent for review.'
-              : 'Thanks. Your correction is saved and will send automatically when online.'}
+              ? submittedKind === 'confirmation'
+                ? 'Thanks. This image was sent to the review queue.'
+                : 'Thanks. Your feedback was sent for review.'
+              : 'Thanks. Your feedback is saved and will send automatically when online.'}
           </span>
         </div>
         {trainingModeEnabled ? (
@@ -106,13 +121,26 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
     )
   }
 
-  if (!open) {
+  if (view === 'prompt') {
     return (
-      <section className="training-feedback feedback-prompt" aria-label="Result correction">
-        <span>{predictedLabel ? 'Not the right item?' : 'Couldn’t identify it?'}</span>
-        <button type="button" className="feedback-correction-trigger" onClick={() => setOpen(true)}>
-          <span className="feedback-correction-label">Correct result</span>
-        </button>
+      <section className="training-feedback feedback-prompt" aria-label="Confirm AI result">
+        <div className="feedback-verdict-copy">
+          <h2>Is this result correct?</h2>
+          <p>
+            Selecting Yes privately saves this cropped image and result for review and future AI training.
+          </p>
+        </div>
+        <div className="feedback-verdict-actions">
+          <button type="button" className="feedback-verdict-button yes" onClick={confirmPrediction} disabled={saving}>
+            <Check size={16} aria-hidden="true" />
+            {saving ? 'Saving…' : 'Yes'}
+          </button>
+          <button type="button" className="feedback-verdict-button no" onClick={() => setView('correction')} disabled={saving}>
+            <X size={16} aria-hidden="true" />
+            No
+          </button>
+        </div>
+        {saveError ? <p className="inline-error">{saveError}</p> : null}
       </section>
     )
   }
@@ -185,11 +213,11 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
 
       <div className="feedback-actions">
         {predictedItemCode ? (
-          <button type="button" className="ghost-action" onClick={() => setOpen(false)}>
+          <button type="button" className="ghost-action" onClick={() => setView('prompt')}>
             Cancel
           </button>
         ) : null}
-        <button type="button" className="secondary-action" onClick={submit} disabled={!correctedItemCode || !consented || saving}>
+        <button type="button" className="secondary-action" onClick={submitCorrection} disabled={!correctedItemCode || !consented || saving}>
           <Send size={16} aria-hidden="true" />
           {saving ? 'Saving…' : 'Send correction'}
         </button>

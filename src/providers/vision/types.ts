@@ -1,7 +1,8 @@
-import type { DetectedComponent } from '../../types/domain'
+import type { BinCode, DetectedComponent } from '../../types/domain'
 
 export interface VisionResult {
   itemCode: string
+  binCode?: BinCode
   components?: DetectedComponent[]
 }
 

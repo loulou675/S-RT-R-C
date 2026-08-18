@@ -198,6 +198,11 @@ def main() -> int:
                 "review_status": status,
                 "predicted_item_code": row.get("predicted_item_code"),
                 "corrected_item_code": corrected_code,
+                "feedback_type": (
+                    "confirmation"
+                    if row.get("predicted_item_code") == corrected_code
+                    else "correction"
+                ),
                 "input_method": row.get("input_method"),
                 "error_code": row.get("error_code"),
                 "created_at": row.get("created_at"),
