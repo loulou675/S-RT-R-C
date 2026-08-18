@@ -13,7 +13,8 @@
   ],
   "modelClasses": [
     "closure",
-    "food"
+    "food",
+    "straw"
   ],
   "ruleOnlyClasses": [
     "carton_body",

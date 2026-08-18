@@ -556,6 +556,12 @@ const paperCupComponents: ComponentAction[] = [
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
   }),
+  component('straw', 'Ống hút', 'Straw', 'landfill', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+    disposalNoteVi: 'Chất Thải Chôn Lấp',
+    disposalNoteEn: 'Landfill',
+  }),
 ]
 
 const drinkCartonComponents: ComponentAction[] = [
@@ -625,13 +631,13 @@ export const disposalRules: DisposalRule[] = [
   rule('paper_cup', 'default', 'landfill', {
     vi: 'Đổ chất lỏng còn lại vào Hữu Cơ, sau đó bỏ ly giấy vào Chất Thải Chôn Lấp.',
     en: 'Empty remaining liquid into Organic Waste, then place the paper cup in Landfill.',
-    stepsVi: ['Đổ chất lỏng còn lại.', 'Không bỏ ly giấy vào Giấy & Bìa Carton.', 'Đặt ly vào Chất Thải Chôn Lấp.'],
-    stepsEn: ['Empty remaining liquid.', 'Do not place the cup in Paper & Cardboard.', 'Place the cup in Landfill.'],
+    stepsVi: ['Đổ chất lỏng còn lại.', 'Tháo nắp và ống hút khỏi ly.', 'Đặt thân ly giấy vào Chất Thải Chôn Lấp.'],
+    stepsEn: ['Empty remaining liquid.', 'Remove the lid and straw from the cup.', 'Place the paper cup body in Landfill.'],
     components: paperCupComponents,
     stepComponentCodes: [
       ['remaining_liquid'],
+      ['lid', 'straw'],
       ['paper_cup_body'],
-      ['paper_cup_body', 'lid'],
     ],
     warningVi: 'Ly giấy thường có lớp phủ và không thuộc nhóm giấy sạch.',
     warningEn: 'Paper cups usually have a lining and are not clean paper.',

@@ -6,6 +6,8 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -13,9 +15,10 @@ from PIL import Image, ImageOps
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLASS_IDS = {"closure": 0, "food": 1}
+CLASS_IDS = {"closure": 0, "food": 1, "straw": 2}
 VALID_SPLITS = {"train", "val", "test"}
 PREFIX = "real_component_"
+HEIC_SUFFIXES = {".heic", ".heif"}
 
 
 def safe_name(value: str) -> str:
@@ -38,6 +41,24 @@ def validate_box(box: dict, source: str) -> None:
         raise ValueError(f"Box crosses image bounds in {source}: {values}")
 
 
+def load_rgb_image(source: Path) -> Image.Image:
+    """Open common image formats and convert HEIC/HEIF through macOS sips."""
+    if source.suffix.lower() not in HEIC_SUFFIXES:
+        with Image.open(source) as raw_image:
+            return ImageOps.exif_transpose(raw_image).convert("RGB")
+
+    with tempfile.TemporaryDirectory(prefix="sort-rac-heic-") as directory:
+        converted = Path(directory) / f"{source.stem}.jpg"
+        subprocess.run(
+            ["sips", "-s", "format", "jpeg", str(source), "--out", str(converted)],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        with Image.open(converted) as raw_image:
+            return ImageOps.exif_transpose(raw_image).convert("RGB")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -53,8 +74,8 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
-    if manifest.get("classes") != ["closure", "food"]:
-        raise SystemExit("Manifest class order must be ['closure', 'food'].")
+    if manifest.get("classes") != ["closure", "food", "straw"]:
+        raise SystemExit("Manifest class order must be ['closure', 'food', 'straw'].")
 
     for split in VALID_SPLITS:
         image_dir = args.dataset / "images" / split
@@ -88,9 +109,9 @@ def main() -> None:
         image_path = args.dataset / "images" / split / f"{stem}.jpg"
         label_path = args.dataset / "labels" / split / f"{stem}.txt"
 
-        with Image.open(source) as raw_image:
-            image = ImageOps.exif_transpose(raw_image).convert("RGB")
-            image.save(image_path, format="JPEG", quality=95, optimize=True)
+        image = load_rgb_image(source)
+        image.save(image_path, format="JPEG", quality=95, optimize=True)
+        image.close()
 
         lines = []
         for box in boxes:

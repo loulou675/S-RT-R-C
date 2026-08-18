@@ -147,6 +147,10 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
 
         {result ? (
           <div className="panel-card-stack steps-only">
+            <section className="why-bin-section" aria-labelledby="why-bin-heading">
+              <h3 id="why-bin-heading">Why this bin?</h3>
+              <p>{result.whyCategory}</p>
+            </section>
             <section className="steps-section">
               <h3>Preparation steps</h3>
               <ol className="numbered-step-list">

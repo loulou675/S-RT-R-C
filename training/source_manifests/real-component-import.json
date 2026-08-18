@@ -1050,6 +1050,114 @@
       "split": "train",
       "group": "empty_container_negative",
       "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9313.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9313_a77201753c.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9313_a77201753c.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.68,
+            0.61,
+            0.2
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.6,
+            0.39,
+            0.16,
+            0.55
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9314.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9314_d499b5565f.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9314_d499b5565f.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.78,
+            0.61,
+            0.32
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.62,
+            0.48,
+            0.15,
+            0.43
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9315.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9315_0ab5c74f47.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9315_0ab5c74f47.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.79,
+            0.61,
+            0.34
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.6,
+            0.46,
+            0.15,
+            0.47
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9316.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9316_4d4beae73a.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9316_4d4beae73a.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.79,
+            0.6,
+            0.4
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.61,
+            0.81,
+            0.16,
+            0.25
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1041,6 +1041,32 @@ button:disabled {
   gap: 1.35rem;
 }
 
+.why-bin-section {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.42rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--bin-ink, #111111) 14%, transparent);
+  border-radius: 1.1rem;
+  color: var(--bin-ink, #111111);
+  background: rgba(255, 250, 244, 0.2);
+}
+
+.why-bin-section h3 {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.12vw, 1.16rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.why-bin-section p {
+  max-width: 58ch;
+  margin: 0;
+  font-size: clamp(0.82rem, 0.94vw, 0.98rem);
+  font-weight: 450;
+  line-height: 1.38;
+}
+
 .steps-section {
   display: grid;
   grid-column: 1 / -1;
@@ -2738,6 +2764,21 @@ button:disabled {
     grid-template-columns: 1fr;
     gap: 1.2rem;
     margin-top: 1.05rem;
+  }
+
+  .why-bin-section {
+    gap: 0.32rem;
+    padding: 0.82rem 0.9rem;
+    border-radius: 0.95rem;
+  }
+
+  .why-bin-section h3 {
+    font-size: 0.94rem;
+  }
+
+  .why-bin-section p {
+    font-size: 0.76rem;
+    line-height: 1.35;
   }
 
   .steps-section {

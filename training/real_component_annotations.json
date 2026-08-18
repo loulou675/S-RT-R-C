@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "classes": ["closure", "food"],
+  "classes": ["closure", "food", "straw"],
   "review_notes": [
     "Only visually clear parts are boxed.",
     "Repeated photos of the same physical object stay in the train split.",
@@ -81,6 +81,11 @@
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__655143239_18000424661866028_6770491966775909461_n.jpg","split":"train","group":"empty_container_negative","boxes":[]},
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__709862597_17873432415671855_368979356229111986_n.webp","split":"train","group":"empty_container_negative","boxes":[]},
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp","split":"train","group":"empty_container_negative","boxes":[]},
-    {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_turquoise__588370518_17934099315112371_5793710024788888233_n.jpg","split":"train","group":"empty_container_negative","boxes":[]}
+    {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_turquoise__588370518_17934099315112371_5793710024788888233_n.jpg","split":"train","group":"empty_container_negative","boxes":[]},
+
+    {"source":"real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9313.heic","split":"train","group":"paper_cup_parts_session_b","boxes":[{"class":"closure","xywhn":[0.53,0.68,0.61,0.20]},{"class":"straw","xywhn":[0.60,0.39,0.16,0.55]}]},
+    {"source":"real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9314.heic","split":"train","group":"paper_cup_parts_session_b","boxes":[{"class":"closure","xywhn":[0.53,0.78,0.61,0.32]},{"class":"straw","xywhn":[0.62,0.48,0.15,0.43]}]},
+    {"source":"real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9315.heic","split":"train","group":"paper_cup_parts_session_b","boxes":[{"class":"closure","xywhn":[0.53,0.79,0.61,0.34]},{"class":"straw","xywhn":[0.60,0.46,0.15,0.47]}]},
+    {"source":"real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9316.heic","split":"train","group":"paper_cup_parts_session_b","boxes":[{"class":"closure","xywhn":[0.53,0.79,0.60,0.40]},{"class":"straw","xywhn":[0.61,0.81,0.16,0.25]}]}
   ]
 }

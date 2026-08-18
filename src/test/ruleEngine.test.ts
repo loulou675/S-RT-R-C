@@ -109,6 +109,7 @@ describe('rule engine', () => {
       'organic',
       'landfill',
       'clean_plastic',
+      'landfill',
     ])
   })
 
