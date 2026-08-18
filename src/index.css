@@ -429,6 +429,13 @@ a {
   touch-action: pan-y;
 }
 
+.training-feedback,
+.training-feedback button,
+.training-feedback input,
+.training-feedback label {
+  color: #111111;
+}
+
 .training-feedback-heading {
   display: flex;
   align-items: flex-start;
@@ -552,8 +559,14 @@ a {
   min-width: 0;
   border: 0;
   outline: 0;
+  color: #111111;
   background: transparent;
   font: inherit;
+}
+
+.feedback-search input::placeholder {
+  color: #6d6862;
+  opacity: 1;
 }
 
 .feedback-option-list {
