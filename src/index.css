@@ -1880,6 +1880,206 @@ button:disabled {
   cursor: pointer;
 }
 
+.survey-backdrop {
+  position: fixed;
+  z-index: 70;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(13, 13, 13, 0.42);
+  backdrop-filter: blur(5px);
+}
+
+.survey-dialog {
+  position: relative;
+  width: min(100%, 38rem);
+  max-height: min(90vh, 52rem);
+  overflow-y: auto;
+  padding: clamp(1.35rem, 3vw, 2.2rem);
+  border: 1px solid rgba(23, 20, 17, 0.1);
+  border-radius: 1.35rem;
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.survey-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.95rem;
+  display: inline-grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  color: var(--surface);
+  background: var(--ink);
+  cursor: pointer;
+}
+
+.survey-header {
+  padding-right: 2.8rem;
+}
+
+.survey-header h2 {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  line-height: 1.05;
+}
+
+.survey-header > p:last-child {
+  margin: 0.65rem 0 0;
+  color: var(--muted-ink);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.survey-question-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.15rem;
+}
+
+.survey-question {
+  min-width: 0;
+  margin: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+}
+
+.survey-question legend {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.survey-question legend > span {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--butter);
+  font-size: 0.75rem;
+}
+
+.survey-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.survey-option {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.2rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 0.7rem;
+  color: var(--muted-ink);
+  background: var(--cream);
+  cursor: pointer;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.survey-option.selected {
+  border-color: var(--tangerine);
+  color: var(--ink);
+  background: #ffe6be;
+}
+
+.survey-option input {
+  margin: 0;
+  accent-color: var(--tangerine);
+}
+
+.survey-why {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  border-radius: 1rem;
+  background: var(--butter-soft);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.survey-why small {
+  color: var(--muted-ink);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.survey-why textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.survey-submit {
+  width: 100%;
+  margin-top: 1.1rem;
+  min-height: 2.85rem;
+}
+
+.survey-submit:disabled {
+  opacity: 0.46;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.survey-success {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1rem 1.5rem;
+  text-align: center;
+}
+
+.survey-success-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--butter);
+}
+
+.survey-success h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.survey-success p {
+  margin: 0;
+  color: var(--muted-ink);
+  font-size: 0.9rem;
+}
+
+.survey-success .primary-action {
+  margin-top: 0.35rem;
+}
+
 .drop-zone {
   display: grid;
   place-items: center;
@@ -1972,6 +2172,30 @@ button:disabled {
 }
 
 @media (max-width: 860px) {
+  .survey-backdrop {
+    align-items: end;
+    padding: 0.7rem;
+  }
+
+  .survey-dialog {
+    width: 100%;
+    max-height: calc(100svh - 1.4rem);
+    padding: 1.1rem;
+    border-radius: 1.2rem;
+  }
+
+  .survey-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .survey-options {
+    grid-template-columns: 1fr;
+  }
+
+  .survey-question {
+    padding: 0.68rem;
+  }
+
   .main-surface {
     padding: 0;
     background: var(--cream);

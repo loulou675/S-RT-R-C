@@ -14,6 +14,7 @@ The repository contains the complete application and AI integration layer, but a
 - ONNX Runtime Web loads `/public/models/waste_classifier.onnx` for local browser inference.
 - A `VisionProvider` interface separates the model from the app flow.
 - Supabase Postgres stores normalized reference data, rules, condition questions, reuse suggestions and anonymous scan events.
+- A short post-scan survey stores usability feedback locally first, then syncs it to Supabase when configured.
 - The deterministic TypeScript rule engine selects active verified rules and never invents disposal guidance.
 - Zod validates model labels and model output structure.
 - Vitest covers rule/search behavior. Playwright covers critical browser flows in mock mode.
@@ -137,6 +138,12 @@ For the automatic correction queue only, run
 `supabase/migrations/002_training_feedback.sql` in the Supabase SQL Editor. It
 is self-contained and can be run without loading the reference-data seed.
 
+For post-scan survey responses, also run
+`supabase/migrations/004_user_surveys.sql` once in the Supabase SQL Editor. The
+answers are kept in a small browser outbox first, then inserted into the
+`user_surveys` table automatically when Supabase is configured or the browser
+comes back online. Survey responses never contain the uploaded image.
+
 For the complete optional remote reference database, create a Supabase project,
 then apply:
 
@@ -157,6 +164,7 @@ The migration creates:
 - `reuse_suggestions`
 - `scan_events`
 - `training_feedback`
+- `user_surveys`
 - private Storage bucket `training-feedback`
 
 Row Level Security is enabled. Anonymous users can read active reference data,

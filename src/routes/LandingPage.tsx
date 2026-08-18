@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { BinPanel } from '../components/BinPanel'
 import { StatusBlock } from '../components/StatusBlock'
 import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
+import { UserSurveyModal } from '../components/UserSurveyModal'
 import { CameraCapture } from '../features/camera/CameraCapture'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
@@ -25,6 +26,21 @@ const demoItems = [
   { itemCode: 'battery', label: 'Hazardous', color: '#f4d68c', ink: '#171411' },
 ]
 
+const surveySessionKey = 'sot-rac-post-scan-survey-v1-shown'
+let surveySessionFallbackShown = false
+
+function markSurveyShownForSession() {
+  try {
+    if (window.sessionStorage.getItem(surveySessionKey)) return false
+    window.sessionStorage.setItem(surveySessionKey, 'true')
+    return true
+  } catch {
+    if (surveySessionFallbackShown) return false
+    surveySessionFallbackShown = true
+    return true
+  }
+}
+
 export function LandingPage() {
   const [searchParams] = useSearchParams()
   const [stage, setStage] = useState<RecognitionStage>('idle')
@@ -38,6 +54,7 @@ export function LandingPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [resultCollapsed, setResultCollapsed] = useState(false)
   const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
+  const [surveyOpen, setSurveyOpen] = useState(false)
   const recognitionIdRef = useRef(0)
   const searchedItemCode = searchParams.get('item')
   const searchedSource = searchParams.get('source')
@@ -74,6 +91,7 @@ export function LandingPage() {
     setResult(undefined)
     setResultCollapsed(false)
     setErrorCode(undefined)
+    setSurveyOpen(false)
   }
 
   function startCamera() {
@@ -119,6 +137,12 @@ export function LandingPage() {
       setStage('idle')
       setStatus(undefined)
 
+      window.setTimeout(() => {
+        if (recognitionId === recognitionIdRef.current && markSurveyShownForSession()) {
+          setSurveyOpen(true)
+        }
+      }, 520)
+
       if (provider.identifyComponents) {
         void provider.identifyComponents(dataUrl, visionResult.itemCode).then((components) => {
           if (recognitionId === recognitionIdRef.current && components?.length) {
@@ -150,6 +174,7 @@ export function LandingPage() {
     setStatus(undefined)
     setStage('idle')
     setFeedbackDelivery(undefined)
+    setSurveyOpen(false)
   }, [])
 
   const handleCameraCapture = useCallback(
@@ -311,6 +336,15 @@ export function LandingPage() {
               setStage('idle')
             }
           }}
+        />
+      ) : null}
+
+      {surveyOpen && result ? (
+        <UserSurveyModal
+          inputMethod={inputMethod}
+          predictedItemCode={predictedItemCode}
+          destinationBinCode={result.destinationBin.code}
+          onClose={() => setSurveyOpen(false)}
         />
       ) : null}
     </section>
