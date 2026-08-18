@@ -61,15 +61,15 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
         ) : (
           <>
             <header className="survey-header">
-              <p className="eyebrow">Quick check-in</p>
+              <p className="eyebrow">Quick feedbacks</p>
               <h2 id="survey-title">How was your first scan?</h2>
-              <p>Your answers help us improve SỌRT RÁC. All questions are required except the optional Why? field.</p>
+              <p>Your answers help us improve SỌRT RÁC.</p>
             </header>
 
             <div className="survey-question-list">
               <SurveyScaleQuestion
                 number="1"
-                label="How easy was it to scan this item? (Bạn thấy việc quét vật thể này dễ đến mức nào?)"
+                label="How easy was it to get a result for this item? (Bạn thấy việc nhận kết quả cho vật thể này dễ đến mức nào?)"
                 value={scanningEase}
                 leftLabel="Very difficult (Rất khó)"
                 rightLabel="Very easy (Rất dễ)"

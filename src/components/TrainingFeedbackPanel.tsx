@@ -111,7 +111,7 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       <section className="training-feedback feedback-prompt" aria-label="Result correction">
         <span>{predictedLabel ? 'Not the right item?' : 'Couldn’t identify it?'}</span>
         <button type="button" className="feedback-correction-trigger" onClick={() => setOpen(true)}>
-          Correct result
+          <span className="feedback-correction-label">Correct result</span>
         </button>
       </section>
     )

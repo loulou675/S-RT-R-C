@@ -527,16 +527,29 @@ a {
 }
 
 .feedback-correction-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   min-height: 2.15rem;
+  min-width: 8.5rem;
   padding: 0.42rem 0.8rem;
   border: 0;
   border-radius: 999px;
-  color: #ffffff;
-  background: #111111;
+  color: #ffffff !important;
+  background: #111111 !important;
   cursor: pointer;
   font: inherit;
+  font-size: 0.84rem;
   font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
+}
+
+.feedback-correction-label {
+  display: block;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .feedback-editor {
