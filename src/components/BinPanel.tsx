@@ -26,7 +26,7 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
     .filter(Boolean)
     .join(' ')
   const heading = result?.specialHandling ? 'Hazardous' : bin.nameEn
-  const panelInk = bin.code === 'landfill' ? '#fffaf4' : '#171411'
+  const panelInk = bin.code === 'special_handling' ? '#171411' : '#fffaf4'
   const visibleSteps = result?.preparationActions.slice(0, 5) ?? []
   const lastStepForComponent = new Map<string, number>()
 

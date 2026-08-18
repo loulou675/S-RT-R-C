@@ -19,7 +19,7 @@ type RecognitionStage = 'idle' | 'camera' | 'processing'
 const demoItems = [
   { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#f08c21', ink: '#171411' },
   { itemCode: 'fruit_peel', label: 'Organic', color: '#b4b534', ink: '#171411' },
-  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#d14c18', ink: '#171411' },
+  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#bd5961', ink: '#fffaf4' },
   { itemCode: 'cardboard_box', label: 'Paper', color: '#6698cc', ink: '#171411' },
   { itemCode: 'paper_cup', label: 'Landfill', color: '#673c33', ink: '#fffaf4' },
   { itemCode: 'battery', label: 'Hazardous', color: '#f4d68c', ink: '#171411' },

@@ -59,7 +59,7 @@ export const bins: Bin[] = [
     nameVi: 'Nhựa Sạch',
     nameEn: 'Clean Plastic',
     colorName: 'Red',
-    colorHex: '#d14c18',
+    colorHex: '#bd5961',
     iconKey: 'cup',
     descriptionVi: 'Ly nhựa sạch, hộp nhựa sạch, túi nhựa sạch và bao bì sạch.',
     descriptionEn: 'Clean plastic cups, containers, bags, snack packaging and clean foam.',
