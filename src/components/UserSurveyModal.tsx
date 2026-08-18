@@ -69,7 +69,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
             <div className="survey-question-list">
               <SurveyScaleQuestion
                 number="1"
-                label="How easy was it to get a result for this item? (Bạn thấy việc nhận kết quả cho vật thể này dễ đến mức nào?)"
+                label="How easy was it to complete the waste identification process? (Bạn thấy quá trình nhận diện rác dễ đến mức nào?)"
                 value={scanningEase}
                 leftLabel="Very difficult (Rất khó)"
                 rightLabel="Very easy (Rất dễ)"
