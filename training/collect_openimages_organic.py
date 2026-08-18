@@ -233,6 +233,7 @@ def write_component_config() -> None:
         "names:",
         "  0: closure",
         "  1: food",
+        "  2: straw",
     ]
     (COMPONENTS / "data.yaml").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
