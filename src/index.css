@@ -8,9 +8,9 @@
   --cream-deep: #eadfd2;
   --surface: #fffaf4;
   --black: #0d0d0d;
-  --blush: #e36888;
   --tangerine: #f08c21;
   --butter: #f2d88f;
+  --butter-soft: #fbefcc;
   --sea: #6698cc;
   --matcha: #b4b534;
   --ketchup: #d14c18;
@@ -55,7 +55,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid var(--blush);
+  outline: 3px solid var(--tangerine);
   outline-offset: 3px;
 }
 
@@ -118,8 +118,8 @@ a {
 
 .rail button.active {
   color: var(--black);
-  background: var(--blush);
-  box-shadow: 0 0 0 0.25rem rgba(227, 104, 136, 0.22);
+  background: var(--butter);
+  box-shadow: 0 0 0 0.25rem rgba(242, 216, 143, 0.3);
 }
 
 .nav-label {
@@ -182,9 +182,9 @@ a {
   height: 2.75rem;
   border: 0;
   border-radius: 999px;
-  color: var(--ink);
-  background: var(--blush);
-  box-shadow: 0 0.55rem 1.15rem rgba(127, 56, 75, 0.18);
+  color: #ffffff;
+  background: var(--black);
+  box-shadow: 0 0.55rem 1.15rem rgba(0, 0, 0, 0.18);
   cursor: pointer;
 }
 
@@ -264,7 +264,7 @@ a {
 }
 
 .search-suggestions button:hover {
-  background: #f5e4e7;
+  background: var(--butter-soft);
 }
 
 .search-suggestions span,
@@ -697,8 +697,8 @@ a {
 }
 
 .recognition-copy > .button-row .secondary-action {
-  background: #f3d9df;
-  border-color: rgba(227, 104, 136, 0.32);
+  background: var(--surface);
+  border-color: rgba(23, 20, 17, 0.2);
 }
 
 .ghost-action {
@@ -1077,7 +1077,7 @@ button:disabled {
 }
 
 .numbered-step-list > li:nth-child(1) {
-  background: #f3d9df;
+  background: #ffe6be;
 }
 
 .numbered-step-list > li:nth-child(2) {
@@ -1109,7 +1109,7 @@ button:disabled {
 }
 
 .numbered-step-list > li:nth-child(1) .step-number {
-  background: var(--blush);
+  background: var(--butter);
 }
 
 .numbered-step-list > li:nth-child(2) .step-number {
@@ -1891,7 +1891,7 @@ button:disabled {
   border: 1.5px dashed rgba(17, 17, 17, 0.16);
   border-radius: 0.95rem;
   color: #111111;
-  background: #f8e8e9;
+  background: var(--butter-soft);
   cursor: pointer;
 }
 
@@ -2067,7 +2067,7 @@ button:disabled {
     margin-top: -1.28rem;
     color: #111111;
     background: var(--surface);
-    box-shadow: 0 0 0 0.28rem var(--blush), 0 0.55rem 1.25rem rgba(0, 0, 0, 0.24);
+    box-shadow: 0 0 0 0.28rem var(--butter), 0 0.55rem 1.25rem rgba(0, 0, 0, 0.24);
   }
 
   .rail button:nth-child(2) svg {
