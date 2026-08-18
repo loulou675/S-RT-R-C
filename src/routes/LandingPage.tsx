@@ -26,7 +26,8 @@ const demoItems = [
   { itemCode: 'battery', label: 'Hazardous', color: '#f4d68c', ink: '#171411' },
 ]
 
-const surveySessionKey = 'sot-rac-post-scan-survey-v1-shown'
+// Bump this when the survey UI changes so an existing browser session can see the new version once.
+const surveySessionKey = 'sot-rac-post-scan-survey-v2-shown'
 let surveySessionFallbackShown = false
 
 function markSurveyShownForSession() {

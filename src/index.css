@@ -2340,8 +2340,8 @@ button:disabled {
   }
 
   .survey-scale-endpoints {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: baseline;
     grid-column: 1;
     grid-row: 2;
@@ -2360,11 +2360,18 @@ button:disabled {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: clamp(0.56rem, 2.25vw, 0.7rem);
+    white-space: nowrap;
+    font-size: clamp(0.5rem, 2.15vw, 0.68rem);
+  }
+
+  .survey-scale-anchor-left {
+    grid-column: 1;
+    text-align: left;
   }
 
   .survey-scale-anchor-right {
     text-align: right;
+    grid-column: 2;
   }
 
   .survey-question {
