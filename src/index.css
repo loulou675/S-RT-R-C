@@ -2043,14 +2043,31 @@ button:disabled {
   gap: 0.65rem;
 }
 
+.survey-scale-options {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.survey-scale-endpoints {
+  display: contents;
+}
+
 .survey-scale-anchor {
   color: var(--muted-ink);
   font-size: 0.75rem;
   line-height: 1.25;
+  white-space: nowrap;
+}
+
+.survey-scale-anchor-left {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .survey-scale-anchor-right {
   text-align: right;
+  grid-column: 3;
+  grid-row: 1;
 }
 
 .survey-scale-options {
@@ -2322,15 +2339,32 @@ button:disabled {
     width: min(14rem, 80%);
   }
 
-  .survey-scale-anchor,
-  .survey-scale-anchor-right {
-    text-align: left;
+  .survey-scale-endpoints {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    gap: 0.45rem;
   }
 
   .survey-scale-options {
-    order: 2;
+    grid-column: 1;
+    grid-row: 1;
     width: min(14rem, 80%);
     margin: 0 auto;
+  }
+
+  .survey-scale-anchor {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(0.56rem, 2.25vw, 0.7rem);
+  }
+
+  .survey-scale-anchor-right {
+    text-align: right;
   }
 
   .survey-question {

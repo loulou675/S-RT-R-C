@@ -147,7 +147,6 @@ function SurveyScaleQuestion({
           {scaleOptions.map((option) => <span key={option}>{option}</span>)}
         </div>
         <div className="survey-scale-row">
-          <span className="survey-scale-anchor">{leftLabel}</span>
           <div className="survey-scale-options">
             {scaleOptions.map((option) => (
               <label className={value === option ? 'survey-scale-option selected' : 'survey-scale-option'} key={option}>
@@ -156,7 +155,10 @@ function SurveyScaleQuestion({
               </label>
             ))}
           </div>
-          <span className="survey-scale-anchor survey-scale-anchor-right">{rightLabel}</span>
+          <div className="survey-scale-endpoints">
+            <span className="survey-scale-anchor survey-scale-anchor-left">{leftLabel}</span>
+            <span className="survey-scale-anchor survey-scale-anchor-right">{rightLabel}</span>
+          </div>
         </div>
       </div>
     </fieldset>

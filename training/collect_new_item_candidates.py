@@ -42,6 +42,12 @@ TARGETS: dict[str, dict[str, Any]] = {
     "broken_ceramic": {"bin": "landfill", "queries": ["broken ceramic", "broken pottery", "broken plate"], "target": 45},
     "birthday_candle": {"bin": "landfill", "queries": ["birthday candle", "used candle"], "target": 35},
     "phone_charger": {"bin": "special_handling", "queries": ["phone charger", "power adapter", "charging cable"], "target": 45},
+    "pen_marker": {"bin": "landfill", "queries": ["ballpoint pen", "marker pen", "highlighter pen"], "target": 45},
+    "pencil_crayon": {"bin": "landfill", "queries": ["colored pencil", "colour pencil", "crayon"], "target": 45},
+    "eraser": {"bin": "landfill", "queries": ["rubber eraser", "pencil eraser"], "target": 35},
+    "ruler": {"bin": "landfill", "queries": ["plastic ruler", "school ruler"], "target": 35},
+    "glue_tape": {"bin": "landfill", "queries": ["glue stick", "correction tape", "sticky tape"], "target": 35},
+    "notebook": {"bin": "paper_cardboard", "queries": ["school notebook", "exercise book", "spiral notebook"], "target": 45},
 }
 
 CATEGORY_TARGETS: dict[str, list[str]] = {
@@ -50,6 +56,9 @@ CATEGORY_TARGETS: dict[str, list[str]] = {
     "hair_tie": ["Hair_ties", "Scrunchies"],
     "comb": ["Modern_haircombs", "Combs_(hair_ornaments)"],
     "broken_ceramic": ["Broken_ceramics"],
+    "pencil_crayon": ["Colored_pencils", "Crayons"],
+    "eraser": ["Erasers"],
+    "ruler": ["Rulers"],
 }
 
 
@@ -202,6 +211,12 @@ def title_matches(class_code: str, title: str) -> bool:
         "broken_ceramic": (r"broken ceramic|broken pottery|broken plate|ceramic shard|pottery", r"periodic table|chart|table of elements"),
         "birthday_candle": (r"birthday candle|candle", r"cat|dog|balloon|candlelight concert"),
         "phone_charger": (r"phone charger|power adapter|charging cable|usb charger|charger", r"phone only|battery charger review"),
+        "pen_marker": (r"ballpoint pen|marker pen|highlighter|felt.?tip pen", r"pencil|penalty|peninsula|person"),
+        "pencil_crayon": (r"colored pencil|colour pencil|crayon|pencil crayon", r"pencil sketch|pencil drawing|pencil sharpener"),
+        "eraser": (r"eraser|rubber eraser", r"eraserhead|eraser tool software"),
+        "ruler": (r"school ruler|plastic ruler|ruler", r"ruler of|ruler portrait|ruler person"),
+        "glue_tape": (r"glue stick|correction tape|sticky tape|adhesive tape", r"tape measure|tape recording|tape drive"),
+        "notebook": (r"school notebook|exercise book|spiral notebook|notebook", r"laptop|computer|notebook computer"),
     }
     include, exclude = rules[class_code]
     return bool(re.search(include, text)) and not re.search(exclude, text)
@@ -274,6 +289,7 @@ def main() -> None:
     parser.add_argument("--per-class", type=int, default=None)
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--limit-query", type=int, default=80)
+    parser.add_argument("--classes", nargs="*", help="Only collect selected class codes")
     args = parser.parse_args()
 
     existing: dict[str, dict[str, Any]] = {}
@@ -287,6 +303,8 @@ def main() -> None:
 
     all_records = dict(existing)
     for class_code, config in TARGETS.items():
+        if args.classes and class_code not in args.classes:
+            continue
         target = args.per_class or config["target"]
         current = [record for record in all_records.values() if record.get("class") == class_code]
         if len(current) >= target:

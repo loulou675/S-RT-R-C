@@ -78,6 +78,48 @@
       "bin": "special_handling",
       "status": "usable_candidate",
       "note": "Treat as e-waste or special collection, not Landfill."
+    },
+    {
+      "code": "pen_marker",
+      "label": "Pen, marker and highlighter",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include empty, broken and used writing tools; do not include pencils made only of paper and wood without checking local rules."
+    },
+    {
+      "code": "pencil_crayon",
+      "label": "Colored pencil and crayon",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include colored pencils, crayons and short used pieces."
+    },
+    {
+      "code": "eraser",
+      "label": "Eraser",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include worn, dirty and broken erasers."
+    },
+    {
+      "code": "ruler",
+      "label": "Ruler",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Focus on plastic and mixed-material rulers, especially broken ones."
+    },
+    {
+      "code": "glue_tape",
+      "label": "Glue, correction tape and sticky tape",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Keep glue sticks, correction tape and used tape as separate visual variants in the review notes."
+    },
+    {
+      "code": "notebook",
+      "label": "Notebook and exercise book",
+      "bin": "paper_cardboard",
+      "status": "new_candidate",
+      "note": "Collect worn or discarded notebooks, including spiral-bound and partially used examples."
     }
   ]
 }
