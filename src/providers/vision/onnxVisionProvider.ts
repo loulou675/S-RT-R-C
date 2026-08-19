@@ -7,6 +7,14 @@ import { visionLabelSchema } from '../../lib/validation/schemas'
 import { selectEnsembledItem, type ScoredClass } from './ensembleSelection'
 import type { VisionProvider, VisionResult } from './types'
 
+// Static hosts such as GitHub Pages do not provide the isolation headers that
+// SharedArrayBuffer-based WASM workers require. A single WASM thread keeps
+// inference reliable there and on mobile Safari.
+if (typeof crossOriginIsolated === 'undefined' || !crossOriginIsolated) {
+  ort.env.wasm.numThreads = 1
+  ort.env.wasm.proxy = false
+}
+
 interface LabelRecord {
   index: number
   code: string
@@ -28,16 +36,15 @@ export class OnnxVisionProvider implements VisionProvider {
     if (!this.warmupPromise) {
       this.warmupPromise = Promise.all([this.loadSession(), this.loadLabels(), this.loadBinAssets()]).then(
         async ([session, , binAssets]) => {
-          const input = new ort.Tensor('float32', new Float32Array(3 * 224 * 224), [1, 3, 224, 224])
           const sessions = [session, binAssets?.session].filter(
             (entry): entry is ort.InferenceSession => Boolean(entry),
           )
-          await Promise.all(
-            sessions.map((modelSession) => {
-              const inputName = modelSession.inputNames[0]
-              return inputName ? modelSession.run({ [inputName]: input }) : undefined
-            }),
-          )
+          for (const modelSession of sessions) {
+            const inputName = modelSession.inputNames[0]
+            if (!inputName) continue
+            const input = new ort.Tensor('float32', new Float32Array(3 * 224 * 224), [1, 3, 224, 224])
+            await modelSession.run({ [inputName]: input })
+          }
         },
       )
     }
@@ -65,15 +72,13 @@ export class OnnxVisionProvider implements VisionProvider {
     ])
     const normalization = import.meta.env.VITE_AI_NORMALIZATION === 'imagenet' ? 'imagenet' : 'zero-one'
     const tensor = await preprocessImageToTensor(image, { width: 224, height: 224, normalization })
-    const [itemClasses, binClasses] = await Promise.all([
-      this.runClassifier(session, labels, tensor),
-      binAssets
-        ? this.runClassifier(binAssets.session, binAssets.labels, tensor).catch((error) => {
-            console.warn('Bin classifier failed; falling back to item-only inference.', error)
-            return undefined
-          })
-        : undefined,
-    ])
+    const itemClasses = await this.runClassifier(session, labels, tensor)
+    const binClasses = binAssets
+      ? await this.runClassifier(binAssets.session, binAssets.labels, tensor).catch((error) => {
+          console.warn('Bin classifier failed; falling back to item-only inference.', error)
+          return undefined
+        })
+      : undefined
 
     if (binClasses) {
       return this.resolveEnsembledResult(itemClasses, binClasses)
