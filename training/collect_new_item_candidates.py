@@ -48,6 +48,17 @@ TARGETS: dict[str, dict[str, Any]] = {
     "ruler": {"bin": "landfill", "queries": ["plastic ruler", "school ruler"], "target": 35},
     "glue_tape": {"bin": "landfill", "queries": ["glue stick", "correction tape", "sticky tape"], "target": 35},
     "notebook": {"bin": "paper_cardboard", "queries": ["school notebook", "exercise book", "spiral notebook"], "target": 45},
+    "drink_carton": {"bin": "paper_cardboard", "queries": ["empty milk carton", "beverage carton packaging", "juice carton package"], "target": 70},
+    "plastic_takeaway_cup": {"bin": "clean_plastic", "queries": ["empty plastic takeaway cup", "bubble tea plastic cup", "iced coffee plastic cup"], "target": 70},
+    "plastic_food_container": {"bin": "clean_plastic", "queries": ["empty plastic food container", "clear takeaway food container", "plastic meal prep container"], "target": 60},
+    "tissue": {"bin": "landfill", "queries": ["used facial tissue", "crumpled tissue paper", "discarded paper tissue"], "target": 60},
+    "medical_mask": {"bin": "landfill", "queries": ["discarded medical mask", "used surgical face mask", "disposable face mask waste"], "target": 60},
+    "aerosol_can": {"bin": "special_handling", "queries": ["empty aerosol spray can", "discarded aerosol can", "spray paint can"], "target": 60},
+    "disposable_diaper": {"bin": "landfill", "queries": ["disposable diaper waste", "used diaper waste", "discarded baby diaper"], "target": 55},
+    "sanitary_pad": {"bin": "landfill", "queries": ["sanitary pad product", "menstrual pad packaging", "disposable sanitary napkin"], "target": 55},
+    "snack_wrapper": {"bin": "clean_plastic", "queries": ["empty snack wrapper", "discarded chip packet", "candy wrapper waste"], "target": 65},
+    "styrofoam_container": {"bin": "clean_plastic", "queries": ["styrofoam food container", "foam takeaway box", "polystyrene food box"], "target": 60},
+    "paperboard_packaging": {"bin": "paper_cardboard", "queries": ["empty paperboard food box", "paperboard product packaging", "folding carton packaging"], "target": 65},
 }
 
 CATEGORY_TARGETS: dict[str, list[str]] = {
@@ -59,6 +70,10 @@ CATEGORY_TARGETS: dict[str, list[str]] = {
     "pencil_crayon": ["Colored_pencils", "Crayons"],
     "eraser": ["Erasers"],
     "ruler": ["Rulers"],
+    "medical_mask": ["Disposable_face_masks", "Surgical_masks"],
+    "aerosol_can": ["Aerosol_cans"],
+    "drink_carton": ["Beverage_cartons"],
+    "styrofoam_container": ["Expanded_polystyrene_food_containers"],
 }
 
 
@@ -217,6 +232,17 @@ def title_matches(class_code: str, title: str) -> bool:
         "ruler": (r"school ruler|plastic ruler|ruler", r"ruler of|ruler portrait|ruler person"),
         "glue_tape": (r"glue stick|correction tape|sticky tape|adhesive tape", r"tape measure|tape recording|tape drive"),
         "notebook": (r"school notebook|exercise book|spiral notebook|notebook", r"laptop|computer|notebook computer"),
+        "drink_carton": (r"milk carton|beverage carton|juice carton|drink carton", r"cartoon|drawing|illustration|milk bottle"),
+        "plastic_takeaway_cup": (r"plastic (takeaway|takeout|drink|coffee) cup|bubble tea cup|iced coffee cup", r"paper cup|ceramic|glass cup|trophy"),
+        "plastic_food_container": (r"plastic food container|takeaway container|takeout container|meal prep container|plastic lunch box", r"paper|glass|metal container"),
+        "tissue": (r"facial tissue|tissue paper|paper tissue", r"tissue culture|human tissue|microscope|histology"),
+        "medical_mask": (r"medical mask|surgical mask|disposable face mask", r"oxygen mask|costume|theatre|painting"),
+        "aerosol_can": (r"aerosol can|spray can|spray paint can", r"spray bottle|watering can"),
+        "disposable_diaper": (r"disposable diaper|baby diaper|nappy", r"diaper bag|diaper cake|cloth diaper"),
+        "sanitary_pad": (r"sanitary pad|sanitary napkin|menstrual pad", r"heating pad|mouse pad|shoulder pad"),
+        "snack_wrapper": (r"snack wrapper|chip packet|chips packet|candy wrapper|food wrapper", r"gift wrapper|wrapper software"),
+        "styrofoam_container": (r"styrofoam.*container|foam.*food.*(box|container)|polystyrene.*food.*(box|container)", r"insulation|construction|packing peanuts"),
+        "paperboard_packaging": (r"paperboard.*(box|packaging)|folding carton|cardboard product box", r"shipping box|wooden|plastic"),
     }
     include, exclude = rules[class_code]
     return bool(re.search(include, text)) and not re.search(exclude, text)

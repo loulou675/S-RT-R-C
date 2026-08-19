@@ -17,6 +17,7 @@ SOURCE = ROOT / "real image"
 DATASET = ROOT / "training" / "classifier_dataset"
 CONDITION_DATASET = ROOT / "training" / "condition_dataset"
 MANIFEST = ROOT / "training" / "source_manifests" / "real-image-import.jsonl"
+MANUAL_LABELS = ROOT / "training" / "real_image_manual_labels.json"
 CLASSES = json.loads((ROOT / "training" / "classes.json").read_text(encoding="utf-8"))["classes"]
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
 
@@ -176,6 +177,90 @@ def save_normalized(path: Path, target_class: str, split: str) -> tuple[Path, st
     return destination, digest
 
 
+def save_condition_only(path: Path, condition: str, split: str) -> tuple[Path, str]:
+    image = open_image(path)
+    image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
+
+    with tempfile.NamedTemporaryFile(suffix=".jpg") as handle:
+        image.save(handle.name, "JPEG", quality=90, optimize=True)
+        payload = Path(handle.name).read_bytes()
+
+    digest = hashlib.sha256(payload).hexdigest()
+    destination = CONDITION_DATASET / split / condition / f"real_condition_{digest[:16]}.jpg"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if not destination.exists():
+        destination.write_bytes(payload)
+    return destination, digest
+
+
+def import_manual_records(records: list[dict[str, object]], skipped: list[str]) -> None:
+    if not MANUAL_LABELS.exists():
+        return
+
+    payload = json.loads(MANUAL_LABELS.read_text(encoding="utf-8"))
+    for entry in payload.get("itemRecords", []):
+        target_class = entry["class"]
+        split = entry.get("split", "train")
+        object_group = entry.get("group")
+        visible_condition = entry.get("condition")
+        if target_class not in CLASSES:
+            raise SystemExit(f"Unknown manual class: {target_class}")
+        for relative_path in entry.get("files", []):
+            path = SOURCE / relative_path
+            if not path.exists() or path.suffix.lower() not in IMAGE_SUFFIXES:
+                skipped.append(str(path.relative_to(ROOT)))
+                continue
+            destination, digest = save_normalized(path, target_class, split)
+            condition_destination = None
+            if visible_condition in {"clean_empty", "dirty_residue"}:
+                condition_destination = (
+                    CONDITION_DATASET / split / visible_condition / f"real_condition_{digest[:16]}.jpg"
+                )
+                condition_destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(destination, condition_destination)
+            records.append(
+                {
+                    "source": str(path.relative_to(ROOT)),
+                    "destination": str(destination.relative_to(ROOT)),
+                    "class": target_class,
+                    "split": split,
+                    "sha256": digest,
+                    "objectGroup": object_group,
+                    "visibleCondition": visible_condition,
+                    "conditionDestination": (
+                        str(condition_destination.relative_to(ROOT)) if condition_destination else None
+                    ),
+                    "labelSource": "reviewed-manual-manifest",
+                }
+            )
+
+    for entry in payload.get("conditionOnlyRecords", []):
+        condition = entry["condition"]
+        split = entry.get("split", "train")
+        object_group = entry.get("group")
+        if condition not in {"clean_empty", "dirty_residue"}:
+            raise SystemExit(f"Unknown visible condition: {condition}")
+        for relative_path in entry.get("files", []):
+            path = SOURCE / relative_path
+            if not path.exists() or path.suffix.lower() not in IMAGE_SUFFIXES:
+                skipped.append(str(path.relative_to(ROOT)))
+                continue
+            destination, digest = save_condition_only(path, condition, split)
+            records.append(
+                {
+                    "source": str(path.relative_to(ROOT)),
+                    "destination": None,
+                    "class": None,
+                    "split": split,
+                    "sha256": digest,
+                    "objectGroup": object_group,
+                    "visibleCondition": condition,
+                    "conditionDestination": str(destination.relative_to(ROOT)),
+                    "labelSource": "reviewed-condition-manifest",
+                }
+            )
+
+
 def relabel_existing_lids(records: list[dict[str, object]]) -> None:
     unknown = DATASET / "train" / "unknown"
     if not unknown.exists():
@@ -281,12 +366,16 @@ def main() -> None:
                 }
             )
 
+    import_manual_records(records, skipped)
+
     relabel_existing_lids(records)
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text("".join(json.dumps(record, ensure_ascii=False) + "\n" for record in records), encoding="utf-8")
 
     counts: dict[tuple[str, str], int] = {}
     for record in records:
+        if record["class"] is None:
+            continue
         key = (str(record["split"]), str(record["class"]))
         counts[key] = counts.get(key, 0) + 1
     for (split, class_name), count in sorted(counts.items()):

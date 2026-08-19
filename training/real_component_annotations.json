@@ -80,7 +80,7 @@
     {"source":"real image/Clean Plastic/plastic_food_container/obj_clear_food_container__618981808_17938265583130145_7494119533249868753_n.jpg","split":"train","group":"empty_container_negative","boxes":[]},
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__655143239_18000424661866028_6770491966775909461_n.jpg","split":"train","group":"empty_container_negative","boxes":[]},
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__709862597_17873432415671855_368979356229111986_n.webp","split":"train","group":"empty_container_negative","boxes":[]},
-    {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp","split":"train","group":"empty_container_negative","boxes":[]},
+    {"source":"real image/Clean:Dirty/Dirty/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp","split":"train","group":"dirty_container_negative","boxes":[]},
     {"source":"real image/Clean Plastic/plastic_food_container/obj_icecream_tub_turquoise__588370518_17934099315112371_5793710024788888233_n.jpg","split":"train","group":"empty_container_negative","boxes":[]},
 
     {"source":"real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9313.heic","split":"train","group":"paper_cup_parts_session_b","boxes":[{"class":"closure","xywhn":[0.53,0.68,0.61,0.20]},{"class":"straw","xywhn":[0.60,0.39,0.16,0.55]}]},

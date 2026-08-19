@@ -13,10 +13,31 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "training" / "candidate_dataset" / "new_items"
 DATASET = ROOT / "training" / "classifier_dataset"
 MANIFEST = ROOT / "training" / "source_manifests" / "new-item-training-import.jsonl"
-ACTIVE_CLASSES = {"hair_clip", "hair_tie", "pen_marker", "phone_case"}
+ACTIVE_CLASSES = {
+    "aerosol_can",
+    "disposable_diaper",
+    "drink_carton",
+    "hair_clip",
+    "hair_tie",
+    "medical_mask",
+    "paperboard_packaging",
+    "pen_marker",
+    "phone_case",
+    "plastic_food_container",
+    "plastic_takeaway_cup",
+    "sanitary_pad",
+    "snack_wrapper",
+    "styrofoam_container",
+    "tissue",
+}
+NEW_WEAK_CLASSES = ACTIVE_CLASSES - {"hair_clip", "hair_tie", "pen_marker", "phone_case"}
 
 
 def split_for(class_name: str, digest: str, index: int, count: int) -> str:
+    if class_name in NEW_WEAK_CLASSES:
+        # Internet additions improve training diversity but never redefine the
+        # independent phone/TACO validation and test sets.
+        return "train"
     if class_name == "phone_case":
         # The real-image folder already supplies one physical case for train.
         return "test"

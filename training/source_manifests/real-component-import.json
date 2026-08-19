@@ -1036,11 +1036,11 @@
       "boxes": []
     },
     {
-      "source": "real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp",
-      "dataset_image": "training/component_dataset/images/train/real_component_empty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_f422c1bc92.jpg",
-      "dataset_label": "training/component_dataset/labels/train/real_component_empty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_f422c1bc92.txt",
+      "source": "real image/Clean:Dirty/Dirty/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp",
+      "dataset_image": "training/component_dataset/images/train/real_component_dirty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_5c9f32517e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_dirty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_5c9f32517e.txt",
       "split": "train",
-      "group": "empty_container_negative",
+      "group": "dirty_container_negative",
       "boxes": []
     },
     {
