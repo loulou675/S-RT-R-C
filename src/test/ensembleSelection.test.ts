@@ -18,7 +18,6 @@ describe('selectEnsembledItem', () => {
         { code: 'organic', score: 0.003 },
         { code: 'unknown', score: 0.002 },
       ],
-      0.49,
     )
 
     expect(result?.binCode).toBe('bottle_can')
@@ -57,4 +56,3 @@ describe('selectEnsembledItem', () => {
     expect(result).toBeUndefined()
   })
 })
-

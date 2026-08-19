@@ -17,7 +17,7 @@ export interface EnsembleSelection {
 export function selectEnsembledItem(
   itemClasses: ScoredClass[],
   binClasses: ScoredClass[],
-  directBinWeight = 0.49,
+  directBinWeight = 0.53,
 ): EnsembleSelection | undefined {
   const itemProbabilities = normalizeScores(itemClasses)
   const binProbabilities = normalizeScores(binClasses)
@@ -74,4 +74,3 @@ function normalizeScores(classes: ScoredClass[]) {
   const exponentialSum = exponentials.reduce((total, score) => total + score, 0)
   return classes.map((entry, index) => ({ ...entry, score: (exponentials[index] ?? 0) / exponentialSum }))
 }
-

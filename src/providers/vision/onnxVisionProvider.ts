@@ -83,7 +83,7 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private resolveEnsembledResult(itemClasses: ScoredClass[], binClasses: ScoredClass[]): VisionResult {
-    const directBinWeight = Number(import.meta.env.VITE_BIN_ENSEMBLE_WEIGHT ?? 0.49)
+    const directBinWeight = Number(import.meta.env.VITE_BIN_ENSEMBLE_WEIGHT ?? 0.53)
     const selected = selectEnsembledItem(itemClasses, binClasses, directBinWeight)
     const minBinAcceptance = Number(import.meta.env.VITE_BIN_MIN_ACCEPTANCE ?? 0.45)
     const minBinMargin = Number(import.meta.env.VITE_BIN_MIN_MARGIN ?? 0.05)

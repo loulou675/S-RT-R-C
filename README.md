@@ -98,6 +98,10 @@ VITE_AI_MIN_ACCEPTANCE=0.55
 VITE_AI_MIN_MARGIN=0.15
 VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE=0.8
 VITE_AI_TIMEOUT_MS=10000
+VITE_BIN_MODEL_ENABLED=true
+VITE_BIN_MODEL_PATH=/models/waste_bin_classifier.onnx
+VITE_BIN_LABELS_PATH=/models/bin_labels.json
+VITE_BIN_ENSEMBLE_WEIGHT=0.53
 VITE_TRAINING_MODE=false
 VITE_RESULT_FEEDBACK=true
 VITE_FEEDBACK_AUTO_UPLOAD=true
@@ -327,7 +331,7 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The checked-in 33-class ONNX model is an MVP checkpoint, not a production safety system.
+- The checked-in 36-class item model and 7-class bin model are validated MVP checkpoints, not a production safety system.
 - Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
 - Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.
