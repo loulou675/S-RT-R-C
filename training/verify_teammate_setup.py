@@ -44,8 +44,8 @@ def main() -> None:
         raise SystemExit(1)
 
     configured = json.loads(classes_path.read_text(encoding="utf-8"))["classes"]
-    if len(configured) != 36:
-        failures.append(f"Expected 36 classifier classes, found {len(configured)}.")
+    if len(configured) != 40:
+        failures.append(f"Expected 40 classifier classes, found {len(configured)}.")
 
     dataset = ROOT / "training" / "classifier_dataset"
     total_images = 0
@@ -76,8 +76,14 @@ def main() -> None:
     if total_images == 0:
         failures.append("Classifier dataset contains no images.")
 
-    require_file(ROOT / "training" / "checkpoints" / "waste_classifier.pt", failures, 1_000_000)
-    require_file(ROOT / "training" / "checkpoints" / "waste_classifier_36_seed.pt", failures, 1_000_000)
+    require_file(
+        ROOT
+        / "training"
+        / "checkpoints"
+        / "candidate_v23_full40_seed_frozen_sparse_search.pt",
+        failures,
+        1_000_000,
+    )
     require_file(ROOT / "public" / "models" / "waste_classifier.onnx", failures, 1_000_000)
 
     labels_path = ROOT / "public" / "models" / "labels.json"
@@ -85,7 +91,7 @@ def main() -> None:
     if labels_path.is_file():
         model_codes = [entry["code"] for entry in json.loads(labels_path.read_text(encoding="utf-8"))["labels"]]
         if model_codes != sorted(configured):
-            failures.append("public/models/labels.json does not match the 36-class dataset order.")
+            failures.append("public/models/labels.json does not match the 40-class dataset order.")
 
     if args.with_components:
         component_dataset = ROOT / "training" / "component_dataset"

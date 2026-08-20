@@ -70,7 +70,12 @@ def main() -> None:
     parser.add_argument(
         "--model",
         type=Path,
-        default=ROOT / "training" / "checkpoints" / "waste_classifier.pt",
+        default=(
+            ROOT
+            / "training"
+            / "checkpoints"
+            / "candidate_v23_full40_seed_frozen_sparse_search.pt"
+        ),
     )
     parser.add_argument("--data", type=Path, default=ROOT / "training" / "classifier_dataset" / "test")
     parser.add_argument("--output", type=Path, default=None)
@@ -112,10 +117,31 @@ def main() -> None:
     bin_confusion: dict[str, Counter[str]] = defaultdict(Counter)
     grouped_bin_total_correct = 0
     grouped_bin_confusion: dict[str, Counter[str]] = defaultdict(Counter)
+    sample_predictions: list[dict[str, object]] = []
 
-    for (_, expected), result in zip(samples, results, strict=True):
+    for (path, expected), result in zip(samples, results, strict=True):
         predicted = model.names[int(result.probs.top1)]
         confidence = float(result.probs.top1conf)
+        top5_indices = [int(index) for index in result.probs.top5]
+        top5_confidences = [float(value) for value in result.probs.top5conf]
+        sample_predictions.append(
+            {
+                "path": str(path),
+                "expected": expected,
+                "predicted": predicted,
+                "correct": predicted == expected,
+                "confidence": round(confidence, 6),
+                "top5": [
+                    {
+                        "class": model.names[index],
+                        "confidence": round(top5_confidence, 6),
+                    }
+                    for index, top5_confidence in zip(
+                        top5_indices, top5_confidences, strict=True
+                    )
+                ],
+            }
+        )
         per_class[expected][predicted] += 1
         confidences[expected].append(confidence)
         if predicted == expected:
@@ -217,6 +243,7 @@ def main() -> None:
         "per_bin": bin_rows,
         "grouped_per_bin": grouped_bin_rows,
         "per_class": class_rows,
+        "sample_predictions": sample_predictions,
         "top_confusions": [
             {"expected": expected, "predicted": predicted, "count": count}
             for (expected, predicted), count in errors.most_common(20)

@@ -24,8 +24,12 @@ training/classifier_dataset/
 training/bin_dataset/
 training/bin_dataset_core/
 training/checkpoints/*
-!training/checkpoints/waste_classifier.pt
+!training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt
+!training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.json
 !training/checkpoints/waste_bin_classifier.pt
+training/candidate_datasets/
+training/external_sources/
+training/model_archive/
 training/review_sheets/
 training/review_sheets_taco/
 training/review_rejected/

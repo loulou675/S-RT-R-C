@@ -16,8 +16,8 @@ SKIP_NAMES = {".DS_Store", ".cache", "__pycache__"}
 CORE_PATHS = [
     "training/classifier_dataset",
     "training/condition_dataset",
-    "training/checkpoints/waste_classifier.pt",
-    "training/checkpoints/waste_classifier_36_seed.pt",
+    "training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt",
+    "training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.json",
     "training/classes.json",
     "training/requirements-training.txt",
     "training/source_manifests",
@@ -114,7 +114,7 @@ def main() -> None:
     guide = ROOT / "training" / "TEAMMATE_SETUP.md"
     (output_dir / "START_HERE.md").write_text(guide.read_text(encoding="utf-8"), encoding="utf-8")
     bundles = [
-        create_bundle(output_dir / "SORT_RAC_AI_CORE_36CLASS.zip", "core-36-class", CORE_PATHS)
+        create_bundle(output_dir / "SORT_RAC_AI_CORE_40CLASS_V23.zip", "core-40-class-v23", CORE_PATHS)
     ]
     if not args.core_only:
         bundles.append(

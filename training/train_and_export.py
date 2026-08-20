@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import shutil
 from pathlib import Path
 
+# Ultralytics imports Polars for the first time when saving an epoch. On some
+# macOS/cloud-backed filesystems that late binary load can time out after a long
+# MPS training epoch. Load it before training so a dependency problem fails fast
+# and completed epochs are not lost.
+import polars  # noqa: F401
 from ultralytics import YOLO
 
 
@@ -28,6 +34,12 @@ def main() -> None:
         help="Ultralytics optimizer name, for example AdamW or SGD. Defaults to auto.",
     )
     parser.add_argument("--freeze", type=int, default=None)
+    parser.add_argument(
+        "--save-period",
+        type=int,
+        default=-1,
+        help="Save an epoch checkpoint every N epochs. Use 1 for controlled top-1 selection.",
+    )
     parser.add_argument("--device", default=None, help="Examples: cpu, mps, 0")
     parser.add_argument("--name", default="waste-classifier-next")
     parser.add_argument("--classes-file", type=Path, default=ROOT / "training" / "classes.json")
@@ -49,6 +61,7 @@ def main() -> None:
         "seed": 42,
         "deterministic": True,
         "pretrained": True,
+        "save_period": args.save_period,
     }
     if args.device:
         train_options["device"] = args.device
@@ -64,11 +77,31 @@ def main() -> None:
         train_options["freeze"] = args.freeze
     trainer.train(**train_options)
 
-    best_path = runs / args.name / "weights" / "best.pt"
+    run_dir = runs / args.name
+    best_path = run_dir / "weights" / "best.pt"
     if not best_path.exists():
         raise SystemExit(f"Training finished but best checkpoint is missing: {best_path}")
 
-    best = YOLO(str(best_path))
+    # Ultralytics classification fitness is primarily top-5 accuracy, which is
+    # not the acceptance metric for this project. When epoch checkpoints are
+    # available, select the highest validation top-1 checkpoint explicitly.
+    selected_path = best_path
+    results_path = run_dir / "results.csv"
+    if args.save_period == 1 and results_path.exists():
+        with results_path.open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        if rows:
+            top1_row = max(rows, key=lambda row: float(row["metrics/accuracy_top1"]))
+            epoch_number = int(float(top1_row["epoch"]))
+            epoch_path = run_dir / "weights" / f"epoch{epoch_number - 1}.pt"
+            if epoch_path.exists():
+                selected_path = epoch_path
+                print(
+                    f"Selected epoch {epoch_number} by validation top-1 "
+                    f"({float(top1_row['metrics/accuracy_top1']):.3%})."
+                )
+
+    best = YOLO(str(selected_path))
     best.val(data=str(args.data.resolve()), split="test", imgsz=224)
     exported_path = Path(best.export(format="onnx", imgsz=224, batch=1, dynamic=False, simplify=True))
 
@@ -82,7 +115,6 @@ def main() -> None:
         raise SystemExit(f"Class order mismatch. Model: {ordered_names}. Dataset folders: {expected}")
 
     labels = {"labels": [{"index": index, "code": code} for index, code in enumerate(ordered_names)]}
-    run_dir = best_path.parents[1]
     (run_dir / "labels.json").write_text(json.dumps(labels, indent=2) + "\n", encoding="utf-8")
 
     print("\nCandidate model:")

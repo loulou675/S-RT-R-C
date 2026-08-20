@@ -1,4 +1,8 @@
-"""Import reviewed internet candidates for the four active new item classes."""
+"""Import license-cleared internet candidates into training only.
+
+Validation and test remain independent real/phone imagery; web images must not
+inflate evaluation metrics for either existing weak classes or new classes.
+"""
 
 from __future__ import annotations
 
@@ -20,6 +24,7 @@ ACTIVE_CLASSES = {
     "hair_clip",
     "hair_tie",
     "medical_mask",
+    "light_bulb",
     "paperboard_packaging",
     "pen_marker",
     "phone_case",
@@ -30,21 +35,12 @@ ACTIVE_CLASSES = {
     "styrofoam_container",
     "tissue",
 }
-NEW_WEAK_CLASSES = ACTIVE_CLASSES - {"hair_clip", "hair_tie", "pen_marker", "phone_case"}
+COLLECTOR_MANIFEST = ROOT / "training" / "source_manifests" / "new-item-candidates.jsonl"
 
 
-def split_for(class_name: str, digest: str, index: int, count: int) -> str:
-    if class_name in NEW_WEAK_CLASSES:
-        # Internet additions improve training diversity but never redefine the
-        # independent phone/TACO validation and test sets.
-        return "train"
-    if class_name == "phone_case":
-        # The real-image folder already supplies one physical case for train.
-        return "test"
-    if count <= 3:
-        return ("train", "val", "test")[index % 3]
-    bucket = int(digest[:8], 16) % 100
-    return "train" if bucket < 70 else "val" if bucket < 85 else "test"
+def approved_license(record: dict[str, object]) -> bool:
+    license_name = str(record.get("license") or "").strip().casefold()
+    return license_name not in {"", "unknown_review_needed", "per_file_review_required"}
 
 
 def main() -> None:
@@ -52,10 +48,25 @@ def main() -> None:
         for path in (DATASET / split).glob("*/internet_new_*.jpg"):
             path.unlink()
 
-    records: list[dict[str, str]] = []
+    source_records: dict[str, dict[str, object]] = {}
+    if COLLECTOR_MANIFEST.exists():
+        for line in COLLECTOR_MANIFEST.read_text(encoding="utf-8").splitlines():
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            source_records[str(record.get("path", ""))] = record
+
+    records: list[dict[str, object]] = []
     for class_name in sorted(ACTIVE_CLASSES):
+        for split in ("train", "val", "test"):
+            (DATASET / split / class_name).mkdir(parents=True, exist_ok=True)
         paths = sorted((SOURCE / class_name).glob("*.jpg"))
-        for index, path in enumerate(paths):
+        for path in paths:
+            source_key = path.relative_to(ROOT).as_posix()
+            source_record = source_records.get(source_key, {})
+            if not approved_license(source_record):
+                continue
             with Image.open(path) as source_image:
                 image = ImageOps.exif_transpose(source_image).convert("RGB")
             image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
@@ -64,17 +75,21 @@ def main() -> None:
             payload = payload_path.read_bytes()
             payload_path.unlink()
             digest = hashlib.sha256(payload).hexdigest()
-            split = split_for(class_name, digest, index, len(paths))
+            split = "train"
             destination = DATASET / split / class_name / f"internet_new_{class_name}_{digest[:16]}.jpg"
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(payload)
             records.append(
                 {
-                    "source": str(path.relative_to(ROOT)),
+                    "source": source_key,
                     "destination": str(destination.relative_to(ROOT)),
                     "class": class_name,
                     "split": split,
                     "sha256": digest,
+                    "sourcePage": source_record.get("sourcePage"),
+                    "sourceFile": source_record.get("sourceFile"),
+                    "license": source_record.get("license"),
+                    "creator": source_record.get("creator"),
                 }
             )
 

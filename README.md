@@ -331,7 +331,7 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The checked-in 36-class item model and 7-class bin model are validated MVP checkpoints, not a production safety system.
+- The checked-in 40-class v23 item model and 7-class bin model are candidate MVP checkpoints, not a production safety system.
 - Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
 - Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.

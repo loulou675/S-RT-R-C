@@ -1,0 +1,477 @@
+{
+  "model": "training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt",
+  "data": "training/candidate_datasets/candidate_v22_full40_balanced_with_sparse_organic_feedback/test",
+  "view_order": [
+    "center224",
+    "center224_hflip",
+    "fivecrop_top_left",
+    "fivecrop_top_right",
+    "fivecrop_bottom_left",
+    "fivecrop_bottom_right",
+    "fivecrop_center",
+    "fivecrop_top_left_hflip",
+    "fivecrop_top_right_hflip",
+    "fivecrop_bottom_left_hflip",
+    "fivecrop_bottom_right_hflip",
+    "fivecrop_center_hflip",
+    "square224",
+    "square224_hflip",
+    "letterbox_gray",
+    "letterbox_gray_hflip",
+    "letterbox_white",
+    "letterbox_black",
+    "center_rotate_plus_8",
+    "center_rotate_minus_8"
+  ],
+  "best": {
+    "group": "center_square",
+    "aggregation": "probability",
+    "views": [
+      0,
+      1,
+      12,
+      13
+    ],
+    "correct": 223,
+    "images": 326,
+    "top1": 0.6840490797546013
+  },
+  "best_group_weights": null,
+  "group_weight_search": [],
+  "results": [
+    {
+      "group": "center",
+      "aggregation": "probability",
+      "views": [
+        0
+      ],
+      "correct": 214,
+      "images": 326,
+      "top1": 0.656441717791411
+    },
+    {
+      "group": "center",
+      "aggregation": "logit",
+      "views": [
+        0
+      ],
+      "correct": 214,
+      "images": 326,
+      "top1": 0.656441717791411
+    },
+    {
+      "group": "center_flip",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "center_flip",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "five_crop",
+      "aggregation": "probability",
+      "views": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "correct": 214,
+      "images": 326,
+      "top1": 0.656441717791411
+    },
+    {
+      "group": "five_crop",
+      "aggregation": "logit",
+      "views": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "correct": 215,
+      "images": 326,
+      "top1": 0.6595092024539877
+    },
+    {
+      "group": "ten_crop",
+      "aggregation": "probability",
+      "views": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "correct": 222,
+      "images": 326,
+      "top1": 0.6809815950920245
+    },
+    {
+      "group": "ten_crop",
+      "aggregation": "logit",
+      "views": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "correct": 216,
+      "images": 326,
+      "top1": 0.6625766871165644
+    },
+    {
+      "group": "center_plus_five",
+      "aggregation": "probability",
+      "views": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "center_plus_five",
+      "aggregation": "logit",
+      "views": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "correct": 215,
+      "images": 326,
+      "top1": 0.6595092024539877
+    },
+    {
+      "group": "center_plus_ten",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "center_plus_ten",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "correct": 213,
+      "images": 326,
+      "top1": 0.6533742331288344
+    },
+    {
+      "group": "square",
+      "aggregation": "probability",
+      "views": [
+        12
+      ],
+      "correct": 213,
+      "images": 326,
+      "top1": 0.6533742331288344
+    },
+    {
+      "group": "square",
+      "aggregation": "logit",
+      "views": [
+        12
+      ],
+      "correct": 213,
+      "images": 326,
+      "top1": 0.6533742331288344
+    },
+    {
+      "group": "square_flip",
+      "aggregation": "probability",
+      "views": [
+        12,
+        13
+      ],
+      "correct": 216,
+      "images": 326,
+      "top1": 0.6625766871165644
+    },
+    {
+      "group": "square_flip",
+      "aggregation": "logit",
+      "views": [
+        12,
+        13
+      ],
+      "correct": 215,
+      "images": 326,
+      "top1": 0.6595092024539877
+    },
+    {
+      "group": "center_square",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        12,
+        13
+      ],
+      "correct": 223,
+      "images": 326,
+      "top1": 0.6840490797546013
+    },
+    {
+      "group": "center_square",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        12,
+        13
+      ],
+      "correct": 221,
+      "images": 326,
+      "top1": 0.6779141104294478
+    },
+    {
+      "group": "all_views",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "correct": 220,
+      "images": 326,
+      "top1": 0.6748466257668712
+    },
+    {
+      "group": "all_views",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "correct": 216,
+      "images": 326,
+      "top1": 0.6625766871165644
+    },
+    {
+      "group": "letterbox",
+      "aggregation": "probability",
+      "views": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "correct": 187,
+      "images": 326,
+      "top1": 0.5736196319018405
+    },
+    {
+      "group": "letterbox",
+      "aggregation": "logit",
+      "views": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "correct": 186,
+      "images": 326,
+      "top1": 0.5705521472392638
+    },
+    {
+      "group": "center_letterbox",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        14,
+        15,
+        16,
+        17
+      ],
+      "correct": 201,
+      "images": 326,
+      "top1": 0.6165644171779141
+    },
+    {
+      "group": "center_letterbox",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        14,
+        15,
+        16,
+        17
+      ],
+      "correct": 205,
+      "images": 326,
+      "top1": 0.6288343558282209
+    },
+    {
+      "group": "rotated_center",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        18,
+        19
+      ],
+      "correct": 221,
+      "images": 326,
+      "top1": 0.6779141104294478
+    },
+    {
+      "group": "rotated_center",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        18,
+        19
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "extended_all",
+      "aggregation": "probability",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "correct": 219,
+      "images": 326,
+      "top1": 0.6717791411042945
+    },
+    {
+      "group": "extended_all",
+      "aggregation": "logit",
+      "views": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "correct": 217,
+      "images": 326,
+      "top1": 0.6656441717791411
+    }
+  ]
+}

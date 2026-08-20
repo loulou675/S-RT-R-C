@@ -11,7 +11,7 @@ Khong copy rieng folder `src`; can lay toan bo repository.
 
 ## 2. Nhan hai file ZIP
 
-- `SORT_RAC_AI_CORE_36CLASS.zip`: dataset classifier 36 lop, checkpoint co the
+- `SORT_RAC_AI_CORE_40CLASS_V23.zip`: dataset classifier 40 lop, checkpoint co the
   train tiep, condition samples va model dang dung.
 - `SORT_RAC_AI_PARTS.zip`: dataset box cho `food`/`closure`, checkpoint detector
   va model parts dang dung.
@@ -22,7 +22,7 @@ OneDrive, AirDrop hoac o cung. Giai nen **tai repository root**, la folder co
 
 ```text
 training/classifier_dataset/train/
-training/checkpoints/waste_classifier.pt
+training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt
 training/component_dataset/data.yaml
 training/checkpoints/component_detector.pt
 ```
@@ -61,7 +61,7 @@ Mac Apple Silicon:
 
 ```bash
 .training-venv/bin/python training/train_and_export.py \
-  --model training/checkpoints/waste_classifier.pt \
+  --model training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt \
   --epochs 30 --batch 16 --device mps --name teammate-candidate-v1
 ```
 

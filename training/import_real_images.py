@@ -33,6 +33,7 @@ OBJECT_SPLIT_OVERRIDES = {
     **{f"pen_{index:02d}": "val" for index in range(7, 9)},
     **{f"pen_{index:02d}": "test" for index in range(9, 11)},
     "phone_case_session_a": "train",
+    "cosmetic_jar_green": "test",
 }
 
 SOURCE_TO_CLASS = {

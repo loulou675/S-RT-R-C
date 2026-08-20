@@ -5,6 +5,7 @@ import { AppError } from '../../lib/errors'
 import { preprocessImageToTensor } from '../../lib/image-processing/preprocess'
 import { visionLabelSchema } from '../../lib/validation/schemas'
 import { selectEnsembledItem, type ScoredClass } from './ensembleSelection'
+import { runOnnxExclusive } from './onnxRuntimeQueue'
 import type { VisionProvider, VisionResult } from './types'
 
 interface LabelRecord {
@@ -32,12 +33,12 @@ export class OnnxVisionProvider implements VisionProvider {
           const sessions = [session, binAssets?.session].filter(
             (entry): entry is ort.InferenceSession => Boolean(entry),
           )
-          await Promise.all(
-            sessions.map((modelSession) => {
-              const inputName = modelSession.inputNames[0]
-              return inputName ? modelSession.run({ [inputName]: input }) : undefined
-            }),
-          )
+          for (const modelSession of sessions) {
+            const inputName = modelSession.inputNames[0]
+            if (inputName) {
+              await runOnnxExclusive(() => modelSession.run({ [inputName]: input }))
+            }
+          }
         },
       )
     }
@@ -65,15 +66,13 @@ export class OnnxVisionProvider implements VisionProvider {
     ])
     const normalization = import.meta.env.VITE_AI_NORMALIZATION === 'imagenet' ? 'imagenet' : 'zero-one'
     const tensor = await preprocessImageToTensor(image, { width: 224, height: 224, normalization })
-    const [itemClasses, binClasses] = await Promise.all([
-      this.runClassifier(session, labels, tensor),
-      binAssets
-        ? this.runClassifier(binAssets.session, binAssets.labels, tensor).catch((error) => {
-            console.warn('Bin classifier failed; falling back to item-only inference.', error)
-            return undefined
-          })
-        : undefined,
-    ])
+    const itemClasses = await this.runClassifier(session, labels, tensor)
+    const binClasses = binAssets
+      ? await this.runClassifier(binAssets.session, binAssets.labels, tensor).catch((error) => {
+          console.warn('Bin classifier failed; falling back to item-only inference.', error)
+          return undefined
+        })
+      : undefined
 
     if (binClasses) {
       return this.resolveEnsembledResult(itemClasses, binClasses)
@@ -161,8 +160,11 @@ export class OnnxVisionProvider implements VisionProvider {
 
     let outputs: ort.InferenceSession.ReturnType
     try {
-      outputs = await session.run({ [inputName]: tensor })
+      outputs = await runOnnxExclusive(() => session.run({ [inputName]: tensor }))
     } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('ONNX Runtime session.run failed.', error)
+      }
       throw new AppError('INFERENCE_FAILED', 'ONNX inference failed', error)
     }
 

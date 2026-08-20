@@ -1,6 +1,7 @@
 import * as ort from 'onnxruntime-web'
 import { preprocessImageToTensor } from '../../lib/image-processing/preprocess'
 import type { DetectedComponent } from '../../types/domain'
+import { runOnnxExclusive } from './onnxRuntimeQueue'
 
 interface ComponentLabel {
   index: number
@@ -24,7 +25,7 @@ export class OnnxComponentProvider {
     const inputName = session.inputNames[0]
     if (!inputName || !outputName) return []
 
-    const outputs = await session.run({ [inputName]: tensor })
+    const outputs = await runOnnxExclusive(() => session.run({ [inputName]: tensor }))
     const output = outputs[outputName]
     if (!output) return []
 

@@ -12,13 +12,15 @@ the bin model validates the destination category. Their probability outputs are
 combined by `src/providers/vision/ensembleSelection.ts` before the final item is
 selected.
 
-The deployed item model has 36 outputs, including `unknown`. The training target
-has 40 item classes, but a 40-class model must not replace the deployed model
-until it passes the release gates.
+The locally deployed item model is candidate v23 with 40 outputs, including
+`unknown`, `hair_clip`, `hair_tie`, `pen_marker`, and `phone_case`. It was
+promoted for field testing on 2026-08-20 despite not passing the production
+release gates. The previous 36-class model is preserved under
+`training/model_archive/original-active-36class-20260820/`.
 
-On the current 350-image held-out test set, the accepted item/bin ensemble
-reaches 76.9% destination-bin accuracy. Exact item recognition remains weaker
-than destination-bin recognition; see the training evaluation files before
+On the 326-image held-out test set, v23 reaches 65.6% single-view item top-1
+accuracy and 68.4% with its best evaluated test-time augmentation group. These
+figures are not production-ready; see the training evaluation files before
 making a broader accuracy claim.
 
 The current direct-bin checkpoint was refreshed with reviewed real and public
