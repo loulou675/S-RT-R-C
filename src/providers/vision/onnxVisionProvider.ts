@@ -4,6 +4,11 @@ import { wasteItems } from '../../data/referenceData'
 import { AppError } from '../../lib/errors'
 import { preprocessImageToTensor } from '../../lib/image-processing/preprocess'
 import { visionLabelSchema } from '../../lib/validation/schemas'
+import {
+  combineCalibratedProbabilities,
+  validateCalibratedEnsembleConfig,
+  type CalibratedEnsembleConfig,
+} from './calibratedEnsemble'
 import { selectEnsembledItem, type ScoredClass } from './ensembleSelection'
 import { runOnnxExclusive } from './onnxRuntimeQueue'
 import type { VisionProvider, VisionResult } from './types'
@@ -22,23 +27,26 @@ interface LabelRecord {
 }
 
 export class OnnxVisionProvider implements VisionProvider {
-  private sessionPromise?: Promise<ort.InferenceSession>
+  private itemAssetsPromise?: Promise<{
+    sessions: ort.InferenceSession[]
+    config?: CalibratedEnsembleConfig
+  }>
   private labelsPromise?: Promise<LabelRecord[]>
   private binAssetsPromise?: Promise<{ session: ort.InferenceSession; labels: LabelRecord[] } | undefined>
   private componentProviderPromise?: Promise<import('./onnxComponentProvider').OnnxComponentProvider>
   private warmupPromise?: Promise<void>
 
   async identify(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
-    const timeoutMs = Number(import.meta.env.VITE_AI_TIMEOUT_MS ?? 10000)
+    const timeoutMs = Number(import.meta.env.VITE_AI_TIMEOUT_MS ?? 60000)
     return withTimeout(this.runInference(image), timeoutMs)
   }
 
   async prepare() {
     if (!this.warmupPromise) {
-      this.warmupPromise = Promise.all([this.loadSession(), this.loadLabels(), this.loadBinAssets()]).then(
-        async ([session, , binAssets]) => {
+      this.warmupPromise = Promise.all([this.loadItemAssets(), this.loadLabels(), this.loadBinAssets()]).then(
+        async ([itemAssets, , binAssets]) => {
           const input = new ort.Tensor('float32', new Float32Array(3 * 224 * 224), [1, 3, 224, 224])
-          const sessions = [session, binAssets?.session].filter(
+          const sessions = [...itemAssets.sessions, binAssets?.session].filter(
             (entry): entry is ort.InferenceSession => Boolean(entry),
           )
           for (const modelSession of sessions) {
@@ -67,19 +75,31 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private async runInference(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
-    const [session, labels, binAssets] = await Promise.all([
-      this.loadSession(),
+    const [itemAssets, labels, binAssets] = await Promise.all([
+      this.loadItemAssets(),
       this.loadLabels(),
       this.loadBinAssets(),
     ])
     const normalization = import.meta.env.VITE_AI_NORMALIZATION === 'imagenet' ? 'imagenet' : 'zero-one'
     const tensor = await preprocessImageToTensor(image, { width: 224, height: 224, normalization })
-    const itemClasses = await this.runClassifier(session, labels, tensor)
+    const modelProbabilities = [] as number[][]
+    for (const session of itemAssets.sessions) {
+      modelProbabilities.push(await this.runRawClassifier(session, labels.length, tensor))
+    }
+    const itemClasses = itemAssets.config
+      ? combineCalibratedProbabilities(
+          modelProbabilities,
+          itemAssets.config,
+          labels.map(({ code }) => code),
+        )
+      : modelProbabilities[0]!.map((score, index) => ({ score, code: labels[index]!.code }))
     const binClasses = binAssets
-      ? await this.runClassifier(binAssets.session, binAssets.labels, tensor).catch((error) => {
-          console.warn('Bin classifier failed; falling back to item-only inference.', error)
-          return undefined
-        })
+      ? await this.runRawClassifier(binAssets.session, binAssets.labels.length, tensor)
+          .then((scores) => scores.map((score, index) => ({ score, code: binAssets.labels[index]!.code })))
+          .catch((error) => {
+            console.warn('Bin classifier failed; falling back to item-only inference.', error)
+            return undefined
+          })
       : undefined
 
     if (binClasses) {
@@ -158,7 +178,7 @@ export class OnnxVisionProvider implements VisionProvider {
     return supported
   }
 
-  private async runClassifier(session: ort.InferenceSession, labels: LabelRecord[], tensor: ort.Tensor) {
+  private async runRawClassifier(session: ort.InferenceSession, expectedClassCount: number, tensor: ort.Tensor) {
     const inputName = session.inputNames[0]
     const outputName = session.outputNames[0]
 
@@ -181,17 +201,13 @@ export class OnnxVisionProvider implements VisionProvider {
     if (!scores.length || scores.some((score) => Number.isNaN(score))) {
       throw new AppError('INFERENCE_FAILED', 'Model output is malformed')
     }
-    if (scores.length !== labels.length) {
+    if (scores.length !== expectedClassCount) {
       throw new AppError(
         'MODEL_LOAD_FAILED',
-        `Model returns ${scores.length} classes but its labels file contains ${labels.length}`,
+        `Model returns ${scores.length} classes but its labels file contains ${expectedClassCount}`,
       )
     }
-
     return scores
-      .map((score, index) => ({ score, label: labels.find((label) => label.index === index) }))
-      .filter((entry): entry is { score: number; label: LabelRecord } => Boolean(entry.label))
-      .map(({ score, label }) => ({ score, code: label.code }))
   }
 
   private loadComponentProvider() {
@@ -203,17 +219,47 @@ export class OnnxVisionProvider implements VisionProvider {
     return this.componentProviderPromise
   }
 
-  private loadSession() {
-    if (!this.sessionPromise) {
-      const modelPath = import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
-      this.sessionPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
-        .catch((error) => {
-          if (error instanceof AppError) throw error
-          throw new AppError('MODEL_LOAD_FAILED', 'Model failed to load', error)
-        })
+  private loadItemAssets() {
+    if (!this.itemAssetsPromise) {
+      if (import.meta.env.VITE_AI_ENSEMBLE_ENABLED === 'false') {
+        const modelPath =
+          import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
+        this.itemAssetsPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
+          .then((session) => ({ sessions: [session] }))
+          .catch((error) => {
+            throw new AppError('MODEL_LOAD_FAILED', 'Model failed to load', error)
+          })
+      } else {
+        const configPath =
+          import.meta.env.VITE_AI_ENSEMBLE_CONFIG_PATH ??
+          `${import.meta.env.BASE_URL}models/waste_classifier_ensemble.json`
+        this.itemAssetsPromise = fetch(configPath)
+          .then((response) => {
+            if (!response.ok) throw new Error('Ensemble configuration is not available')
+            return response.json()
+          })
+          .then(validateCalibratedEnsembleConfig)
+          .then(async (config) => {
+            const modelBase = `${import.meta.env.BASE_URL}models/`
+            const sessions = [] as ort.InferenceSession[]
+            for (const path of config.modelPaths) {
+              const resolvedPath = /^(?:https?:)?\//.test(path) ? path : `${modelBase}${path}`
+              sessions.push(
+                await ort.InferenceSession.create(resolvedPath, {
+                  executionProviders: ['wasm'],
+                }),
+              )
+            }
+            return { sessions, config }
+          })
+          .catch((error) => {
+            if (error instanceof AppError) throw error
+            throw new AppError('MODEL_LOAD_FAILED', 'Calibrated ensemble failed to load', error)
+          })
+      }
     }
 
-    return this.sessionPromise
+    return this.itemAssetsPromise
   }
 
   private loadLabels() {
@@ -243,7 +289,9 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private loadBinAssets() {
-    if (import.meta.env.VITE_BIN_MODEL_ENABLED === 'false') {
+    // v61 was accepted as an item-classifier ensemble. Keep the separate bin
+    // classifier opt-in so its scores cannot silently change the evaluated v61 result.
+    if (import.meta.env.VITE_BIN_MODEL_ENABLED !== 'true') {
       return Promise.resolve(undefined)
     }
 

@@ -43,8 +43,10 @@ export const trainingTargetClassCodes = [
   'vegetable_scraps',
 ] as const
 
-/** Classes currently present in public/models/waste_classifier.onnx. */
-export const deployedModelClassCodes = trainingTargetClassCodes
+/** Classes currently present in every v61 ONNX component. */
+export const deployedModelClassCodes = trainingTargetClassCodes.filter(
+  (code) => code !== 'disposable_cutlery',
+)
 
 // Backwards-compatible name used by the existing training feedback UI.
 export const yoloClassCodes = deployedModelClassCodes

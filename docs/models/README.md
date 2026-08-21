@@ -1,38 +1,39 @@
 # SỌRT RÁC ONNX model files
 
-The browser uses two classifiers together:
+The browser uses the calibrated v61 four-model item-classifier ensemble:
 
 - `waste_classifier.onnx`
+- `waste_classifier_v61_s_late.onnx`
+- `waste_classifier_v61_s_frozen.onnx`
+- `waste_classifier_v61_m_frozen.onnx`
+- `waste_classifier_ensemble.json`
 - `labels.json`
-- `waste_bin_classifier.onnx`
-- `bin_labels.json`
 
-Both models expect a 224 x 224 RGB image. The item model identifies the object;
-the bin model validates the destination category. Their probability outputs are
-combined by `src/providers/vision/ensembleSelection.ts` before the final item is
-selected.
+All four models expect a 224 x 224 RGB image. Their probabilities are
+temperature-scaled and combined with class-wise weights and biases from the
+runtime JSON by `src/providers/vision/calibratedEnsemble.ts`. The first ONNX
+file is the v29 YOLO26n component; the other components are two YOLO26s models
+and one YOLO26m model.
 
-The locally deployed item model is candidate v23 with 40 outputs, including
+The locally deployed item ensemble is candidate v61 with 40 outputs, including
 `unknown`, `hair_clip`, `hair_tie`, `pen_marker`, and `phone_case`. It was
-promoted for field testing on 2026-08-20 despite not passing the production
-release gates. The previous 36-class model remains recoverable from Git commit
-`236e3744`; its accepted evaluation is preserved at
-`training/previous-accepted-model-evaluation.json` for comparison.
+promoted for field testing on 2026-08-21 after passing the project’s 70% held-out
+top-1 candidate goal. It has not passed the production release gates. The
+previous accepted model remains recoverable from Git history and its evaluation
+is preserved at `training/previous-accepted-model-evaluation.json`.
 
-On the 326-image held-out test set, v23 reaches 65.6% single-view item top-1
-accuracy and 68.4% with its best evaluated test-time augmentation group. These
-figures are not production-ready; see the training evaluation files before
-making a broader accuracy claim.
+On the untouched 326-image held-out test set, v61 reaches 72.1% single-view
+item top-1 accuracy, 61.9% macro recall, 70.2% hazardous-class macro recall,
+79.0% known-item bin accuracy and 85.2% unknown rejection recall. These figures
+are not production-ready; see `training/candidate-v61-acceptance-comparison.json`.
 
-The current direct-bin checkpoint was refreshed with reviewed real and public
-images for clothing, stationery, phone chargers, hair accessories, cosmetic
-sponges and similar broad waste items. The production ensemble gives the direct
-bin model a validation-selected weight of 0.53. It reaches 76.9% on the core
-holdout. On the small 33-image broad-item holdout, direct-bin accuracy improved
-from 24.2% to 75.8%; ensemble accuracy improved from 9.1% to 42.4%. Treat the
-broad-item figures as preliminary because the holdout is small.
+The separate `waste_bin_classifier.onnx` remains available for experiments but
+is disabled by default because it was not part of the accepted v61 evaluation.
+Set `VITE_BIN_MODEL_ENABLED=true` only when deliberately evaluating that hybrid.
 
-Use `training/train_and_export.py` to generate a matched model/labels pair. The
-app rejects a model whose output count differs from its labels file.
+Use `training/export_v61_browser_ensemble.py` to reproduce the browser files.
+The app rejects any component whose output count differs from `labels.json`.
+`disposable_cutlery` is available in search and training taxonomy but is not a
+v61 output; it needs a new calibrated candidate before browser recognition.
 
 Local development can use `VITE_USE_MOCK_VISION=true`, but mock mode is disabled by default.

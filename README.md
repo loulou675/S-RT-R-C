@@ -11,7 +11,7 @@ The repository contains the complete application and AI integration layer, but a
 - React, TypeScript, Vite and React Router provide the multi-route web app.
 - Browser MediaDevices handles laptop and mobile camera capture after explicit user action.
 - Browser Canvas automatically extracts the centered camera guide, resizes it and prepares the RGB tensor.
-- ONNX Runtime Web loads `/public/models/waste_classifier.onnx` for local browser inference.
+- ONNX Runtime Web loads the calibrated v61 four-model ensemble from `/public/models/` for local browser inference.
 - A `VisionProvider` interface separates the model from the app flow.
 - Supabase Postgres stores normalized reference data, rules, condition questions, reuse suggestions and anonymous scan events.
 - A short post-scan survey stores usability feedback locally first, then syncs it to Supabase when configured.
@@ -91,14 +91,16 @@ pnpm build:pages
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 VITE_USE_MOCK_VISION=false
+VITE_AI_ENSEMBLE_ENABLED=true
+VITE_AI_ENSEMBLE_CONFIG_PATH=/models/waste_classifier_ensemble.json
 VITE_AI_MODEL_PATH=/models/waste_classifier.onnx
 VITE_AI_LABELS_PATH=/models/labels.json
 VITE_AI_NORMALIZATION=zero-one
 VITE_AI_MIN_ACCEPTANCE=0.55
 VITE_AI_MIN_MARGIN=0.15
 VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE=0.8
-VITE_AI_TIMEOUT_MS=10000
-VITE_BIN_MODEL_ENABLED=true
+VITE_AI_TIMEOUT_MS=60000
+VITE_BIN_MODEL_ENABLED=false
 VITE_BIN_MODEL_PATH=/models/waste_bin_classifier.onnx
 VITE_BIN_LABELS_PATH=/models/bin_labels.json
 VITE_BIN_ENSEMBLE_WEIGHT=0.53
@@ -190,6 +192,10 @@ Place files in `public/models/`:
 
 ```text
 public/models/waste_classifier.onnx
+public/models/waste_classifier_v61_s_late.onnx
+public/models/waste_classifier_v61_s_frozen.onnx
+public/models/waste_classifier_v61_m_frozen.onnx
+public/models/waste_classifier_ensemble.json
 public/models/labels.json
 ```
 
@@ -208,8 +214,8 @@ Example labels format:
 }
 ```
 
-The checked-in model and `labels.json` contain the 33 phase-one visual classes
-listed in `training/classes.json`, including `unknown`. Searchable waste names
+The checked-in v61 ensemble and `labels.json` contain 40 visual classes,
+including `unknown`. Searchable waste names
 can be more detailed than model classes; disposal conditions such as clean,
 dirty, wet or full are handled by rules after recognition.
 
@@ -331,7 +337,8 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The checked-in 40-class v23 item model and 7-class bin model are candidate MVP checkpoints, not a production safety system.
+- The checked-in 40-class v61 ensemble is a candidate MVP (72.1% held-out top-1), not a production safety system.
+- `disposable_cutlery` is searchable but not yet a v61 model output; include it in the next controlled candidate.
 - Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
 - Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.

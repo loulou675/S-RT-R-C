@@ -1,0 +1,27 @@
+{
+  "candidate": "v61-four-model-classwise-calibrated-ensemble",
+  "status": "promoted_to_browser_on_2026-08-21",
+  "taxonomyClasses": 40,
+  "dataset": "training/candidate_datasets/candidate_v47_reviewed_expansion_40class",
+  "heldoutImages": 326,
+  "heldoutCorrect": 235,
+  "heldoutTop1": 0.7208588957055214,
+  "macroRecall": 0.6185307436122654,
+  "hazardousMacroRecall": 0.7023809523809523,
+  "knownItemBinAccuracy": 0.7899159663865546,
+  "groupedKnownItemBinAccuracy": 0.7983193277310925,
+  "unknownRejectionRecall": 0.8522727272727273,
+  "models": [
+    {"path": "training/checkpoints/candidate_v29_weak_group_focused_rows.pt", "sha256": "a0077391f39f430ff72ca69c4f3a5ba528a611b79d0d0cfec483b8bd05952243"},
+    {"path": "training/runs/candidate-v52-yolo26s-late-block/weights/epoch5.pt", "sha256": "6b5b65e5ee7bcd41e002f07f34accef5744b73ef425a03f5b6d0c53600b97523"},
+    {"path": "training/checkpoints/candidate_v51_yolo26s_frozen_head.pt", "sha256": "89f0734f6dc66152df6a22f91d63f14b4ced9162ba4085b0cb0e0a8e80b0799a"},
+    {"path": "training/checkpoints/candidate_v59_yolo26m_frozen_head.pt", "sha256": "a89a60cbbf8c36fdc07ebc4fd211db370dcf837f326091b5b82dc94b4eab44ef"}
+  ],
+  "calibration": {"path": "training/candidate-v61-four-model-classwise-calibration.json", "sha256": "ad18a64925214cd1144f384711d90fcd318d11e1168d57757c764be7c42a908e"},
+  "reports": {
+    "crossValidation": "training/candidate-v61-four-model-classwise-calibration.json",
+    "heldout": "training/candidate-v61-four-model-heldout-calibrated.json",
+    "acceptance": "training/candidate-v61-acceptance-comparison.json"
+  },
+  "replacedModel": {"candidate": "v23", "sha256": "a38c40b76a716754ae1f3e150b8597e3901cf38b31caf9cfbd17ec98ed882005", "localRollbackPath": "training/model_archive/candidate-v23-browser-20260821/waste_classifier.onnx"}
+}
