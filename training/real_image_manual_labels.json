@@ -4,7 +4,7 @@
     "Only visually unambiguous root-level images are listed.",
     "Downloaded/social images are train-only; independent phone photos already exist in val/test.",
     "Condition labels describe visible cleanliness, not the disposal bin.",
-    "Disposable cutlery and ambiguous tissue-like images are intentionally excluded from the item classifier."
+    "Disposable cutlery is a pending 41st class. It is not exposed by the active browser model until the candidate is independently validated."
   ],
   "itemRecords": [
     {
@@ -68,7 +68,18 @@
     {"class": "battery", "split": "train", "group": "root_battery", "files": ["768232217_4594553897444935_294654445925989175_n.jpg"]},
     {"class": "dirty_plastic_bag", "split": "train", "group": "phone_dirty_bag_session_a", "condition": "dirty_residue", "files": ["IMG_9404.heic", "IMG_9405.heic", "IMG_9406.heic", "IMG_9407.heic", "IMG_9408.heic", "IMG_9409.heic"]},
     {"class": "plastic_cup_lid", "split": "train", "group": "phone_cup_lid_session_a", "condition": "clean_empty", "files": ["IMG_9410.heic", "IMG_9411.heic", "IMG_9412.heic", "IMG_9413.heic"]},
-    {"class": "dirty_plastic_bag", "split": "train", "group": "phone_dirty_bag_session_b", "condition": "dirty_residue", "files": ["IMG_9414.heic", "IMG_9415.heic", "IMG_9416.heic", "IMG_9417.heic"]}
+    {"class": "dirty_plastic_bag", "split": "train", "group": "phone_dirty_bag_session_b", "condition": "dirty_residue", "files": ["IMG_9414.heic", "IMG_9415.heic", "IMG_9416.heic", "IMG_9417.heic"]},
+    {"class": "disposable_cutlery", "split": "train", "group": "phone_used_cutlery_train", "files": ["IMG_9396.heic", "IMG_9397.heic", "IMG_9398.heic", "IMG_9399.heic", "IMG_9400.heic", "IMG_9401.heic"]},
+    {"class": "disposable_cutlery", "split": "val", "group": "phone_used_cutlery_val", "files": ["IMG_9402.heic"]},
+    {"class": "disposable_cutlery", "split": "test", "group": "phone_used_cutlery_test", "files": ["IMG_9403.heic"]},
+    {"class": "tissue", "split": "train", "group": "root_tissue_variety", "files": ["565833261_17849258769577928_3012441882920697167_n.jpg", "573186860_17855535813557574_7070517968113082428_n.jpg"]},
+    {"class": "tissue", "split": "train", "group": "root_dirty_tissue_food_session", "condition": "dirty_residue", "files": ["753248103_17893175454569802_5767393406428106501_n.jpg"]},
+    {"class": "tissue", "split": "train", "group": "phone_tissue_session_b", "files": ["IMG_9436.heic", "IMG_9437.heic", "IMG_9438.heic", "IMG_9439.heic", "IMG_9440.heic"]},
+    {"class": "plastic_takeaway_cup", "split": "train", "group": "root_clear_takeaway_cup", "condition": "clean_empty", "files": ["572649069_17901745068297382_1992550630914422415_n.jpg"]},
+    {"class": "hair_clip", "split": "train", "group": "root_clear_hair_clip_pair", "files": ["589385586_17860247757554389_4939117640469158449_n.jpg", "589424271_17860247766554389_7705247663052402966_n.jpg"]},
+    {"class": "paperboard_packaging", "split": "train", "group": "root_handmade_paperboard", "files": ["656241607_18086652974522120_7237215641340996391_n.jpg"]},
+    {"class": "snack_wrapper", "split": "train", "group": "root_dirty_milo_wrapper", "condition": "dirty_residue", "files": ["683938421_17922642315337967_6246416835816953770_n.webp"]},
+    {"class": "drink_carton", "split": "train", "group": "root_drink_carton_with_straw", "files": ["726937812_17950429179188237_4561822129364201825_n.jpg"]}
   ],
   "conditionOnlyRecords": [
     {"condition": "clean_empty", "split": "val", "group": "clean_clear_cup_distinct", "files": ["Clean:Dirty/Clean/523105345_17848879494518489_1836893627182587379_n.jpg"]},

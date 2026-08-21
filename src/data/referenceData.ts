@@ -337,14 +337,20 @@ export const wasteItems: WasteItem[] = [
     'trà sữa',
     'ly trà sữa',
   ], ['milk tea cup', 'bubble tea cup', 'boba cup']),
-  item('plastic_spoon', 'Muỗng nhựa', 'Plastic spoon', 'mixed_plastic', 'utensil', 'Clean Plastic', false, false, [
+  item('plastic_spoon', 'Muỗng nhựa', 'Plastic spoon', 'mixed_plastic', 'utensil', 'Landfill', false, false, [
     'muỗng nhựa',
     'thìa nhựa',
   ], ['plastic spoon', 'disposable spoon']),
-  item('plastic_fork', 'Nĩa nhựa', 'Plastic fork', 'mixed_plastic', 'utensil', 'Clean Plastic', false, false, [
+  item('plastic_fork', 'Nĩa nhựa', 'Plastic fork', 'mixed_plastic', 'utensil', 'Landfill', false, false, [
     'nĩa nhựa',
     'dĩa nhựa',
   ], ['plastic fork', 'disposable fork']),
+  item('disposable_cutlery', 'Dụng cụ dùng một lần', 'Disposable cutlery', 'mixed_material', 'utensil', 'Landfill', false, false, [
+    'dụng cụ dùng một lần',
+    'dao nĩa muỗng nhựa',
+    'muỗng nĩa nhựa dùng một lần',
+    'đũa dùng một lần',
+  ], ['disposable cutlery', 'plastic cutlery', 'plastic spoon', 'plastic fork', 'plastic knife', 'disposable chopsticks', 'bamboo chopsticks']),
   item('wooden_utensil', 'Dụng cụ gỗ dùng một lần', 'Wooden utensil', 'wood', 'utensil', 'Landfill', false, false, [
     'muỗng gỗ',
     'đũa gỗ',
@@ -481,7 +487,7 @@ export const conditionQuestions: ConditionQuestion[] = [
     sortOrder: 1,
     isActive: true,
   })),
-  ...['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container'].map(
+  ...['plastic_cup_lid', 'plastic_straw', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container'].map(
     (itemCode) => ({
       itemCode,
       questionKey: 'plastic_cleanliness',
@@ -616,7 +622,7 @@ export const disposalRules: DisposalRule[] = [
   ...plasticContainerRules('plastic_food_container', 'hộp nhựa', 'plastic food container'),
   ...plasticContainerRules('plastic_cosmetic_container', 'vỏ mỹ phẩm nhựa', 'plastic cosmetic container'),
   ...plasticContainerRules('plastic_takeaway_box', 'hộp nhựa mang đi', 'plastic takeaway box'),
-  ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork']),
+  ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw']),
   ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container']),
   rule('clean_plastic_bag', 'default', 'clean_plastic', {
     vi: 'Đặt túi nhựa sạch vào thùng Nhựa Sạch.',
@@ -678,7 +684,7 @@ export const disposalRules: DisposalRule[] = [
     warningVi: 'Hộp đồ uống có nhiều lớp vật liệu; chỉ bỏ hộp rỗng, sạch và khô vào dòng này.',
     warningEn: 'Drink cartons contain multiple material layers; use this stream only for empty, clean and dry cartons.',
   }),
-  ...defaultRules(['tissue', 'hair_clip', 'hair_tie', 'pen_marker', 'phone_case', 'paper_napkin', 'wooden_utensil', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
+  ...defaultRules(['tissue', 'hair_clip', 'hair_tie', 'pen_marker', 'phone_case', 'paper_napkin', 'wooden_utensil', 'plastic_spoon', 'plastic_fork', 'disposable_cutlery', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
     vi: 'Đặt vật phẩm này vào thùng Chất Thải Chôn Lấp.',
     en: 'Place this item in Landfill.',
     stepsVi: ['Không bỏ vào thùng tái chế.', 'Đặt vào Chất Thải Chôn Lấp.'],

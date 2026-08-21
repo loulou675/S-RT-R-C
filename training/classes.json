@@ -6,6 +6,7 @@
     "cardboard_box",
     "chemical_container",
     "dirty_plastic_bag",
+    "disposable_cutlery",
     "disposable_diaper",
     "drink_carton",
     "electronic_cable",
@@ -72,6 +73,7 @@
     ],
     "landfill": [
       "disposable_diaper",
+      "disposable_cutlery",
       "dirty_plastic_bag",
       "medical_mask",
       "hair_clip",

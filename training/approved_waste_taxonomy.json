@@ -108,6 +108,7 @@
         "Clothing and foam items"
       ],
       "classes": [
+        "disposable_cutlery",
         "disposable_diaper",
         "dirty_plastic_bag",
         "medical_mask",

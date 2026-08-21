@@ -44,8 +44,8 @@ def main() -> None:
         raise SystemExit(1)
 
     configured = json.loads(classes_path.read_text(encoding="utf-8"))["classes"]
-    if len(configured) != 40:
-        failures.append(f"Expected 40 classifier classes, found {len(configured)}.")
+    if len(configured) < 40:
+        failures.append(f"Expected at least 40 classifier classes, found {len(configured)}.")
 
     dataset = ROOT / "training" / "classifier_dataset"
     total_images = 0
@@ -90,8 +90,16 @@ def main() -> None:
     require_file(labels_path, failures)
     if labels_path.is_file():
         model_codes = [entry["code"] for entry in json.loads(labels_path.read_text(encoding="utf-8"))["labels"]]
-        if model_codes != sorted(configured):
-            failures.append("public/models/labels.json does not match the 40-class dataset order.")
+        configured_set = set(configured)
+        if len(model_codes) < 40 or not set(model_codes).issubset(configured_set):
+            failures.append(
+                "public/models/labels.json must contain a valid deployed classifier class set."
+            )
+        elif len(model_codes) != len(configured):
+            warnings.append(
+                "The training taxonomy contains pending candidate classes that are not yet "
+                "included in the deployed browser model."
+            )
 
     if args.with_components:
         component_dataset = ROOT / "training" / "component_dataset"

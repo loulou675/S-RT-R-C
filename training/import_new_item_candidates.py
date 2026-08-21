@@ -19,6 +19,7 @@ DATASET = ROOT / "training" / "classifier_dataset"
 MANIFEST = ROOT / "training" / "source_manifests" / "new-item-training-import.jsonl"
 ACTIVE_CLASSES = {
     "aerosol_can",
+    "disposable_cutlery",
     "disposable_diaper",
     "drink_carton",
     "hair_clip",

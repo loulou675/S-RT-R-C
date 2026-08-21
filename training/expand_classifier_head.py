@@ -14,6 +14,7 @@ from ultralytics import YOLO
 ROOT = Path(__file__).resolve().parents[1]
 NEW_CLASS_SEEDS = {
     "dirty_plastic_bag": "plastic_bag",
+    "disposable_cutlery": "unknown",
     "hair_clip": "unknown",
     "hair_tie": "unknown",
     "pen_marker": "unknown",

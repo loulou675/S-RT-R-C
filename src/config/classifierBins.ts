@@ -16,6 +16,7 @@ const itemClassifierBins: Record<string, ClassifierBinCode> = {
   cardboard_box: 'paper_cardboard',
   chemical_container: 'hazardous',
   dirty_plastic_bag: 'landfill',
+  disposable_cutlery: 'landfill',
   disposable_diaper: 'landfill',
   drink_carton: 'paper_cardboard',
   electronic_cable: 'hazardous',
@@ -60,4 +61,3 @@ export function toAppBinCode(binCode: ClassifierBinCode): BinCode | undefined {
   if (binCode === 'unknown') return undefined
   return binCode === 'hazardous' ? 'special_handling' : binCode
 }
-

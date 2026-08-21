@@ -28,6 +28,7 @@ CLASS_TO_BIN = {
     "cardboard_box": "paper_cardboard",
     "chemical_container": "hazardous",
     "dirty_plastic_bag": "landfill",
+    "disposable_cutlery": "landfill",
     "disposable_diaper": "landfill",
     "drink_carton": "paper_cardboard",
     "electronic_cable": "hazardous",

@@ -6,6 +6,7 @@ export const trainingTargetClassCodes = [
   'cardboard_box',
   'chemical_container',
   'dirty_plastic_bag',
+  'disposable_cutlery',
   'disposable_diaper',
   'drink_carton',
   'electronic_cable',
