@@ -27,21 +27,6 @@ export function AppShell() {
 
   return (
     <div className="app-shell">
-      <aside className="rail" aria-label="Primary">
-        <button type="button" aria-label="Eco Tips coming soon" title="Eco Tips coming soon">
-          <Lightbulb size={18} aria-hidden="true" />
-          <span className="nav-label">Eco Tips</span>
-        </button>
-        <button type="button" aria-label="Waste Scan" className={location.pathname === '/' ? 'active' : ''} onClick={() => navigate('/')}>
-          <ScanLine size={20} aria-hidden="true" />
-          <span className="nav-label">Waste Scan</span>
-        </button>
-        <button type="button" aria-label="Scan history" className={location.pathname === '/history' ? 'active' : ''} onClick={() => navigate('/history')}>
-          <History size={17} aria-hidden="true" />
-          <span className="nav-label">History</span>
-        </button>
-        </aside>
-
       <main className="main-surface">
         <header className="top-bar">
           <form className="search-form" role="search" onSubmit={submitSearch}>
@@ -79,6 +64,23 @@ export function AppShell() {
         </header>
         <Outlet />
       </main>
+
+      {/* Keep navigation outside the result content surface so result sheets
+          cannot unmount or cover it while they are open. */}
+      <aside className="rail" aria-label="Primary">
+        <button type="button" aria-label="Eco Tips coming soon" title="Eco Tips coming soon">
+          <Lightbulb size={18} aria-hidden="true" />
+          <span className="nav-label">Eco Tips</span>
+        </button>
+        <button type="button" aria-label="Waste Scan" className={location.pathname === '/' ? 'active' : ''} onClick={() => navigate('/')}>
+          <ScanLine size={20} aria-hidden="true" />
+          <span className="nav-label">Waste Scan</span>
+        </button>
+        <button type="button" aria-label="Scan history" className={location.pathname === '/history' ? 'active' : ''} onClick={() => navigate('/history')}>
+          <History size={17} aria-hidden="true" />
+          <span className="nav-label">History</span>
+        </button>
+      </aside>
     </div>
   )
 }

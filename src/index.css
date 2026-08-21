@@ -83,7 +83,8 @@ a {
 
 .rail {
   position: fixed;
-  z-index: 20;
+  /* Keep primary navigation above fixed result sheets at every breakpoint. */
+  z-index: 80;
   top: 50%;
   left: clamp(0.7rem, 2.1vw, 1.5rem);
   display: grid;
@@ -2490,7 +2491,7 @@ button:disabled {
   }
 
   .rail {
-    z-index: 30;
+    z-index: 80;
     top: auto;
     bottom: calc(0.75rem + env(safe-area-inset-bottom));
     left: 50%;
