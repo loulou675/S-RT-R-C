@@ -88,7 +88,7 @@ pnpm build:pages
 ## Environment Variables
 
 ```text
-VITE_SUPABASE_URL=
+VITE_SUPABASE_URL=https://mbgiaevxiabtdweydgwm.supabase.co
 VITE_SUPABASE_ANON_KEY=
 VITE_USE_MOCK_VISION=false
 VITE_AI_ENSEMBLE_ENABLED=true
@@ -113,21 +113,16 @@ Do not expose Supabase service-role keys in the browser.
 
 ## Private training mode
 
-Set `VITE_TRAINING_MODE=true` only in a local or private field-test `.env.local`.
-The correction prompt is controlled separately with
-`VITE_RESULT_FEEDBACK=true`. A user must choose the correct item and consent
-before anything is sent. When Supabase and `VITE_FEEDBACK_AUTO_UPLOAD=true` are
-configured, the app uploads the cropped JPEG and correction to a private review
-queue automatically. Failed uploads stay in a local outbox and retry at startup
-or when the browser comes back online.
+The correction prompt is controlled with `VITE_RESULT_FEEDBACK=true`. A user
+must choose the correct item and consent before anything is sent. When Supabase
+and `VITE_FEEDBACK_AUTO_UPLOAD=true` are configured, the app uploads the cropped
+JPEG and correction to a private review queue automatically. Failed uploads
+stay in a local outbox and retry at startup or when the browser comes back
+online. There is no manual reviewer-export control in the deployed interface.
 
-`VITE_TRAINING_MODE=true` only exposes the reviewer JSON export as a fallback.
-Normal users do not need to download or send a file.
-
-After field testing, set `VITE_TRAINING_MODE=false` (or remove it) and restart
-the Vite server or rebuild the app. Because Vite environment variables are
-embedded at build time, a production rebuild is required before the training
-controls disappear from a deployed build.
+After field testing, set `VITE_RESULT_FEEDBACK=false` and rebuild the app to
+remove the correction prompt. Vite environment variables are embedded at build
+time, so changing the value requires a new deployment.
 
 To publish a temporary training-mode Pages build, run:
 

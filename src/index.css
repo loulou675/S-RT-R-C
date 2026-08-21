@@ -506,13 +506,6 @@ a {
   font-weight: 700;
 }
 
-.training-feedback-export {
-  justify-self: start;
-  padding-inline: 0;
-  color: #222222;
-  background: transparent;
-}
-
 .feedback-prompt {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

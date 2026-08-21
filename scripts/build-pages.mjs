@@ -1,5 +1,16 @@
 import { build } from 'vite'
 
+const resultFeedbackEnabled = process.env.VITE_RESULT_FEEDBACK !== 'false'
+const feedbackUploadConfigured = Boolean(
+  process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY,
+)
+
+if (resultFeedbackEnabled && !feedbackUploadConfigured) {
+  throw new Error(
+    'Result feedback is enabled, but Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, or explicitly set VITE_RESULT_FEEDBACK=false.',
+  )
+}
+
 await build({
   build: {
     outDir: 'docs',

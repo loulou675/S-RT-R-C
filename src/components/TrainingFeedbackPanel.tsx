@@ -1,13 +1,11 @@
-import { Check, Download, MessageSquareWarning, Search, Send, X } from 'lucide-react'
+import { Check, MessageSquareWarning, Search, Send, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { trainingTargetClassCodes } from '../config/modelClasses'
-import { resultFeedbackEnabled, trainingModeEnabled } from '../config/trainingMode'
+import { resultFeedbackEnabled } from '../config/trainingMode'
 import { wasteItems } from '../data/referenceData'
 import type { AppErrorCode } from '../lib/errors'
 import {
   automaticFeedbackUploadConfigured,
-  downloadTrainingFeedback,
-  readTrainingFeedback,
   saveTrainingFeedback,
 } from '../services/trainingFeedback'
 import type { InputMethod } from '../types/domain'
@@ -60,8 +58,6 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
   if (!resultFeedbackEnabled || !imagePreview) return null
 
   const selectedItem = itemOptions.find((item) => item.code === correctedItemCode)
-  const feedbackCount = readTrainingFeedback().length
-
   async function saveFeedback(itemCode: string, kind: FeedbackKind) {
     if (!itemCode || (kind === 'correction' && !consented)) return
 
@@ -111,12 +107,6 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
               : 'Thanks. Your feedback is saved and will send automatically when online.'}
           </span>
         </div>
-        {trainingModeEnabled ? (
-          <button type="button" className="ghost-action training-feedback-export" onClick={downloadTrainingFeedback}>
-            <Download size={16} aria-hidden="true" />
-            Reviewer export ({feedbackCount})
-          </button>
-        ) : null}
       </section>
     )
   }
@@ -224,12 +214,6 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       </div>
       {saveError ? <p className="inline-error">{saveError}</p> : null}
 
-      {trainingModeEnabled && feedbackCount > 0 ? (
-        <button type="button" className="ghost-action training-feedback-export" onClick={downloadTrainingFeedback}>
-          <Download size={16} aria-hidden="true" />
-          Reviewer export ({feedbackCount})
-        </button>
-      ) : null}
     </section>
   )
 }

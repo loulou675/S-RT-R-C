@@ -61,20 +61,6 @@ export function readTrainingFeedback(): TrainingFeedbackRecord[] {
   }
 }
 
-export function downloadTrainingFeedback() {
-  const records = readTrainingFeedback()
-  const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  // Keep milliseconds in the filename so exports made on the same day remain
-  // distinguishable when they are uploaded to the shared review folder.
-  const exportTimestamp = new Date().toISOString().replace(/[:.]/g, '-')
-  link.download = `sot-rac-training-feedback-${exportTimestamp}.json`
-  link.click()
-  URL.revokeObjectURL(url)
-}
-
 /** Retry queued records at startup and whenever the browser comes back online. */
 export function startTrainingFeedbackSync() {
   if (!feedbackAutoUploadEnabled || !supabase) return () => undefined
