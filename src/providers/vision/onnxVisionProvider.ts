@@ -8,6 +8,14 @@ import { selectEnsembledItem, type ScoredClass } from './ensembleSelection'
 import { runOnnxExclusive } from './onnxRuntimeQueue'
 import type { VisionProvider, VisionResult } from './types'
 
+// Static hosts such as GitHub Pages do not provide the isolation headers that
+// SharedArrayBuffer-based WASM workers require. Keep inference single-threaded
+// there while the runtime queue prevents overlapping model executions.
+if (typeof crossOriginIsolated === 'undefined' || !crossOriginIsolated) {
+  ort.env.wasm.numThreads = 1
+  ort.env.wasm.proxy = false
+}
+
 interface LabelRecord {
   index: number
   code: string

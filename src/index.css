@@ -1535,7 +1535,7 @@ button:disabled {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(72cqw, 72cqh);
+  width: min(78cqw, 78cqh);
   height: auto;
   aspect-ratio: 1 / 1;
   border: 2px solid rgba(255, 255, 255, 0.72);
@@ -3106,7 +3106,7 @@ button:disabled {
   }
 
   .scan-window {
-    width: min(72vw, 72svh);
+    width: min(78vw, 78svh);
   }
 
   .camera-stage .status-line {

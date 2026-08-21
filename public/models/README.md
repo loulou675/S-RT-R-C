@@ -15,8 +15,9 @@ selected.
 The locally deployed item model is candidate v23 with 40 outputs, including
 `unknown`, `hair_clip`, `hair_tie`, `pen_marker`, and `phone_case`. It was
 promoted for field testing on 2026-08-20 despite not passing the production
-release gates. The previous 36-class model is preserved under
-`training/model_archive/original-active-36class-20260820/`.
+release gates. The previous 36-class model remains recoverable from Git commit
+`236e3744`; its accepted evaluation is preserved at
+`training/previous-accepted-model-evaluation.json` for comparison.
 
 On the 326-image held-out test set, v23 reaches 65.6% single-view item top-1
 accuracy and 68.4% with its best evaluated test-time augmentation group. These
