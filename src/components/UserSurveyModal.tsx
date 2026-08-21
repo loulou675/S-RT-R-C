@@ -11,8 +11,20 @@ interface UserSurveyModalProps {
 }
 
 const scaleOptions = ['1', '2', '3', '4', '5']
-const confusionOptions = ['Scanning', 'Result category', 'Preparation steps', 'Parts separation', 'Nothing']
-const improvementOptions = ['Recognition accuracy', 'Scanning speed', 'Result explanation', 'Visual design', 'Other']
+const navigationOptions = [
+  'Finding the scan feature (Tìm chức năng quét)',
+  'Reading the result (Đọc kết quả)',
+  'Scanning another item (Quét thêm vật khác)',
+  'Using the navigation bar (Dùng thanh điều hướng)',
+  'Nothing was difficult (Không có phần nào khó)',
+]
+const improvementOptions = [
+  'Recognition accuracy (Độ chính xác nhận diện)',
+  'Scanning speed (Tốc độ quét)',
+  'Result explanation (Giải thích kết quả)',
+  'Visual design (Thiết kế giao diện)',
+  'Other (Khác)',
+]
 
 export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBinCode, onClose }: UserSurveyModalProps) {
   const [scanningEase, setScanningEase] = useState('')
@@ -21,6 +33,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
   const [confusionPoint, setConfusionPoint] = useState('')
   const [confusionDetails, setConfusionDetails] = useState('')
   const [improvementPriority, setImprovementPriority] = useState('')
+  const [additionalFeedback, setAdditionalFeedback] = useState('')
   const [saving, setSaving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
@@ -37,7 +50,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
       guidanceClarity,
       resultTrust,
       confusionPoint,
-      confusionDetails: confusionDetails.trim() || undefined,
+      confusionDetails: formatOpenFeedback(confusionDetails, additionalFeedback),
       improvementPriority,
     })
     setSubmitted(true)
@@ -93,15 +106,15 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
               />
               <SurveyQuestion
                 number="4"
-                label="What was the most confusing part? (Phần nào gây khó hiểu nhất?)"
+                label="Which part of the interface was hardest to use? (Phần nào của giao diện khó sử dụng nhất?)"
                 value={confusionPoint}
-                options={confusionOptions}
+                options={navigationOptions}
                 onChange={setConfusionPoint}
               />
               {confusionPoint ? (
                 <label className="survey-why">
-                  <span>Why? (Vì sao?) <small>Optional / Không bắt buộc</small></span>
-                  <textarea value={confusionDetails} onChange={(event) => setConfusionDetails(event.target.value)} placeholder="Tell us what felt unclear" rows={2} maxLength={500} />
+                  <span>Could you tell us why? (Bạn có thể nói rõ hơn không?) <small>Optional / Không bắt buộc</small></span>
+                  <textarea value={confusionDetails} onChange={(event) => setConfusionDetails(event.target.value)} placeholder="Tell us what felt difficult or unclear" rows={2} maxLength={200} />
                 </label>
               ) : null}
               <SurveyQuestion
@@ -111,6 +124,10 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
                 options={improvementOptions}
                 onChange={setImprovementPriority}
               />
+              <label className="survey-why survey-general-feedback">
+                <span>What is one change that would make SỌRT RÁC better for you? (Một thay đổi nào sẽ khiến SỌRT RÁC tốt hơn với bạn?) <small>Optional / Không bắt buộc</small></span>
+                <textarea value={additionalFeedback} onChange={(event) => setAdditionalFeedback(event.target.value)} placeholder="Share any idea, concern, or suggestion" rows={3} maxLength={200} />
+              </label>
             </div>
 
             <button type="button" className="primary-action survey-submit" onClick={submit} disabled={!canSubmit || saving}>
@@ -122,6 +139,15 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
       </section>
     </div>
   )
+}
+
+function formatOpenFeedback(navigationDetails: string, additionalFeedback: string) {
+  const entries = [
+    navigationDetails.trim() ? `Navigation detail: ${navigationDetails.trim()}` : '',
+    additionalFeedback.trim() ? `Additional feedback: ${additionalFeedback.trim()}` : '',
+  ].filter(Boolean)
+
+  return entries.length ? entries.join('\n\n') : undefined
 }
 
 function SurveyScaleQuestion({
