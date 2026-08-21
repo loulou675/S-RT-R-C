@@ -121,7 +121,7 @@ describe('rule engine', () => {
     expect(result.warning).toContain('medicine remains')
   })
 
-  it('uses the largest detected component for the main category', () => {
+  it('keeps the item destination as the main category when it detects separate parts', () => {
     const result = evaluateDisposal({
       siteCode: 'default_station',
       itemCode: 'drink_carton',
@@ -133,7 +133,7 @@ describe('rule engine', () => {
       ],
     })
 
-    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.destinationBin.code).toBe('paper_cardboard')
     expect(result.componentActions.map((action) => action.code)).toEqual([
       'remaining_liquid',
       'carton_body',
@@ -141,7 +141,7 @@ describe('rule engine', () => {
     ])
   })
 
-  it('keeps the body category when the detected body is largest', () => {
+  it('keeps the main item destination regardless of detected part area', () => {
     const result = evaluateDisposal({
       siteCode: 'default_station',
       itemCode: 'drink_carton',

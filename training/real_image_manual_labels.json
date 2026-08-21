@@ -79,7 +79,9 @@
     {"class": "hair_clip", "split": "train", "group": "root_clear_hair_clip_pair", "files": ["589385586_17860247757554389_4939117640469158449_n.jpg", "589424271_17860247766554389_7705247663052402966_n.jpg"]},
     {"class": "paperboard_packaging", "split": "train", "group": "root_handmade_paperboard", "files": ["656241607_18086652974522120_7237215641340996391_n.jpg"]},
     {"class": "snack_wrapper", "split": "train", "group": "root_dirty_milo_wrapper", "condition": "dirty_residue", "files": ["683938421_17922642315337967_6246416835816953770_n.webp"]},
-    {"class": "drink_carton", "split": "train", "group": "root_drink_carton_with_straw", "files": ["726937812_17950429179188237_4561822129364201825_n.jpg"]}
+    {"class": "drink_carton", "split": "train", "group": "root_drink_carton_with_straw", "files": ["726937812_17950429179188237_4561822129364201825_n.jpg"]},
+    {"class": "medicine_blister_pack", "split": "train", "group": "phone_medicine_blister_session_aug21", "files": ["IMG_9457.heic", "IMG_9458.heic", "IMG_9461.heic"]},
+    {"class": "medicine_blister_pack", "split": "train", "group": "phone_medicine_carton_session_aug21", "files": ["IMG_9462.heic", "IMG_9463.heic"]}
   ],
   "conditionOnlyRecords": [
     {"condition": "clean_empty", "split": "val", "group": "clean_clear_cup_distinct", "files": ["Clean:Dirty/Clean/523105345_17848879494518489_1836893627182587379_n.jpg"]},
