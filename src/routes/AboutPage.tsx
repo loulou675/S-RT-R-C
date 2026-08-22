@@ -9,7 +9,7 @@ export function AboutPage() {
           <span>Sorting guidance decides the bin.</span>
         </h1>
         <p>
-          The app processes one still image in the browser, maps it to a known waste item, then checks curated disposal guidance. Raw user images are not stored.
+          The app processes one still image in the browser, maps it to a known waste item, then checks curated disposal guidance. Images are retained only when a user chooses to submit post-scan feedback for review.
         </p>
       </div>
       <div className="about-card-grid">
@@ -17,6 +17,12 @@ export function AboutPage() {
           <h2>Local data disclaimer</h2>
           <p>
             This guidance applies to the selected waste station and should be updated when signage or local sorting policy changes.
+          </p>
+        </section>
+        <section className="about-card">
+          <h2>Anonymous usage analytics</h2>
+          <p>
+            We count visits, visible time, pages, feature actions, and broad device type using random browser and session identifiers. We do not include names, scanned images, or full referral URLs, and browser Do Not Track is respected.
           </p>
         </section>
         <section className="about-card">

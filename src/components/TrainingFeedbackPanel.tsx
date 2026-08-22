@@ -9,6 +9,7 @@ import {
   saveTrainingFeedback,
 } from '../services/trainingFeedback'
 import type { InputMethod } from '../types/domain'
+import { trackFeature } from '../services/siteAnalytics'
 
 interface TrainingFeedbackPanelProps {
   imagePreview?: string
@@ -76,6 +77,7 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       setUploaded(result.uploaded)
       setSubmittedKind(kind)
       setSubmitted(true)
+      void trackFeature(kind === 'confirmation' ? 'feedback_confirmation' : 'feedback_correction', 'feedback_submitted')
       if (kind === 'correction') onCorrected?.(itemCode, result.uploaded)
       else onSubmitted?.(result.uploaded)
     } catch {

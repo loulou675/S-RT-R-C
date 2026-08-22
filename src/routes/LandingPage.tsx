@@ -12,6 +12,7 @@ import { evaluateDisposal, getDefaultConditionForItem } from '../features/sortin
 import { AppError, messageForError, toAppError } from '../lib/errors'
 import { createVisionProvider } from '../providers/vision'
 import { saveScanHistory } from '../services/history'
+import { trackFeature } from '../services/siteAnalytics'
 import type { AppErrorCode } from '../lib/errors'
 import type { DetectedComponent, InputMethod, RuleEngineResult } from '../types/domain'
 
@@ -96,6 +97,7 @@ export function LandingPage() {
   }
 
   function startCamera() {
+    void trackFeature('camera_scan')
     closeResult()
     setFeedbackDelivery(undefined)
     setImagePreview(undefined)
@@ -105,6 +107,7 @@ export function LandingPage() {
   }
 
   function openUpload() {
+    void trackFeature('image_upload')
     closeResult()
     setFeedbackDelivery(undefined)
     setImagePreview(undefined)
@@ -137,6 +140,7 @@ export function LandingPage() {
       saveScanHistory(disposal, method)
       setStage('idle')
       setStatus(undefined)
+      void trackFeature('scan_success', 'scan_success')
 
       window.setTimeout(() => {
         if (recognitionId === recognitionIdRef.current && markSurveyShownForSession()) {
@@ -162,6 +166,7 @@ export function LandingPage() {
       setPredictedItemCode(undefined)
       setStage(keepCameraOpen ? 'camera' : 'idle')
       setStatus(undefined)
+      void trackFeature('scan_error', 'scan_error')
       return false
     }
   }, [])
@@ -189,6 +194,7 @@ export function LandingPage() {
   }, [])
 
   function showDemoResult(itemCode: string) {
+    void trackFeature('demo_result')
     try {
       setFeedbackDelivery(undefined)
       const disposal = getDisposalForItem(itemCode)

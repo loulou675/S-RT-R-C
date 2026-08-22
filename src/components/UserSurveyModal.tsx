@@ -2,6 +2,7 @@ import { Check, Send, X } from 'lucide-react'
 import { useState } from 'react'
 import type { InputMethod } from '../types/domain'
 import { saveUserSurvey } from '../services/userSurvey'
+import { trackFeature } from '../services/siteAnalytics'
 
 interface UserSurveyModalProps {
   inputMethod: InputMethod
@@ -54,6 +55,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
       improvementPriority,
     })
     setSubmitted(true)
+    void trackFeature('survey_submitted', 'survey_submitted')
     setSaving(false)
   }
 

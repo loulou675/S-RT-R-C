@@ -1,4 +1,5 @@
 import { build } from 'vite'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 
 const resultFeedbackEnabled = process.env.VITE_RESULT_FEEDBACK !== 'false'
 const feedbackUploadConfigured = Boolean(
@@ -17,3 +18,11 @@ await build({
     emptyOutDir: true,
   },
 })
+
+const rootIndex = await readFile('docs/index.html', 'utf8')
+const devStatsIndex = rootIndex
+  .replaceAll('./assets/', '../assets/')
+  .replaceAll('./favicon.svg', '../favicon.svg')
+
+await mkdir('docs/devstats', { recursive: true })
+await writeFile('docs/devstats/index.html', devStatsIndex)

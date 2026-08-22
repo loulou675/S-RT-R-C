@@ -12,6 +12,7 @@ import { ResultPage } from './routes/ResultPage'
 import { ReusePage } from './routes/ReusePage'
 import { ScanPage } from './routes/ScanPage'
 import { SearchPage } from './routes/SearchPage'
+import { DevStatsPage } from './routes/DevStatsPage'
 
 const router = createHashRouter([
   {
@@ -34,6 +35,10 @@ const router = createHashRouter([
 ])
 
 export default function App() {
+  if (/\/devstats\/?$/.test(window.location.pathname)) {
+    return <DevStatsPage />
+  }
+
   return (
     <FlowProvider>
       <RouterProvider router={router} />
