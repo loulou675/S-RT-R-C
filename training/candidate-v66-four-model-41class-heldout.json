@@ -1,0 +1,676 @@
+{
+  "candidate": "v61 four-model class-wise calibrated ensemble",
+  "calibration": "training/candidate-v66-four-model-41class-calibration.json",
+  "models": [
+    "training/checkpoints/candidate_v64a_v29_cutlery_trained.pt",
+    "training/checkpoints/candidate_v63b_v52_cutlery_trained.pt",
+    "training/checkpoints/candidate_v63c_v51_cutlery_trained.pt",
+    "training/checkpoints/candidate_v64d_v59_cutlery_trained.pt"
+  ],
+  "test_data": "training/candidate_datasets/candidate_v64_cutlery_41class",
+  "images": 330,
+  "top1_accuracy": 0.7151515151515152,
+  "top1_correct": 236,
+  "macro_recall": 0.609542188890015,
+  "hazardous_macro_recall": 0.7023809523809524,
+  "known_item_bin_accuracy": 0.7851239669421488,
+  "grouped_known_item_bin_accuracy": 0.7933884297520661,
+  "unknown_rejection_recall": 0.8522727272727273,
+  "per_bin": [
+    {
+      "bin": "bottle_can",
+      "correct": 17,
+      "total": 20,
+      "recall": 0.85,
+      "predictions": {
+        "bottle_can": 17,
+        "clean_plastic": 2,
+        "unknown": 1
+      }
+    },
+    {
+      "bin": "clean_plastic",
+      "correct": 21,
+      "total": 34,
+      "recall": 0.6176470588235294,
+      "predictions": {
+        "clean_plastic": 21,
+        "landfill": 6,
+        "paper_cardboard": 4,
+        "unknown": 2,
+        "organic": 1
+      }
+    },
+    {
+      "bin": "hazardous",
+      "correct": 23,
+      "total": 32,
+      "recall": 0.71875,
+      "predictions": {
+        "hazardous": 23,
+        "unknown": 6,
+        "clean_plastic": 2,
+        "landfill": 1
+      }
+    },
+    {
+      "bin": "landfill",
+      "correct": 34,
+      "total": 46,
+      "recall": 0.7391304347826086,
+      "predictions": {
+        "landfill": 34,
+        "unknown": 6,
+        "organic": 3,
+        "paper_cardboard": 1,
+        "bottle_can": 1,
+        "clean_plastic": 1
+      }
+    },
+    {
+      "bin": "organic",
+      "correct": 72,
+      "total": 76,
+      "recall": 0.9473684210526315,
+      "predictions": {
+        "organic": 72,
+        "unknown": 4
+      }
+    },
+    {
+      "bin": "paper_cardboard",
+      "correct": 23,
+      "total": 34,
+      "recall": 0.6764705882352942,
+      "predictions": {
+        "paper_cardboard": 23,
+        "unknown": 4,
+        "landfill": 4,
+        "bottle_can": 2,
+        "clean_plastic": 1
+      }
+    },
+    {
+      "bin": "unknown",
+      "correct": 75,
+      "total": 88,
+      "recall": 0.8522727272727273,
+      "predictions": {
+        "unknown": 75,
+        "clean_plastic": 4,
+        "landfill": 4,
+        "hazardous": 2,
+        "bottle_can": 1,
+        "paper_cardboard": 1,
+        "organic": 1
+      }
+    }
+  ],
+  "grouped_per_bin": [
+    {
+      "bin": "bottle_can",
+      "correct": 18,
+      "total": 20,
+      "recall": 0.9,
+      "predictions": {
+        "bottle_can": 18,
+        "unknown": 1,
+        "clean_plastic": 1
+      }
+    },
+    {
+      "bin": "clean_plastic",
+      "correct": 21,
+      "total": 34,
+      "recall": 0.6176470588235294,
+      "predictions": {
+        "clean_plastic": 21,
+        "landfill": 7,
+        "paper_cardboard": 3,
+        "bottle_can": 1,
+        "organic": 1,
+        "unknown": 1
+      }
+    },
+    {
+      "bin": "hazardous",
+      "correct": 25,
+      "total": 32,
+      "recall": 0.78125,
+      "predictions": {
+        "hazardous": 25,
+        "unknown": 3,
+        "clean_plastic": 3,
+        "landfill": 1
+      }
+    },
+    {
+      "bin": "landfill",
+      "correct": 34,
+      "total": 46,
+      "recall": 0.7391304347826086,
+      "predictions": {
+        "landfill": 34,
+        "unknown": 6,
+        "organic": 3,
+        "paper_cardboard": 1,
+        "bottle_can": 1,
+        "clean_plastic": 1
+      }
+    },
+    {
+      "bin": "organic",
+      "correct": 72,
+      "total": 76,
+      "recall": 0.9473684210526315,
+      "predictions": {
+        "organic": 72,
+        "unknown": 4
+      }
+    },
+    {
+      "bin": "paper_cardboard",
+      "correct": 22,
+      "total": 34,
+      "recall": 0.6470588235294118,
+      "predictions": {
+        "paper_cardboard": 22,
+        "unknown": 4,
+        "landfill": 4,
+        "bottle_can": 2,
+        "organic": 1,
+        "clean_plastic": 1
+      }
+    },
+    {
+      "bin": "unknown",
+      "correct": 74,
+      "total": 88,
+      "recall": 0.8409090909090909,
+      "predictions": {
+        "unknown": 74,
+        "clean_plastic": 4,
+        "landfill": 4,
+        "paper_cardboard": 2,
+        "hazardous": 2,
+        "bottle_can": 1,
+        "organic": 1
+      }
+    }
+  ],
+  "per_class": [
+    {
+      "class": "aerosol_can",
+      "correct": 3,
+      "total": 3,
+      "recall": 1.0,
+      "hazardous": true,
+      "predictions": {
+        "aerosol_can": 3
+      }
+    },
+    {
+      "class": "aluminium_drink_can",
+      "correct": 3,
+      "total": 3,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "aluminium_drink_can": 3
+      }
+    },
+    {
+      "class": "battery",
+      "correct": 7,
+      "total": 7,
+      "recall": 1.0,
+      "hazardous": true,
+      "predictions": {
+        "battery": 7
+      }
+    },
+    {
+      "class": "cardboard_box",
+      "correct": 9,
+      "total": 12,
+      "recall": 0.75,
+      "hazardous": false,
+      "predictions": {
+        "cardboard_box": 9,
+        "unknown": 2,
+        "steel_food_can": 1
+      }
+    },
+    {
+      "class": "chemical_container",
+      "correct": 3,
+      "total": 4,
+      "recall": 0.75,
+      "hazardous": true,
+      "predictions": {
+        "chemical_container": 3,
+        "paper_cup": 1
+      }
+    },
+    {
+      "class": "dirty_plastic_bag",
+      "correct": 4,
+      "total": 4,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "dirty_plastic_bag": 4
+      }
+    },
+    {
+      "class": "disposable_cutlery",
+      "correct": 1,
+      "total": 4,
+      "recall": 0.25,
+      "hazardous": false,
+      "predictions": {
+        "disposable_cutlery": 1,
+        "food_waste": 1,
+        "paper_plate": 1,
+        "unknown": 1
+      }
+    },
+    {
+      "class": "disposable_diaper",
+      "correct": 2,
+      "total": 3,
+      "recall": 0.6666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "disposable_diaper": 2,
+        "dirty_plastic_bag": 1
+      }
+    },
+    {
+      "class": "drink_carton",
+      "correct": 1,
+      "total": 6,
+      "recall": 0.16666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "cardboard_box": 1,
+        "sanitary_pad": 1,
+        "snack_wrapper": 1,
+        "unknown": 1,
+        "drink_carton": 1,
+        "steel_food_can": 1
+      }
+    },
+    {
+      "class": "electronic_cable",
+      "correct": 4,
+      "total": 6,
+      "recall": 0.6666666666666666,
+      "hazardous": true,
+      "predictions": {
+        "electronic_cable": 4,
+        "unknown": 2
+      }
+    },
+    {
+      "class": "food_waste",
+      "correct": 23,
+      "total": 27,
+      "recall": 0.8518518518518519,
+      "hazardous": false,
+      "predictions": {
+        "food_waste": 23,
+        "fruit_peel": 2,
+        "vegetable_scraps": 1,
+        "unknown": 1
+      }
+    },
+    {
+      "class": "fruit_peel",
+      "correct": 20,
+      "total": 26,
+      "recall": 0.7692307692307693,
+      "hazardous": false,
+      "predictions": {
+        "fruit_peel": 20,
+        "unknown": 3,
+        "vegetable_scraps": 2,
+        "food_waste": 1
+      }
+    },
+    {
+      "class": "glass_drink_bottle",
+      "correct": 8,
+      "total": 8,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "glass_drink_bottle": 8
+      }
+    },
+    {
+      "class": "hair_clip",
+      "correct": 0,
+      "total": 1,
+      "recall": 0.0,
+      "hazardous": false,
+      "predictions": {
+        "unknown": 1
+      }
+    },
+    {
+      "class": "hair_tie",
+      "correct": 1,
+      "total": 1,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "hair_tie": 1
+      }
+    },
+    {
+      "class": "light_bulb",
+      "correct": 3,
+      "total": 6,
+      "recall": 0.5,
+      "hazardous": true,
+      "predictions": {
+        "light_bulb": 3,
+        "styrofoam_container": 2,
+        "unknown": 1
+      }
+    },
+    {
+      "class": "medical_mask",
+      "correct": 4,
+      "total": 6,
+      "recall": 0.6666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "medical_mask": 4,
+        "unknown": 1,
+        "drink_carton": 1
+      }
+    },
+    {
+      "class": "medicine_blister_pack",
+      "correct": 5,
+      "total": 5,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "medicine_blister_pack": 5
+      }
+    },
+    {
+      "class": "mobile_phone",
+      "correct": 1,
+      "total": 3,
+      "recall": 0.3333333333333333,
+      "hazardous": true,
+      "predictions": {
+        "unknown": 2,
+        "mobile_phone": 1
+      }
+    },
+    {
+      "class": "newspaper",
+      "correct": 1,
+      "total": 3,
+      "recall": 0.3333333333333333,
+      "hazardous": false,
+      "predictions": {
+        "sanitary_pad": 2,
+        "newspaper": 1
+      }
+    },
+    {
+      "class": "paper_bag",
+      "correct": 3,
+      "total": 4,
+      "recall": 0.75,
+      "hazardous": false,
+      "predictions": {
+        "paper_bag": 3,
+        "unknown": 1
+      }
+    },
+    {
+      "class": "paper_cup",
+      "correct": 5,
+      "total": 6,
+      "recall": 0.8333333333333334,
+      "hazardous": false,
+      "predictions": {
+        "paper_cup": 5,
+        "paper_plate": 1
+      }
+    },
+    {
+      "class": "paper_plate",
+      "correct": 3,
+      "total": 5,
+      "recall": 0.6,
+      "hazardous": false,
+      "predictions": {
+        "paper_plate": 3,
+        "food_waste": 2
+      }
+    },
+    {
+      "class": "paperboard_packaging",
+      "correct": 3,
+      "total": 6,
+      "recall": 0.5,
+      "hazardous": false,
+      "predictions": {
+        "paperboard_packaging": 3,
+        "cardboard_box": 2,
+        "paper_bag": 1
+      }
+    },
+    {
+      "class": "pen_marker",
+      "correct": 0,
+      "total": 1,
+      "recall": 0.0,
+      "hazardous": false,
+      "predictions": {
+        "unknown": 1
+      }
+    },
+    {
+      "class": "phone_case",
+      "correct": 0,
+      "total": 1,
+      "recall": 0.0,
+      "hazardous": false,
+      "predictions": {
+        "medicine_blister_pack": 1
+      }
+    },
+    {
+      "class": "plastic_bag",
+      "correct": 5,
+      "total": 9,
+      "recall": 0.5555555555555556,
+      "hazardous": false,
+      "predictions": {
+        "plastic_bag": 5,
+        "dirty_plastic_bag": 4
+      }
+    },
+    {
+      "class": "plastic_cosmetic_container",
+      "correct": 1,
+      "total": 1,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "plastic_cosmetic_container": 1
+      }
+    },
+    {
+      "class": "plastic_cup_lid",
+      "correct": 2,
+      "total": 3,
+      "recall": 0.6666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "plastic_cup_lid": 2,
+        "plastic_takeaway_cup": 1
+      }
+    },
+    {
+      "class": "plastic_food_container",
+      "correct": 1,
+      "total": 3,
+      "recall": 0.3333333333333333,
+      "hazardous": false,
+      "predictions": {
+        "dirty_plastic_bag": 1,
+        "plastic_food_container": 1,
+        "styrofoam_container": 1
+      }
+    },
+    {
+      "class": "plastic_takeaway_cup",
+      "correct": 3,
+      "total": 6,
+      "recall": 0.5,
+      "hazardous": false,
+      "predictions": {
+        "plastic_takeaway_cup": 3,
+        "sanitary_pad": 1,
+        "plastic_cup_lid": 1,
+        "drink_carton": 1
+      }
+    },
+    {
+      "class": "plastic_water_bottle",
+      "correct": 2,
+      "total": 3,
+      "recall": 0.6666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "plastic_water_bottle": 2,
+        "plastic_takeaway_cup": 1
+      }
+    },
+    {
+      "class": "power_bank",
+      "correct": 2,
+      "total": 3,
+      "recall": 0.6666666666666666,
+      "hazardous": true,
+      "predictions": {
+        "power_bank": 2,
+        "unknown": 1
+      }
+    },
+    {
+      "class": "printing_paper",
+      "correct": 2,
+      "total": 3,
+      "recall": 0.6666666666666666,
+      "hazardous": false,
+      "predictions": {
+        "printing_paper": 2,
+        "medicine_blister_pack": 1
+      }
+    },
+    {
+      "class": "sanitary_pad",
+      "correct": 2,
+      "total": 6,
+      "recall": 0.3333333333333333,
+      "hazardous": false,
+      "predictions": {
+        "sanitary_pad": 2,
+        "unknown": 2,
+        "tissue": 1,
+        "steel_food_can": 1
+      }
+    },
+    {
+      "class": "snack_wrapper",
+      "correct": 3,
+      "total": 9,
+      "recall": 0.3333333333333333,
+      "hazardous": false,
+      "predictions": {
+        "snack_wrapper": 3,
+        "drink_carton": 3,
+        "unknown": 2,
+        "fruit_peel": 1
+      }
+    },
+    {
+      "class": "steel_food_can",
+      "correct": 2,
+      "total": 6,
+      "recall": 0.3333333333333333,
+      "hazardous": false,
+      "predictions": {
+        "steel_food_can": 2,
+        "aluminium_drink_can": 2,
+        "unknown": 1,
+        "plastic_food_container": 1
+      }
+    },
+    {
+      "class": "styrofoam_container",
+      "correct": 3,
+      "total": 3,
+      "recall": 1.0,
+      "hazardous": false,
+      "predictions": {
+        "styrofoam_container": 3
+      }
+    },
+    {
+      "class": "tissue",
+      "correct": 0,
+      "total": 3,
+      "recall": 0.0,
+      "hazardous": false,
+      "predictions": {
+        "medical_mask": 1,
+        "plastic_bag": 1,
+        "paper_cup": 1
+      }
+    },
+    {
+      "class": "unknown",
+      "correct": 75,
+      "total": 88,
+      "recall": 0.8522727272727273,
+      "hazardous": false,
+      "predictions": {
+        "unknown": 75,
+        "mobile_phone": 2,
+        "sanitary_pad": 2,
+        "plastic_takeaway_cup": 2,
+        "snack_wrapper": 1,
+        "steel_food_can": 1,
+        "plastic_cosmetic_container": 1,
+        "pen_marker": 1,
+        "printing_paper": 1,
+        "tissue": 1,
+        "food_waste": 1
+      }
+    },
+    {
+      "class": "vegetable_scraps",
+      "correct": 16,
+      "total": 23,
+      "recall": 0.6956521739130435,
+      "hazardous": false,
+      "predictions": {
+        "vegetable_scraps": 16,
+        "food_waste": 4,
+        "fruit_peel": 3
+      }
+    }
+  ]
+}

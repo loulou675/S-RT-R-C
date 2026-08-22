@@ -11,7 +11,7 @@ The repository contains the complete application and AI integration layer, but a
 - React, TypeScript, Vite and React Router provide the multi-route web app.
 - Browser MediaDevices handles laptop and mobile camera capture after explicit user action.
 - Browser Canvas automatically extracts the centered camera guide, resizes it and prepares the RGB tensor.
-- ONNX Runtime Web loads the calibrated v61 four-model ensemble from `/public/models/` for local browser inference.
+- ONNX Runtime Web loads the calibrated v66 four-model, 41-class ensemble from `/public/models/` for local browser inference.
 - A `VisionProvider` interface separates the model from the app flow.
 - Supabase Postgres stores normalized reference data, rules, condition questions, reuse suggestions and anonymous scan events.
 - A short post-scan survey stores usability feedback locally first, then syncs it to Supabase when configured.
@@ -187,9 +187,9 @@ Place files in `public/models/`:
 
 ```text
 public/models/waste_classifier.onnx
-public/models/waste_classifier_v61_s_late.onnx
-public/models/waste_classifier_v61_s_frozen.onnx
-public/models/waste_classifier_v61_m_frozen.onnx
+public/models/waste_classifier_v66_s_late.onnx
+public/models/waste_classifier_v66_s_frozen.onnx
+public/models/waste_classifier_v66_m_frozen.onnx
 public/models/waste_classifier_ensemble.json
 public/models/labels.json
 ```
@@ -209,7 +209,7 @@ Example labels format:
 }
 ```
 
-The checked-in v61 ensemble and `labels.json` contain 40 visual classes,
+The checked-in v66 ensemble and `labels.json` contain 41 visual classes,
 including `unknown`. Searchable waste names
 can be more detailed than model classes; disposal conditions such as clean,
 dirty, wet or full are handled by rules after recognition.
@@ -332,8 +332,8 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The checked-in 40-class v61 ensemble is a candidate MVP (72.1% held-out top-1), not a production safety system.
-- `disposable_cutlery` is searchable but not yet a v61 model output; include it in the next controlled candidate.
+- The checked-in 41-class v66 ensemble is a candidate MVP (71.5% held-out top-1 on the expanded test set), not a production safety system.
+- `disposable_cutlery` is an experimental v66 output with only 1/4 held-out recall; keep collecting independent field images.
 - Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
 - Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.

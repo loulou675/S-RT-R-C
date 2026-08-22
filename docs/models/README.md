@@ -1,11 +1,11 @@
 # SỌRT RÁC ONNX model files
 
-The browser uses the calibrated v61 four-model item-classifier ensemble:
+The browser uses the calibrated v66 four-model item-classifier ensemble:
 
 - `waste_classifier.onnx`
-- `waste_classifier_v61_s_late.onnx`
-- `waste_classifier_v61_s_frozen.onnx`
-- `waste_classifier_v61_m_frozen.onnx`
+- `waste_classifier_v66_s_late.onnx`
+- `waste_classifier_v66_s_frozen.onnx`
+- `waste_classifier_v66_m_frozen.onnx`
 - `waste_classifier_ensemble.json`
 - `labels.json`
 
@@ -15,25 +15,25 @@ runtime JSON by `src/providers/vision/calibratedEnsemble.ts`. The first ONNX
 file is the v29 YOLO26n component; the other components are two YOLO26s models
 and one YOLO26m model.
 
-The locally deployed item ensemble is candidate v61 with 40 outputs, including
-`unknown`, `hair_clip`, `hair_tie`, `pen_marker`, and `phone_case`. It was
-promoted for field testing on 2026-08-21 after passing the project’s 70% held-out
-top-1 candidate goal. It has not passed the production release gates. The
-previous accepted model remains recoverable from Git history and its evaluation
-is preserved at `training/previous-accepted-model-evaluation.json`.
+The locally deployed item ensemble is candidate v66 with 41 outputs, including
+`disposable_cutlery` and `unknown`. It was promoted for field testing on
+2026-08-22 after preserving every v61 success on the original held-out set. It
+has not passed the production release gates. The previous v61 browser bundle is
+recoverable from Git history and from the local model archive used for this
+release.
 
-On the untouched 326-image held-out test set, v61 reaches 72.1% single-view
-item top-1 accuracy, 61.9% macro recall, 70.2% hazardous-class macro recall,
-79.0% known-item bin accuracy and 85.2% unknown rejection recall. These figures
-are not production-ready; see `training/candidate-v61-acceptance-comparison.json`.
+On the expanded untouched 330-image held-out test set, v66 reaches 71.5%
+single-view item top-1 accuracy (236/330), including 1/4 disposable-cutlery
+images. On the original 326-image v61 set it preserves the same 235 correct
+predictions (72.1%), with no old-class regression. These figures are not
+production-ready; see `training/candidate-v66-four-model-41class-heldout.json`.
 
 The separate `waste_bin_classifier.onnx` remains available for experiments but
-is disabled by default because it was not part of the accepted v61 evaluation.
+is disabled by default because it was not part of the accepted v66 evaluation.
 Set `VITE_BIN_MODEL_ENABLED=true` only when deliberately evaluating that hybrid.
 
-Use `training/export_v61_browser_ensemble.py` to reproduce the browser files.
+Use `training/export_v66_browser_ensemble.py` to reproduce the browser files.
 The app rejects any component whose output count differs from `labels.json`.
-`disposable_cutlery` is available in search and training taxonomy but is not a
-v61 output; it needs a new calibrated candidate before browser recognition.
+`disposable_cutlery` is now present at index 6 in every ensemble component.
 
 Local development can use `VITE_USE_MOCK_VISION=true`, but mock mode is disabled by default.

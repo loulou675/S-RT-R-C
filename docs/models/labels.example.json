@@ -1,12 +1,168 @@
 {
   "labels": [
-    { "index": 0, "code": "aluminium_drink_can", "nameEn": "Aluminium drink can", "nameVi": "Lon nước nhôm" },
-    { "index": 1, "code": "battery", "nameEn": "Battery", "nameVi": "Pin" },
-    { "index": 2, "code": "cardboard_box", "nameEn": "Cardboard box", "nameVi": "Thùng carton" },
-    { "index": 3, "code": "fruit_peel", "nameEn": "Fruit peel", "nameVi": "Vỏ trái cây" },
-    { "index": 4, "code": "paper_cup", "nameEn": "Paper cup", "nameVi": "Ly giấy" },
-    { "index": 5, "code": "plastic_takeaway_cup", "nameEn": "Plastic takeaway cup", "nameVi": "Ly nhựa mang đi" },
-    { "index": 6, "code": "plastic_water_bottle", "nameEn": "Plastic water bottle", "nameVi": "Chai nước nhựa" },
-    { "index": 7, "code": "unknown", "nameEn": "Unknown item", "nameVi": "Vật phẩm chưa xác định" }
+    {
+      "index": 0,
+      "code": "aerosol_can"
+    },
+    {
+      "index": 1,
+      "code": "aluminium_drink_can"
+    },
+    {
+      "index": 2,
+      "code": "battery"
+    },
+    {
+      "index": 3,
+      "code": "cardboard_box"
+    },
+    {
+      "index": 4,
+      "code": "chemical_container"
+    },
+    {
+      "index": 5,
+      "code": "dirty_plastic_bag"
+    },
+    {
+      "index": 6,
+      "code": "disposable_cutlery"
+    },
+    {
+      "index": 7,
+      "code": "disposable_diaper"
+    },
+    {
+      "index": 8,
+      "code": "drink_carton"
+    },
+    {
+      "index": 9,
+      "code": "electronic_cable"
+    },
+    {
+      "index": 10,
+      "code": "food_waste"
+    },
+    {
+      "index": 11,
+      "code": "fruit_peel"
+    },
+    {
+      "index": 12,
+      "code": "glass_drink_bottle"
+    },
+    {
+      "index": 13,
+      "code": "hair_clip"
+    },
+    {
+      "index": 14,
+      "code": "hair_tie"
+    },
+    {
+      "index": 15,
+      "code": "light_bulb"
+    },
+    {
+      "index": 16,
+      "code": "medical_mask"
+    },
+    {
+      "index": 17,
+      "code": "medicine_blister_pack"
+    },
+    {
+      "index": 18,
+      "code": "mobile_phone"
+    },
+    {
+      "index": 19,
+      "code": "newspaper"
+    },
+    {
+      "index": 20,
+      "code": "paper_bag"
+    },
+    {
+      "index": 21,
+      "code": "paper_cup"
+    },
+    {
+      "index": 22,
+      "code": "paper_plate"
+    },
+    {
+      "index": 23,
+      "code": "paperboard_packaging"
+    },
+    {
+      "index": 24,
+      "code": "pen_marker"
+    },
+    {
+      "index": 25,
+      "code": "phone_case"
+    },
+    {
+      "index": 26,
+      "code": "plastic_bag"
+    },
+    {
+      "index": 27,
+      "code": "plastic_cosmetic_container"
+    },
+    {
+      "index": 28,
+      "code": "plastic_cup_lid"
+    },
+    {
+      "index": 29,
+      "code": "plastic_food_container"
+    },
+    {
+      "index": 30,
+      "code": "plastic_takeaway_cup"
+    },
+    {
+      "index": 31,
+      "code": "plastic_water_bottle"
+    },
+    {
+      "index": 32,
+      "code": "power_bank"
+    },
+    {
+      "index": 33,
+      "code": "printing_paper"
+    },
+    {
+      "index": 34,
+      "code": "sanitary_pad"
+    },
+    {
+      "index": 35,
+      "code": "snack_wrapper"
+    },
+    {
+      "index": 36,
+      "code": "steel_food_can"
+    },
+    {
+      "index": 37,
+      "code": "styrofoam_container"
+    },
+    {
+      "index": 38,
+      "code": "tissue"
+    },
+    {
+      "index": 39,
+      "code": "unknown"
+    },
+    {
+      "index": 40,
+      "code": "vegetable_scraps"
+    }
   ]
 }

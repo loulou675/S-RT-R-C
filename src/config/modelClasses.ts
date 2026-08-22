@@ -43,10 +43,8 @@ export const trainingTargetClassCodes = [
   'vegetable_scraps',
 ] as const
 
-/** Classes currently present in every v61 ONNX component. */
-export const deployedModelClassCodes = trainingTargetClassCodes.filter(
-  (code) => code !== 'disposable_cutlery',
-)
+/** Classes currently present in every v66 ONNX component. */
+export const deployedModelClassCodes = trainingTargetClassCodes
 
 // Backwards-compatible name used by the existing training feedback UI.
 export const yoloClassCodes = deployedModelClassCodes

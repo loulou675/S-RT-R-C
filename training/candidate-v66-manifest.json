@@ -1,0 +1,53 @@
+{
+  "candidate": "v66-four-model-41class-calibrated-ensemble",
+  "promotedAt": "2026-08-22",
+  "classes": 41,
+  "components": [
+    {
+      "checkpoint": "training/checkpoints/candidate_v64a_v29_cutlery_trained.pt",
+      "checkpointSha256": "3124fd0a02120e2e225f544b5957023f6e366a0d89a748aa4f00252e0b164957",
+      "browserFile": "public/models/waste_classifier.onnx",
+      "browserSha256": "cd9e9b97fd5b648ade7ea3e4c04a5036e248f5795d860c6a52a21fb1b35d7bff"
+    },
+    {
+      "checkpoint": "training/checkpoints/candidate_v63b_v52_cutlery_trained.pt",
+      "checkpointSha256": "c4b2ce653dad64798a75d4f663c20496f6f727b617b1be6e0cfc20e3d6d831bf",
+      "browserFile": "public/models/waste_classifier_v66_s_late.onnx",
+      "browserSha256": "17b90ff5bba25e6158793b27c8370df20034f820918d07417205411ac7e59b9f"
+    },
+    {
+      "checkpoint": "training/checkpoints/candidate_v63c_v51_cutlery_trained.pt",
+      "checkpointSha256": "cfb6bb47f127fcbdbbbdaa2d5c4f22e29430a7db7fe10ea12c0c6e2f38a40a44",
+      "browserFile": "public/models/waste_classifier_v66_s_frozen.onnx",
+      "browserSha256": "b951d176e509d74b93f765358cb30f9a05e033ec5f9c61cd3a2a4369f4a166e5"
+    },
+    {
+      "checkpoint": "training/checkpoints/candidate_v64d_v59_cutlery_trained.pt",
+      "checkpointSha256": "ebacc557960dede88a09375a4f971928e629c165cc741e939a233669e434deb5",
+      "browserFile": "public/models/waste_classifier_v66_m_frozen.onnx",
+      "browserSha256": "b2c5b5b13ed88b5fe94bbd1b7d037f1ef8eda4c60a5b22120957bdbdc645acde"
+    }
+  ],
+  "runtime": {
+    "path": "public/models/waste_classifier_ensemble.json",
+    "sha256": "487cc883dc2198db5669bfdc7238747f6dcabbfe01a5c0cd00613ede5c0e3a02"
+  },
+  "labels": {
+    "path": "public/models/labels.json",
+    "sha256": "43486aac50c11d55f98d1dedffac7d8113f1a1ca16a21aa163eb450e427dac1b"
+  },
+  "evaluation": {
+    "expandedHeldout": "training/candidate-v66-four-model-41class-heldout.json",
+    "top1": 0.7151515151515152,
+    "correct": 236,
+    "images": 330,
+    "originalV61SetCorrect": 235,
+    "originalV61SetImages": 326,
+    "disposableCutleryCorrect": 1,
+    "disposableCutleryImages": 4
+  },
+  "replacedModel": {
+    "candidate": "v61",
+    "rollback": "Git parent commit and local training/model_archive/candidate-v61-browser-20260822"
+  }
+}
