@@ -102,6 +102,18 @@ export const bins: Bin[] = [
     sortOrder: 6,
     isActive: true,
   },
+  {
+    code: 'mixed_uncertain',
+    nameVi: 'Hỗn Hợp / Chưa Chắc Chắn',
+    nameEn: 'Mixed or Uncertain',
+    colorName: 'Neutral',
+    colorHex: '#77716a',
+    iconKey: 'help',
+    descriptionVi: 'Không chọn thùng cho đến khi xác định được vật phẩm hoặc vật liệu chính xác hơn.',
+    descriptionEn: 'No bin is selected until the item or its material can be identified more precisely.',
+    sortOrder: 7,
+    isActive: true,
+  },
 ]
 
 export const materials: Material[] = [
@@ -237,7 +249,10 @@ export const wasteItems: WasteItem[] = [
   item('paperboard_packaging', 'Hộp giấy mỏng', 'Paperboard packaging', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
     'hộp giấy',
     'bìa giấy mỏng',
-  ], ['paperboard packaging', 'cereal box', 'paperboard box']),
+    'bao thuốc lá',
+    'vỏ bao thuốc lá',
+    'hộp thuốc lá',
+  ], ['paperboard packaging', 'cereal box', 'paperboard box', 'cigarette pack', 'cigarette box', 'tobacco pack']),
   item('cardboard_box', 'Thùng carton', 'Cardboard box', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
     'thùng carton',
     'bìa carton',
@@ -893,6 +908,10 @@ function defaultWhyForBin(destinationBinCode: BinCode, locale: 'vi' | 'en') {
       return isVi
         ? 'Vật phẩm này cần xử lý riêng vì có thể gây rủi ro an toàn hoặc cần điểm thu gom được phê duyệt.'
         : 'This item needs special handling because it may create safety risks or require an approved collection point.'
+    case 'mixed_uncertain':
+      return isVi
+        ? 'Không chọn thùng vì mô hình chỉ xác định được vật liệu hỗn hợp hoặc chưa chắc chắn.'
+        : 'No bin is selected because the material model could only identify a mixed or uncertain material.'
   }
 }
 

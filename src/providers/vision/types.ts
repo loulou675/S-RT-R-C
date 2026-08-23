@@ -1,10 +1,19 @@
-import type { BinCode, DetectedComponent } from '../../types/domain'
+import type { BinCode, BroadMaterialCode, DetectedComponent } from '../../types/domain'
 
-export interface VisionResult {
+export interface ItemVisionResult {
+  kind: 'item'
   itemCode: string
   binCode?: BinCode
   components?: DetectedComponent[]
 }
+
+export interface MaterialVisionResult {
+  kind: 'material'
+  materialCode: BroadMaterialCode
+  confidence: number
+}
+
+export type VisionResult = ItemVisionResult | MaterialVisionResult
 
 export interface VisionProvider {
   identify(image: Blob | string | HTMLCanvasElement): Promise<VisionResult>

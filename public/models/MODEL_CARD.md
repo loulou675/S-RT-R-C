@@ -2,7 +2,7 @@
 
 ## Summary
 
-This browser model is a calibrated 41-class ensemble for a single waste item placed
+This browser model is the v69 calibrated 41-class ensemble for a single waste item placed
 inside the camera guide. It predicts an item class; the application then maps
 that class to one of six disposal groups and applies the relevant preparation
 rules.
@@ -15,6 +15,8 @@ instead of forcing every image into a bin.
 
 - Architecture: four fine-tuned Ultralytics YOLO26 classifiers (one YOLO26n,
   two YOLO26s and one YOLO26m) with validation-fitted class-wise calibration.
+  V69 preserves the first three v66 components and refines only the YOLO26m
+  classifier rows for `plastic_takeaway_cup` and `printing_paper`.
 - Browser format: four ONNX files, each with 41 outputs, plus a calibration JSON.
 - Input: one RGB image, center-cropped and resized to 224 x 224.
 - Output order: `labels.json` is the authoritative index-to-code mapping.
@@ -29,14 +31,14 @@ adds balanced negative examples such as people, furniture, clothing, toys,
 plants, animals, electronics, transport and signage to improve rejection of
 objects outside the waste taxonomy.
 
-The v66 evaluation split contains:
+The unchanged evaluation split contains:
 
 - 5,300 training images;
 - 373 validation images;
 - 330 test images;
 - 41 classes, including `disposable_cutlery` and `unknown`.
 
-The latest real-camera import adds 32 independently reviewed photos of clean
+The real-camera import adds 32 independently reviewed photos of clean
 and visibly dirty packaging, paper cups, bottles, bags, food trays and used
 masks. Clean/dirty/used status is retained as manifest metadata; it is not a
 separate classifier output.
@@ -44,18 +46,29 @@ separate classifier output.
 Several classes still contain too few independent original photographs.
 Augmentation improves robustness but does not replace new real images.
 
+The v69 feedback pass reviewed 31 Supabase rows. Twenty-nine had already been
+accounted for by the prior controlled feedback candidate, so they were not
+inserted twice. Two genuinely new, readable single-item images were accepted
+train-only: one plastic takeaway cup and one printed receipt. Validation and
+test images were not changed.
+
 ## Evaluation
 
-Candidate v66 evaluated once on the untouched expanded test split:
+Candidate v69 evaluated once on the untouched expanded test split using the
+same deployed class-wise calibration as v66:
 
-- single-view top-1 accuracy: 71.5% (236/330);
-- accuracy on the original v61 test images: 72.1% (235/326), unchanged;
+- single-view top-1 accuracy: 71.8% (237/330), up from v66's 71.5% (236/330);
 - disposable-cutlery recall: 25.0% (1/4);
-- macro recall: 61.0%;
+- macro recall: 61.4%;
 - hazardous-class macro recall: 70.2%;
-- correct six-bin destination for known items: 78.5%;
-- grouped known-item bin accuracy: 79.3%;
+- correct six-bin destination for known items: 79.3%;
+- grouped known-item bin accuracy: 79.8%;
 - unknown rejection recall: 85.2%.
+
+Compared with v66, v69 fixes one additional held-out
+`plastic_takeaway_cup` image and introduces no correct-to-wrong held-out class
+regression. The two submitted training images are reported separately only as
+a sanity check and are not counted as independent evaluation evidence.
 
 The weakest test classes remain `hair_clip`, `pen_marker`, `phone_case`, and
 `tissue` at 0%, with only one to three test images in each class.

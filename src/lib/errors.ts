@@ -11,6 +11,7 @@ export type AppErrorCode =
   | 'SCAN_TIMEOUT'
   | 'ITEM_NOT_RECOGNISED'
   | 'ITEM_AMBIGUOUS'
+  | 'MATERIAL_NOT_RECOGNISED'
   | 'MULTIPLE_ITEMS_DETECTED'
   | 'DATABASE_UNAVAILABLE'
   | 'RULE_NOT_FOUND'
@@ -77,6 +78,10 @@ export function messageForError(code?: AppErrorCode) {
 
   if (code === 'ITEM_AMBIGUOUS') {
     return 'The AI ran, but confidence was too low. Crop closer around one item or use a clearer photo.'
+  }
+
+  if (code === 'MATERIAL_NOT_RECOGNISED') {
+    return 'Neither the exact-item model nor the broad-material model was confident. Please identify the item below.'
   }
 
   if (code === 'OFFLINE') {

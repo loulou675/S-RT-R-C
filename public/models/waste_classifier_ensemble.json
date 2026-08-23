@@ -1,10 +1,10 @@
 {
-  "version": "v66",
+  "version": "v69",
   "modelPaths": [
     "waste_classifier.onnx",
     "waste_classifier_v66_s_late.onnx",
     "waste_classifier_v66_s_frozen.onnx",
-    "waste_classifier_v66_m_frozen.onnx"
+    "waste_classifier_v69_m_feedback.onnx"
   ],
   "temperatures": [
     1.0,

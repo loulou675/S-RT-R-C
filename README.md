@@ -11,7 +11,8 @@ The repository contains the complete application and AI integration layer, but a
 - React, TypeScript, Vite and React Router provide the multi-route web app.
 - Browser MediaDevices handles laptop and mobile camera capture after explicit user action.
 - Browser Canvas automatically extracts the centered camera guide, resizes it and prepares the RGB tensor.
-- ONNX Runtime Web loads the calibrated v66 four-model, 41-class ensemble from `/public/models/` for local browser inference.
+- ONNX Runtime Web loads the calibrated v69 four-model, 41-class ensemble from `/public/models/` for local browser inference.
+- Rejected exact-item scans can fall back to a separate seven-class broad-material model and open the normal result sheet with material-only guidance.
 - A `VisionProvider` interface separates the model from the app flow.
 - Supabase Postgres stores normalized reference data, rules, condition questions, reuse suggestions and anonymous scan events.
 - A short post-scan survey stores usability feedback locally first, then syncs it to Supabase when configured.
@@ -189,9 +190,11 @@ Place files in `public/models/`:
 public/models/waste_classifier.onnx
 public/models/waste_classifier_v66_s_late.onnx
 public/models/waste_classifier_v66_s_frozen.onnx
-public/models/waste_classifier_v66_m_frozen.onnx
+public/models/waste_classifier_v69_m_feedback.onnx
 public/models/waste_classifier_ensemble.json
 public/models/labels.json
+public/models/waste_material_classifier.onnx
+public/models/material_labels.json
 ```
 
 The app expects a 224 x 224 RGB classifier unless the provider is adjusted for model metadata.
@@ -209,10 +212,16 @@ Example labels format:
 }
 ```
 
-The checked-in v66 ensemble and `labels.json` contain 41 visual classes,
+The checked-in v69 ensemble and `labels.json` contain 41 visual classes,
 including `unknown`. Searchable waste names
 can be more detailed than model classes; disposal conditions such as clean,
 dirty, wet or full are handled by rules after recognition.
+
+If that exact-item ensemble rejects a scan, the app may run the separate
+seven-class material model. A sufficiently reliable material prediction opens
+the same result sheet as a successful exact scan, clearly marked as a
+material-based result. If both stages reject the scan, the user is routed to
+the correction-feedback flow.
 
 No confidence score appears in the user interface. Scores are used only internally to reject uncertain results.
 
@@ -332,8 +341,9 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The checked-in 41-class v66 ensemble is a candidate MVP (71.5% held-out top-1 on the expanded test set), not a production safety system.
-- `disposable_cutlery` is an experimental v66 output with only 1/4 held-out recall; keep collecting independent field images.
+- The checked-in 41-class v69 ensemble is a candidate MVP (71.8% held-out top-1 on the expanded test set), not a production safety system.
+- `disposable_cutlery` is an experimental v69 output with only 1/4 held-out recall; keep collecting independent field images.
+- Broad-material results are deliberately conservative, visibly labelled, and cannot determine hidden materials, contamination, coatings or local acceptance rules.
 - Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
 - Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.

@@ -1,5 +1,7 @@
+import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toAppError, type AppErrorCode } from '../../lib/errors'
+import { averagePixelDifference, measureFrameQuality } from './frameQuality'
 
 interface CameraCaptureProps {
   onCapture: (dataUrl: string) => Promise<boolean>
@@ -7,14 +9,14 @@ interface CameraCaptureProps {
   onError: (code: AppErrorCode) => void
 }
 
-const SAMPLE_SIZE = 48
-const STABLE_DIFFERENCE = 7.5
-const REQUIRED_STABLE_SAMPLES = 2
-const SCAN_SESSION_TIMEOUT_MS = 25_000
-const MAX_FAILED_ATTEMPTS = 3
-const DARK_LUMINANCE = 52
-const GLARE_LUMINANCE = 222
-const FAILURE_HINT_MS = 2_400
+const SAMPLE_SIZE = 64
+const SAMPLE_INTERVAL_MS = 220
+const STARTUP_GRACE_MS = 1_800
+const STABLE_DIFFERENCE = 4.8
+const READY_STABLE_SAMPLES = 4
+const CAPTURE_STABLE_SAMPLES = 7
+
+type FocusState = 'adjusting' | 'ready' | 'scanning'
 
 export function CameraCapture({ onCapture, onCancel, onError }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -23,117 +25,92 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
   const stableSamplesRef = useRef(0)
   const busyRef = useRef(false)
   const mountedRef = useRef(true)
-  const scanStartedAtRef = useRef(0)
-  const failedAttemptsRef = useRef(0)
-  const failureHintUntilRef = useRef(0)
-  const timeoutHandledRef = useRef(false)
   const [facingMode] = useState<'environment' | 'user'>(() =>
     window.matchMedia('(max-width: 860px)').matches ? 'environment' : 'user',
   )
   const [status, setStatus] = useState('Starting camera...')
+  const [focusState, setFocusState] = useState<FocusState>('adjusting')
   const isFrontCamera = facingMode === 'user'
 
   useEffect(() => {
     mountedRef.current = true
     let cancelled = false
     let sampleTimer: number | undefined
+    let startupTimer: number | undefined
 
     function stopCamera() {
       if (sampleTimer) window.clearInterval(sampleTimer)
+      if (startupTimer) window.clearTimeout(startupTimer)
       streamRef.current?.getTracks().forEach((track) => track.stop())
       streamRef.current = null
     }
 
-    async function scanWhenStable() {
+    function resetStability(sample?: Uint8ClampedArray) {
+      stableSamplesRef.current = 0
+      previousSampleRef.current = sample
+      setFocusState('adjusting')
+    }
+
+    async function scanWhenReady() {
       const video = videoRef.current
-      if (!video || timeoutHandledRef.current || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return
-
-      const now = Date.now()
-      const elapsed = now - scanStartedAtRef.current
-
-      if (!busyRef.current && elapsed >= SCAN_SESSION_TIMEOUT_MS) {
-        timeoutHandledRef.current = true
-        onError('SCAN_TIMEOUT')
-        return
-      }
-
-      if (busyRef.current || now < failureHintUntilRef.current) return
+      if (busyRef.current || !video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return
 
       const sample = sampleCenter(video)
       if (!sample) return
 
-      const luminance = averageLuminance(sample)
-      if (luminance < DARK_LUMINANCE) {
-        stableSamplesRef.current = 0
-        previousSampleRef.current = undefined
-        setStatus('Too dark. Move to brighter, even light.')
-        return
-      }
-
-      if (luminance > GLARE_LUMINANCE) {
-        stableSamplesRef.current = 0
-        previousSampleRef.current = undefined
-        setStatus('Too much glare. Tilt the item or soften the light.')
+      const quality = measureFrameQuality(sample, SAMPLE_SIZE)
+      if (!quality.good) {
+        resetStability(sample)
+        setStatus(quality.message)
         return
       }
 
       const previous = previousSampleRef.current
       previousSampleRef.current = sample
-
       if (!previous) {
-        setStatus('Place one item inside the frame.')
+        setStatus('Center one item in the yellow square and hold still.')
         return
       }
 
       const difference = averagePixelDifference(previous, sample)
-      stableSamplesRef.current = difference < STABLE_DIFFERENCE ? stableSamplesRef.current + 1 : 0
-      setStatus(
-        stableSamplesRef.current > 0
-          ? 'Hold still. Scanning automatically...'
-          : elapsed > 12_000
-            ? 'Move one item closer and keep the background clear.'
-            : 'Center one item and hold it still.',
-      )
+      stableSamplesRef.current = difference <= STABLE_DIFFERENCE ? stableSamplesRef.current + 1 : 0
 
-      if (stableSamplesRef.current < REQUIRED_STABLE_SAMPLES) return
+      if (stableSamplesRef.current < READY_STABLE_SAMPLES) {
+        setFocusState('adjusting')
+        setStatus(difference <= STABLE_DIFFERENCE ? 'Hold still while focus settles.' : 'Keep one item centered and hold still.')
+        return
+      }
 
-      busyRef.current = true
-      stableSamplesRef.current = 0
-      setStatus('Identifying item...')
+      setFocusState('ready')
+      setStatus('Good position. Hold still—scanning automatically...')
+      if (stableSamplesRef.current < CAPTURE_STABLE_SAMPLES) return
 
       const dataUrl = captureCenter(video, isFrontCamera)
       if (!dataUrl) {
-        busyRef.current = false
+        resetStability()
         onError('IMAGE_INVALID')
         return
       }
 
+      busyRef.current = true
+      stableSamplesRef.current = 0
+      setFocusState('scanning')
+      setStatus('Identifying item...')
       const recognised = await onCapture(dataUrl)
       if (!mountedRef.current) return
 
       if (!recognised) {
-        previousSampleRef.current = undefined
-        failedAttemptsRef.current += 1
-
-        if (
-          failedAttemptsRef.current >= MAX_FAILED_ATTEMPTS
-          || Date.now() - scanStartedAtRef.current >= SCAN_SESSION_TIMEOUT_MS
-        ) {
-          timeoutHandledRef.current = true
-          onError('SCAN_TIMEOUT')
-          return
-        }
-
-        failureHintUntilRef.current = Date.now() + FAILURE_HINT_MS
-        setStatus('Not clear yet. Add light, move closer, and show only one item.')
-        window.setTimeout(() => {
-          if (mountedRef.current) busyRef.current = false
-        }, 900)
+        setFocusState('adjusting')
+        setStatus('No confident match. Opening the feedback form...')
       }
     }
 
     async function startCamera() {
       setStatus('Starting camera...')
+      setFocusState('adjusting')
+      busyRef.current = false
+      previousSampleRef.current = undefined
+      stableSamplesRef.current = 0
 
       if (!navigator.mediaDevices?.getUserMedia) {
         onError('CAMERA_NOT_AVAILABLE')
@@ -163,14 +140,12 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
           await videoRef.current.play()
         }
 
-        setStatus('Place one item inside the frame.')
-        scanStartedAtRef.current = Date.now()
-        failedAttemptsRef.current = 0
-        failureHintUntilRef.current = 0
-        timeoutHandledRef.current = false
-        window.setTimeout(() => {
-          if (!cancelled) sampleTimer = window.setInterval(scanWhenStable, 220)
-        }, 350)
+        if (!cancelled) {
+          setStatus('Place one item inside the yellow square.')
+          startupTimer = window.setTimeout(() => {
+            if (!cancelled) sampleTimer = window.setInterval(() => void scanWhenReady(), SAMPLE_INTERVAL_MS)
+          }, STARTUP_GRACE_MS)
+        }
       } catch (error) {
         const appError = toAppError(
           error,
@@ -203,12 +178,18 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
         <div className={isFrontCamera ? 'camera-frame user-facing' : 'camera-frame'}>
           <video ref={videoRef} playsInline muted aria-label="Camera preview" />
           <div className="scan-shade" aria-hidden="true" />
-          <div className="scan-window" aria-hidden="true">
+          <div className={`scan-window ${focusState}`} aria-hidden="true">
             <span />
           </div>
         </div>
       </div>
       <p className="status-line" role="status">{status}</p>
+      <div className="camera-controls">
+        <button type="button" className="camera-cancel-button" onClick={onCancel} aria-label="Close camera">
+          <X size={20} aria-hidden="true" />
+          <span>Cancel</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -260,26 +241,4 @@ function drawCenterCrop(
   }
 
   context.drawImage(video, sourceX, sourceY, sourceSize, sourceSize, 0, 0, outputSize, outputSize)
-}
-
-function averagePixelDifference(previous: Uint8ClampedArray, current: Uint8ClampedArray) {
-  let difference = 0
-  for (let index = 0; index < current.length; index += 4) {
-    difference += Math.abs(current[index] - previous[index])
-    difference += Math.abs(current[index + 1] - previous[index + 1])
-    difference += Math.abs(current[index + 2] - previous[index + 2])
-  }
-  return difference / ((current.length / 4) * 3)
-}
-
-function averageLuminance(sample: Uint8ClampedArray) {
-  let luminance = 0
-
-  for (let index = 0; index < sample.length; index += 4) {
-    luminance += sample[index] * 0.2126
-    luminance += sample[index + 1] * 0.7152
-    luminance += sample[index + 2] * 0.0722
-  }
-
-  return luminance / (sample.length / 4)
 }

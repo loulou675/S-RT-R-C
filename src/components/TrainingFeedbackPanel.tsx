@@ -34,6 +34,7 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
   const [uploaded, setUploaded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>()
+  const recognitionFailed = Boolean(errorCode)
 
   const itemOptions = useMemo(
     () => wasteItems
@@ -142,12 +143,14 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       <div className="training-feedback-heading">
         <MessageSquareWarning size={18} aria-hidden="true" />
         <div>
-          <p className="eyebrow">Improve this result</p>
-          <h2>What is this item?</h2>
+          <p className="eyebrow">{recognitionFailed ? 'Give feedback' : 'Improve this result'}</p>
+          <h2>{recognitionFailed ? 'Help identify this scan' : 'What is this item?'}</h2>
         </div>
       </div>
       <p className="training-feedback-copy">
-        Choose the closest match. We review corrections before using them to train the AI.
+        {recognitionFailed
+          ? 'Exact-item and broad-material recognition both abstained. Choose the correct item so this scan can be reviewed.'
+          : 'Choose the closest match. We review corrections before using them to train the AI.'}
       </p>
 
       <label className="feedback-search">

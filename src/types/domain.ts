@@ -13,6 +13,16 @@ export type BinCode =
   | 'paper_cardboard'
   | 'landfill'
   | 'special_handling'
+  | 'mixed_uncertain'
+
+export type BroadMaterialCode =
+  | 'plastic'
+  | 'metal'
+  | 'paper_cardboard'
+  | 'organic'
+  | 'glass'
+  | 'electronic_battery'
+  | 'mixed_uncertain'
 
 export type MaterialCode =
   | 'pet_plastic'
@@ -199,4 +209,6 @@ export interface RuleEngineResult {
   warning?: string
   reuseSuggestions: ReuseSuggestion[]
   specialHandling: boolean
+  matchLevel?: 'item' | 'material'
+  materialCode?: BroadMaterialCode
 }

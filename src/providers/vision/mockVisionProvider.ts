@@ -1,5 +1,6 @@
 import { AppError } from '../../lib/errors'
 import type { VisionProvider, VisionResult } from './types'
+import type { BroadMaterialCode } from '../../types/domain'
 
 export class MockVisionProvider implements VisionProvider {
   private readonly itemCode: string
@@ -19,6 +20,14 @@ export class MockVisionProvider implements VisionProvider {
       throw new AppError('ITEM_NOT_RECOGNISED', 'Forced mock failure')
     }
 
-    return { itemCode: selectedItem }
+    if (selectedItem.startsWith('material_')) {
+      return {
+        kind: 'material',
+        materialCode: selectedItem.slice('material_'.length) as BroadMaterialCode,
+        confidence: 0.86,
+      }
+    }
+
+    return { kind: 'item', itemCode: selectedItem }
   }
 }

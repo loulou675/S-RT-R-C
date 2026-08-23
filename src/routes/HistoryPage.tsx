@@ -26,7 +26,11 @@ export function HistoryPage() {
               type="button"
               className="history-card"
               key={entry.id}
-              onClick={() => navigate(`/?item=${entry.itemCode}&source=history`)}
+              onClick={() => navigate(
+                entry.materialCode
+                  ? `/?material=${entry.materialCode}&source=history`
+                  : `/?item=${entry.itemCode}&source=history`,
+              )}
             >
               <span className="history-dot" style={{ background: entry.destinationHex }} aria-hidden="true" />
               <span>

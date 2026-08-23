@@ -8,13 +8,13 @@ import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { UserSurveyModal } from '../components/UserSurveyModal'
 import { CameraCapture } from '../features/camera/CameraCapture'
 import { fileToDataUrl } from '../features/camera/fileInput'
-import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
+import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
 import { createVisionProvider } from '../providers/vision'
 import { saveScanHistory } from '../services/history'
 import { trackFeature } from '../services/siteAnalytics'
 import type { AppErrorCode } from '../lib/errors'
-import type { DetectedComponent, InputMethod, RuleEngineResult } from '../types/domain'
+import type { BroadMaterialCode, DetectedComponent, InputMethod, RuleEngineResult } from '../types/domain'
 
 type RecognitionStage = 'idle' | 'camera' | 'processing'
 
@@ -58,7 +58,9 @@ export function LandingPage() {
   const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
   const [surveyOpen, setSurveyOpen] = useState(false)
   const recognitionIdRef = useRef(0)
+  const feedbackSectionRef = useRef<HTMLDivElement | null>(null)
   const searchedItemCode = searchParams.get('item')
+  const searchedMaterialCode = searchParams.get('material') as BroadMaterialCode | null
   const searchedSource = searchParams.get('source')
 
   useEffect(() => {
@@ -70,10 +72,12 @@ export function LandingPage() {
   }, [])
 
   useEffect(() => {
-    if (!searchedItemCode) return
+    if (!searchedItemCode && !searchedMaterialCode) return
 
     try {
-      const disposal = getDisposalForItem(searchedItemCode)
+      const disposal = searchedMaterialCode
+        ? evaluateMaterialFallback(searchedMaterialCode)
+        : getDisposalForItem(searchedItemCode as string)
       setResult(disposal)
       setResultCollapsed(false)
       setErrorCode(undefined)
@@ -86,7 +90,16 @@ export function LandingPage() {
       const appError = error instanceof AppError ? error : toAppError(error, 'RULE_NOT_FOUND')
       setErrorCode(appError.code)
     }
-  }, [searchedItemCode, searchedSource])
+  }, [searchedItemCode, searchedMaterialCode, searchedSource])
+
+  useEffect(() => {
+    if (stage !== 'idle' || !errorCode || !imagePreview) return
+
+    const frame = window.requestAnimationFrame(() => {
+      feedbackSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [errorCode, imagePreview, stage])
 
   function closeResult() {
     recognitionIdRef.current += 1
@@ -130,17 +143,22 @@ export function LandingPage() {
       const provider = await createVisionProvider()
       const visionResult = await provider.identify(dataUrl)
       if (recognitionId !== recognitionIdRef.current) return false
-      setPredictedItemCode(visionResult.itemCode)
 
       setStatus('Checking disposal guidance...')
-      const disposal = getDisposalForItem(visionResult.itemCode)
+      const disposal = visionResult.kind === 'material'
+        ? evaluateMaterialFallback(visionResult.materialCode)
+        : getDisposalForItem(visionResult.itemCode)
+      setPredictedItemCode(visionResult.kind === 'item' ? visionResult.itemCode : undefined)
 
       setResult(disposal)
       setResultCollapsed(false)
       saveScanHistory(disposal, method)
       setStage('idle')
       setStatus(undefined)
-      void trackFeature('scan_success', 'scan_success')
+      void trackFeature(
+        visionResult.kind === 'material' ? 'material_scan_success' : 'scan_success',
+        'scan_success',
+      )
 
       window.setTimeout(() => {
         if (recognitionId === recognitionIdRef.current && markSurveyShownForSession()) {
@@ -148,7 +166,7 @@ export function LandingPage() {
         }
       }, 520)
 
-      if (provider.identifyComponents) {
+      if (visionResult.kind === 'item' && provider.identifyComponents) {
         void provider.identifyComponents(dataUrl, visionResult.itemCode).then((components) => {
           if (recognitionId === recognitionIdRef.current && components?.length) {
             setResult(getDisposalForItem(visionResult.itemCode, components))
@@ -164,9 +182,12 @@ export function LandingPage() {
       const appError = error instanceof AppError ? error : toAppError(error, 'INFERENCE_FAILED')
       setErrorCode(appError.code)
       setPredictedItemCode(undefined)
-      setStage(keepCameraOpen ? 'camera' : 'idle')
+      setStage('idle')
       setStatus(undefined)
-      void trackFeature('scan_error', 'scan_error')
+      void trackFeature(
+        appError.code === 'MATERIAL_NOT_RECOGNISED' ? 'scan_feedback_requested' : 'scan_error',
+        'scan_error',
+      )
       return false
     }
   }, [])
@@ -271,24 +292,27 @@ export function LandingPage() {
             </div>
             {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
             {!result ? (
-              <TrainingFeedbackPanel
-                imagePreview={imagePreview}
-                predictedItemCode={predictedItemCode}
-                errorCode={errorCode}
-                inputMethod={inputMethod}
-                submittedStatus={feedbackDelivery}
-                onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
-                onCorrected={(correctedCode, uploaded) => {
-                  try {
-                    setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
-                    setResult(getDisposalForItem(correctedCode))
-                    setErrorCode(undefined)
-                    setResultCollapsed(false)
-                  } catch {
-                    // The feedback panel only offers active reference-data classes.
-                  }
-                }}
-              />
+              <div ref={feedbackSectionRef}>
+                <TrainingFeedbackPanel
+                  key={imagePreview}
+                  imagePreview={imagePreview}
+                  predictedItemCode={predictedItemCode}
+                  errorCode={errorCode}
+                  inputMethod={inputMethod}
+                  submittedStatus={feedbackDelivery}
+                  onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
+                  onCorrected={(correctedCode, uploaded) => {
+                    try {
+                      setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
+                      setResult(getDisposalForItem(correctedCode))
+                      setErrorCode(undefined)
+                      setResultCollapsed(false)
+                    } catch {
+                      // The feedback panel only offers active reference-data classes.
+                    }
+                  }}
+                />
+              </div>
             ) : null}
           </div>
         )}

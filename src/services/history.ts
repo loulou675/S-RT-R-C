@@ -1,4 +1,4 @@
-import type { InputMethod, RuleEngineResult } from '../types/domain'
+import type { BroadMaterialCode, InputMethod, RuleEngineResult } from '../types/domain'
 
 export interface ScanHistoryEntry {
   id: string
@@ -10,6 +10,7 @@ export interface ScanHistoryEntry {
   destinationHex: string
   inputMethod: InputMethod
   createdAt: string
+  materialCode?: BroadMaterialCode
 }
 
 const historyKey = 'sot-rac-history-v1'
@@ -26,6 +27,7 @@ export function saveScanHistory(result: RuleEngineResult, inputMethod: InputMeth
     destinationHex: result.destinationBin.colorHex,
     inputMethod,
     createdAt: new Date().toISOString(),
+    materialCode: result.materialCode,
   }
 
   const current = readScanHistory()

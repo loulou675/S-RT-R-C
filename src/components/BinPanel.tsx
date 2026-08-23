@@ -138,7 +138,7 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
       ) : null}
       <div className="result-panel-body" aria-hidden={resultPanel && collapsed ? true : undefined}>
         <div className="result-heading">
-          <p className="eyebrow">This object belongs to</p>
+          <p className="eyebrow">{result?.matchLevel === 'material' ? 'Material-based result' : 'This object belongs to'}</p>
           <h2>{heading}</h2>
           <p className="object-name">{result?.item.nameEn ?? 'Object name'}</p>
           {result?.specialHandling ? <p className="special-note">Special handling required</p> : null}
@@ -147,10 +147,22 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
 
         {result ? (
           <div className="panel-card-stack steps-only">
+            {result.matchLevel === 'material' ? (
+              <section className="material-result-note" aria-label="Material result notice">
+                <strong>Exact item not identified</strong>
+                <p>This guidance comes from a separate broad-material model.</p>
+              </section>
+            ) : null}
             <section className="why-bin-section" aria-labelledby="why-bin-heading">
               <h3 id="why-bin-heading">Why this bin?</h3>
               <p>{result.whyCategory}</p>
             </section>
+            {result.matchLevel === 'material' && result.warning ? (
+              <section className="material-result-warning" aria-label="Important material guidance">
+                <strong>Important</strong>
+                <p>{result.warning}</p>
+              </section>
+            ) : null}
             <section className="steps-section">
               <h3>Preparation steps</h3>
               <ol className="numbered-step-list">

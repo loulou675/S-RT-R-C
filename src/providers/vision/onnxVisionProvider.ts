@@ -12,6 +12,7 @@ import {
 import { selectEnsembledItem, type ScoredClass } from './ensembleSelection'
 import { runOnnxExclusive } from './onnxRuntimeQueue'
 import type { VisionProvider, VisionResult } from './types'
+import type { BroadMaterialCode } from '../../types/domain'
 
 // Static hosts such as GitHub Pages do not provide the isolation headers that
 // SharedArrayBuffer-based WASM workers require. Keep inference single-threaded
@@ -26,6 +27,16 @@ interface LabelRecord {
   code: string
 }
 
+const broadMaterialCodes = new Set<BroadMaterialCode>([
+  'plastic',
+  'metal',
+  'paper_cardboard',
+  'organic',
+  'glass',
+  'electronic_battery',
+  'mixed_uncertain',
+])
+
 export class OnnxVisionProvider implements VisionProvider {
   private itemAssetsPromise?: Promise<{
     sessions: ort.InferenceSession[]
@@ -33,6 +44,7 @@ export class OnnxVisionProvider implements VisionProvider {
   }>
   private labelsPromise?: Promise<LabelRecord[]>
   private binAssetsPromise?: Promise<{ session: ort.InferenceSession; labels: LabelRecord[] } | undefined>
+  private materialAssetsPromise?: Promise<{ session: ort.InferenceSession; labels: Array<{ index: number; code: BroadMaterialCode }> }>
   private componentProviderPromise?: Promise<import('./onnxComponentProvider').OnnxComponentProvider>
   private warmupPromise?: Promise<void>
 
@@ -102,11 +114,56 @@ export class OnnxVisionProvider implements VisionProvider {
           })
       : undefined
 
-    if (binClasses) {
-      return this.resolveEnsembledResult(itemClasses, binClasses)
+    try {
+      if (binClasses) return this.resolveEnsembledResult(itemClasses, binClasses)
+      return this.resolveItemOnlyResult(itemClasses)
+    } catch (error) {
+      if (!(error instanceof AppError) || !['ITEM_NOT_RECOGNISED', 'ITEM_AMBIGUOUS'].includes(error.code)) {
+        throw error
+      }
+      return this.resolveMaterialFallback(tensor, error)
     }
+  }
 
-    return this.resolveItemOnlyResult(itemClasses)
+  private async resolveMaterialFallback(tensor: ort.Tensor, exactItemError: AppError): Promise<VisionResult> {
+    if (import.meta.env.VITE_MATERIAL_MODEL_ENABLED === 'false') throw exactItemError
+
+    try {
+      const assets = await this.loadMaterialAssets()
+      const rawScores = await this.runRawClassifier(assets.session, assets.labels.length, tensor)
+      const probabilities = normalizeScores(rawScores)
+      const ranked = probabilities
+        .map((score, index) => ({ score, code: assets.labels[index]!.code }))
+        .sort((left, right) => right.score - left.score)
+      const top = ranked[0]
+      const runnerUp = ranked[1]
+      const minConfidence = Number(import.meta.env.VITE_MATERIAL_MIN_ACCEPTANCE ?? 0.95)
+      const minMargin = Number(import.meta.env.VITE_MATERIAL_MIN_MARGIN ?? 0.05)
+      const electronicMinConfidence = Number(import.meta.env.VITE_MATERIAL_ELECTRONIC_MIN_ACCEPTANCE ?? 0.70)
+      const requiredConfidence = top?.code === 'electronic_battery' ? electronicMinConfidence : minConfidence
+
+      if (
+        !top ||
+        top.score < requiredConfidence ||
+        top.score - (runnerUp?.score ?? 0) < minMargin
+      ) {
+        throw new AppError(
+          'MATERIAL_NOT_RECOGNISED',
+          'Broad-material result did not clear its calibrated acceptance thresholds.',
+          exactItemError,
+        )
+      }
+
+      return { kind: 'material', materialCode: top.code, confidence: top.score }
+    } catch (error) {
+      if (error instanceof AppError && error.code === 'MATERIAL_NOT_RECOGNISED') throw error
+      console.warn('Material fallback failed; requesting user feedback instead.', error)
+      throw new AppError(
+        'MATERIAL_NOT_RECOGNISED',
+        'Broad-material inference could not provide a reliable result.',
+        { exactItemError, materialError: error },
+      )
+    }
   }
 
   private resolveEnsembledResult(itemClasses: ScoredClass[], binClasses: ScoredClass[]): VisionResult {
@@ -138,6 +195,7 @@ export class OnnxVisionProvider implements VisionProvider {
     }
 
     return {
+      kind: 'item',
       itemCode: selected.itemCode,
       binCode: toAppBinCode(selected.binCode),
     }
@@ -167,7 +225,7 @@ export class OnnxVisionProvider implements VisionProvider {
       throw new AppError('ITEM_AMBIGUOUS', 'Special-handling item result is uncertain')
     }
 
-    return { itemCode: top.code }
+    return { kind: 'item', itemCode: top.code }
   }
 
   private getSupportedItem(itemCode: string) {
@@ -289,8 +347,8 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private loadBinAssets() {
-    // v66 was accepted as an item-classifier ensemble. Keep the separate bin
-    // classifier opt-in so its scores cannot silently change the evaluated v66 result.
+    // v69 was accepted as an item-classifier ensemble. Keep the separate bin
+    // classifier opt-in so its scores cannot silently change the evaluated v69 result.
     if (import.meta.env.VITE_BIN_MODEL_ENABLED !== 'true') {
       return Promise.resolve(undefined)
     }
@@ -322,6 +380,47 @@ export class OnnxVisionProvider implements VisionProvider {
 
     return this.binAssetsPromise
   }
+
+  private loadMaterialAssets() {
+    if (!this.materialAssetsPromise) {
+      const modelPath =
+        import.meta.env.VITE_MATERIAL_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_material_classifier.onnx`
+      const labelsPath =
+        import.meta.env.VITE_MATERIAL_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/material_labels.json`
+      this.materialAssetsPromise = Promise.all([
+        ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] }),
+        fetch(labelsPath)
+          .then((response) => {
+            if (!response.ok) throw new Error('Material labels are not configured')
+            return response.json()
+          })
+          .then((json) => {
+            const parsed = visionLabelSchema.parse(json)
+            const labels = Array.isArray(parsed)
+              ? parsed.map((code, index) => ({ index, code }))
+              : parsed.labels.map(({ index, code }) => ({ index, code }))
+            if (labels.some(({ code }) => !broadMaterialCodes.has(code as BroadMaterialCode))) {
+              throw new Error('Material labels contain an unsupported code')
+            }
+            return labels as Array<{ index: number; code: BroadMaterialCode }>
+          }),
+      ])
+        .then(([session, labels]) => ({ session, labels }))
+        .catch((error) => {
+          throw new AppError('MODEL_LOAD_FAILED', 'Material fallback model failed to load', error)
+        })
+    }
+    return this.materialAssetsPromise
+  }
+}
+
+function normalizeScores(scores: number[]) {
+  const total = scores.reduce((sum, score) => sum + score, 0)
+  if (scores.every((score) => score >= 0 && score <= 1) && total > 0.98 && total < 1.02) return scores
+  const maximum = Math.max(...scores)
+  const exponentials = scores.map((score) => Math.exp(score - maximum))
+  const exponentialTotal = exponentials.reduce((sum, score) => sum + score, 0)
+  return exponentials.map((score) => score / exponentialTotal)
 }
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {

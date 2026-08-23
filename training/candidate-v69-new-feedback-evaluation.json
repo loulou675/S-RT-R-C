@@ -1,0 +1,94 @@
+{
+  "active_v66": [
+    {
+      "image": "8dd5a301-15a2-42eb-bab0-b83707e2b9b8.jpg",
+      "expected": "plastic_takeaway_cup",
+      "predicted": "plastic_takeaway_cup",
+      "confidence": 0.8859432935714722,
+      "expected_probability": 0.8859432935714722,
+      "expected_rank": 1,
+      "top3": [
+        {
+          "class": "plastic_takeaway_cup",
+          "probability": 0.8859432935714722
+        },
+        {
+          "class": "unknown",
+          "probability": 0.08745497465133667
+        },
+        {
+          "class": "sanitary_pad",
+          "probability": 0.009443363174796104
+        }
+      ]
+    },
+    {
+      "image": "8e790c39-2552-4d02-bcc1-91e88b08c1f4.jpg",
+      "expected": "printing_paper",
+      "predicted": "unknown",
+      "confidence": 0.30783215165138245,
+      "expected_probability": 0.015466015785932541,
+      "expected_rank": 12,
+      "top3": [
+        {
+          "class": "unknown",
+          "probability": 0.30783215165138245
+        },
+        {
+          "class": "paperboard_packaging",
+          "probability": 0.22197325527668
+        },
+        {
+          "class": "cardboard_box",
+          "probability": 0.06390305608510971
+        }
+      ]
+    }
+  ],
+  "candidate_v69": [
+    {
+      "image": "8dd5a301-15a2-42eb-bab0-b83707e2b9b8.jpg",
+      "expected": "plastic_takeaway_cup",
+      "predicted": "plastic_takeaway_cup",
+      "confidence": 0.9296512603759766,
+      "expected_probability": 0.9296512603759766,
+      "expected_rank": 1,
+      "top3": [
+        {
+          "class": "plastic_takeaway_cup",
+          "probability": 0.9296512603759766
+        },
+        {
+          "class": "unknown",
+          "probability": 0.056977592408657074
+        },
+        {
+          "class": "sanitary_pad",
+          "probability": 0.0070549724623560905
+        }
+      ]
+    },
+    {
+      "image": "8e790c39-2552-4d02-bcc1-91e88b08c1f4.jpg",
+      "expected": "printing_paper",
+      "predicted": "printing_paper",
+      "confidence": 0.5738821029663086,
+      "expected_probability": 0.5738821029663086,
+      "expected_rank": 1,
+      "top3": [
+        {
+          "class": "printing_paper",
+          "probability": 0.5738821029663086
+        },
+        {
+          "class": "unknown",
+          "probability": 0.17382925748825073
+        },
+        {
+          "class": "paperboard_packaging",
+          "probability": 0.050129733979701996
+        }
+      ]
+    }
+  ]
+}

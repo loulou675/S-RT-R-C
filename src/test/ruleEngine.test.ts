@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { AppError } from '../lib/errors'
-import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
+import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { trainingTargetClassCodes } from '../config/modelClasses'
 import { wasteItems } from '../data/referenceData'
 import type { ConditionKey } from '../types/domain'
@@ -206,5 +206,21 @@ describe('rule engine', () => {
     const activeCodes = new Set(wasteItems.filter((item) => item.isActive).map((item) => item.code))
 
     expect(trainingTargetClassCodes.filter((itemCode) => !activeCodes.has(itemCode))).toEqual([])
+  })
+
+  it('creates a normal result-panel payload for a broad plastic match', () => {
+    const result = evaluateMaterialFallback('plastic')
+
+    expect(result.matchLevel).toBe('material')
+    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.item.nameEn).toBe('Likely plastic material')
+    expect(result.warning).toContain('material-only result')
+  })
+
+  it('does not select a disposal bin for a mixed or uncertain material', () => {
+    const result = evaluateMaterialFallback('mixed_uncertain')
+
+    expect(result.destinationBin.code).toBe('mixed_uncertain')
+    expect(result.whyCategory).toContain('not choosing a disposal bin')
   })
 })

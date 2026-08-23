@@ -31,8 +31,12 @@ export function PreviewPage() {
       const result = await provider.identify(state.imagePreview)
       setStatus('Checking disposal guidance...')
       await wait(180)
-      setPredictedItem(result.itemCode)
-      navigate('/confirm')
+      if (result.kind === 'material') {
+        navigate(`/?material=${result.materialCode}&source=vision`)
+      } else {
+        setPredictedItem(result.itemCode)
+        navigate('/confirm')
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error(error)

@@ -23,6 +23,7 @@ training/dataset/**
 training/classifier_dataset/
 training/bin_dataset/
 training/bin_dataset_core/
+training/material_dataset/
 training/checkpoints/*
 !training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.pt
 !training/checkpoints/candidate_v23_full40_seed_frozen_sparse_search.json
