@@ -135,6 +135,15 @@ def main() -> None:
     )
     train_x, train_y = train_x.to(args.device), train_y.to(args.device)
     val_x, val_y = val_x.to(args.device), val_y.to(args.device)
+    feedback_indices = torch.tensor(
+        [
+            index
+            for index, (path, _label) in enumerate(train_samples)
+            if path.name.startswith("feedback-")
+        ],
+        dtype=torch.long,
+        device=args.device,
+    )
     fixed_weight = linear.weight.detach().float().to(args.device)
     fixed_bias = linear.bias.detach().float().to(args.device)
     new_indices = new_indices.to(args.device)
@@ -161,9 +170,27 @@ def main() -> None:
             initial_new_bias,
         )
         baseline_correct = int((baseline_logits.argmax(1) == val_y).sum())
+        baseline_nll = float(F.cross_entropy(baseline_logits, val_y))
+        baseline_feedback_correct = 0
+        if len(feedback_indices):
+            baseline_feedback_logits = merged_logits(
+                train_x[feedback_indices],
+                fixed_weight,
+                fixed_bias,
+                new_indices,
+                initial_new_weight,
+                initial_new_bias,
+            )
+            baseline_feedback_correct = int(
+                (
+                    baseline_feedback_logits.argmax(1)
+                    == train_y[feedback_indices]
+                ).sum()
+            )
     print(
         f"baseline validation_top1={baseline_correct / len(val_y):.4%} "
-        f"({baseline_correct}/{len(val_y)})",
+        f"({baseline_correct}/{len(val_y)}) nll={baseline_nll:.6f} "
+        f"feedback={baseline_feedback_correct}/{len(feedback_indices)}",
         flush=True,
     )
 
@@ -179,6 +206,8 @@ def main() -> None:
     ]
     rows = []
     global_best_correct = baseline_correct
+    global_best_nll = baseline_nll
+    global_best_feedback_correct = baseline_feedback_correct
     global_best_state = (initial_new_weight.detach().cpu(), initial_new_bias.detach().cpu())
     global_best_configuration = None
     global_best_epoch = 0
@@ -198,6 +227,8 @@ def main() -> None:
         class_weights[new_indices] *= configuration.new_class_multiplier
         class_weights = class_weights.to(args.device)
         best_correct = baseline_correct
+        best_nll = baseline_nll
+        best_feedback_correct = baseline_feedback_correct
         best_state = (new_weight.detach().cpu(), new_bias.detach().cpu())
         best_epoch = 0
         stale = 0
@@ -220,17 +251,39 @@ def main() -> None:
                 loss.backward()
                 optimizer.step()
             with torch.inference_mode():
-                predicted = merged_logits(
+                validation_logits = merged_logits(
                     val_x,
                     fixed_weight,
                     fixed_bias,
                     new_indices,
                     new_weight,
                     new_bias,
-                ).argmax(1)
+                )
+                predicted = validation_logits.argmax(1)
                 correct = int((predicted == val_y).sum())
-            if correct > best_correct:
+                nll = float(F.cross_entropy(validation_logits, val_y))
+                feedback_correct = 0
+                if len(feedback_indices):
+                    feedback_logits = merged_logits(
+                        train_x[feedback_indices],
+                        fixed_weight,
+                        fixed_bias,
+                        new_indices,
+                        new_weight,
+                        new_bias,
+                    )
+                    feedback_correct = int(
+                        (
+                            feedback_logits.argmax(1)
+                            == train_y[feedback_indices]
+                        ).sum()
+                    )
+            current_key = (feedback_correct, correct, -nll)
+            best_key = (best_feedback_correct, best_correct, -best_nll)
+            if correct >= baseline_correct and current_key > best_key:
                 best_correct = correct
+                best_nll = nll
+                best_feedback_correct = feedback_correct
                 best_epoch = epoch
                 best_state = (new_weight.detach().cpu(), new_bias.detach().cpu())
                 stale = 0
@@ -243,6 +296,7 @@ def main() -> None:
             f"lr={configuration.learning_rate:g} class_exp={configuration.class_weight_exponent:g} "
             f"new_multiplier={configuration.new_class_multiplier:g} wd={configuration.weight_decay:g} "
             f"best_top1={best_correct / len(val_y):.4%} ({best_correct}/{len(val_y)}) "
+            f"nll={best_nll:.6f} feedback={best_feedback_correct}/{len(feedback_indices)} "
             f"epoch={best_epoch}",
             flush=True,
         )
@@ -253,10 +307,21 @@ def main() -> None:
                 "validation_correct": best_correct,
                 "validation_images": len(val_y),
                 "validation_top1": best_correct / len(val_y),
+                "validation_nll": best_nll,
+                "feedback_correct": best_feedback_correct,
+                "feedback_images": len(feedback_indices),
             }
         )
-        if best_correct > global_best_correct:
+        candidate_key = (best_feedback_correct, best_correct, -best_nll)
+        global_key = (
+            global_best_feedback_correct,
+            global_best_correct,
+            -global_best_nll,
+        )
+        if best_correct >= baseline_correct and candidate_key > global_key:
             global_best_correct = best_correct
+            global_best_nll = best_nll
+            global_best_feedback_correct = best_feedback_correct
             global_best_state = best_state
             global_best_configuration = configuration
             global_best_epoch = best_epoch
@@ -276,7 +341,12 @@ def main() -> None:
         "train_images": len(train_y),
         "validation_images": len(val_y),
         "baseline_validation_top1": baseline_correct / len(val_y),
+        "baseline_validation_nll": baseline_nll,
+        "baseline_feedback_correct": baseline_feedback_correct,
         "best_validation_top1": global_best_correct / len(val_y),
+        "best_validation_nll": global_best_nll,
+        "best_feedback_correct": global_best_feedback_correct,
+        "feedback_images": len(feedback_indices),
         "best_validation_correct": global_best_correct,
         "best_epoch": global_best_epoch,
         "best_configuration": asdict(global_best_configuration) if global_best_configuration else None,
