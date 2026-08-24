@@ -18,6 +18,17 @@ import type { BroadMaterialCode, DetectedComponent, InputMethod, RuleEngineResul
 
 type RecognitionStage = 'idle' | 'camera' | 'processing'
 
+interface SurveyContext {
+  inputMethod: InputMethod
+  predictedItemCode?: string
+  destinationBinCode?: string
+}
+
+interface PendingSurvey {
+  after: 'result-close' | 'feedback-submit'
+  context: SurveyContext
+}
+
 const demoItems = [
   { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#f08c21', ink: '#171411' },
   { itemCode: 'fruit_peel', label: 'Organic', color: '#b4b534', ink: '#171411' },
@@ -57,7 +68,9 @@ export function LandingPage() {
   const [resultCollapsed, setResultCollapsed] = useState(false)
   const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
   const [surveyOpen, setSurveyOpen] = useState(false)
+  const [surveyContext, setSurveyContext] = useState<SurveyContext>()
   const recognitionIdRef = useRef(0)
+  const pendingSurveyRef = useRef<PendingSurvey | undefined>(undefined)
   const feedbackSectionRef = useRef<HTMLDivElement | null>(null)
   const searchedItemCode = searchParams.get('item')
   const searchedMaterialCode = searchParams.get('material') as BroadMaterialCode | null
@@ -101,12 +114,23 @@ export function LandingPage() {
     return () => window.cancelAnimationFrame(frame)
   }, [errorCode, imagePreview, stage])
 
+  function openPendingSurvey(after: PendingSurvey['after'], context?: SurveyContext) {
+    const pending = pendingSurveyRef.current
+    if (!pending || pending.after !== after) return
+
+    pendingSurveyRef.current = undefined
+    if (!markSurveyShownForSession()) return
+    setSurveyContext(context ?? pending.context)
+    setSurveyOpen(true)
+  }
+
   function closeResult() {
+    const shouldOpenSurvey = Boolean(result && pendingSurveyRef.current?.after === 'result-close')
     recognitionIdRef.current += 1
     setResult(undefined)
     setResultCollapsed(false)
     setErrorCode(undefined)
-    setSurveyOpen(false)
+    if (shouldOpenSurvey) openPendingSurvey('result-close')
   }
 
   function startCamera() {
@@ -131,6 +155,7 @@ export function LandingPage() {
   const recogniseImage = useCallback(async (dataUrl: string, method: InputMethod, keepCameraOpen = false) => {
     const recognitionId = recognitionIdRef.current + 1
     recognitionIdRef.current = recognitionId
+    pendingSurveyRef.current = undefined
     setFeedbackDelivery(undefined)
     setImagePreview(dataUrl)
     setInputMethod(method)
@@ -159,12 +184,14 @@ export function LandingPage() {
         visionResult.kind === 'material' ? 'material_scan_success' : 'scan_success',
         'scan_success',
       )
-
-      window.setTimeout(() => {
-        if (recognitionId === recognitionIdRef.current && markSurveyShownForSession()) {
-          setSurveyOpen(true)
-        }
-      }, 520)
+      pendingSurveyRef.current = {
+        after: 'result-close',
+        context: {
+          inputMethod: method,
+          predictedItemCode: visionResult.kind === 'item' ? visionResult.itemCode : undefined,
+          destinationBinCode: disposal.destinationBin.code,
+        },
+      }
 
       if (visionResult.kind === 'item' && provider.identifyComponents) {
         void provider.identifyComponents(dataUrl, visionResult.itemCode).then((components) => {
@@ -188,6 +215,10 @@ export function LandingPage() {
         appError.code === 'MATERIAL_NOT_RECOGNISED' ? 'scan_feedback_requested' : 'scan_error',
         'scan_error',
       )
+      pendingSurveyRef.current = {
+        after: 'feedback-submit',
+        context: { inputMethod: method },
+      }
       return false
     }
   }, [])
@@ -202,6 +233,8 @@ export function LandingPage() {
     setStage('idle')
     setFeedbackDelivery(undefined)
     setSurveyOpen(false)
+    setSurveyContext(undefined)
+    pendingSurveyRef.current = undefined
   }, [])
 
   const handleCameraCapture = useCallback(
@@ -228,6 +261,31 @@ export function LandingPage() {
       const appError = error instanceof AppError ? error : toAppError(error, 'RULE_NOT_FOUND')
       setErrorCode(appError.code)
     }
+  }
+
+  function handleFeedbackSubmitted(uploaded: boolean) {
+    setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
+    openPendingSurvey('feedback-submit')
+  }
+
+  function handleFeedbackCorrection(correctedCode: string, uploaded: boolean) {
+    setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
+    const context: SurveyContext = {
+      inputMethod,
+      predictedItemCode: correctedCode,
+    }
+
+    try {
+      const correctedResult = getDisposalForItem(correctedCode)
+      context.destinationBinCode = correctedResult.destinationBin.code
+      setResult(correctedResult)
+      setErrorCode(undefined)
+      setResultCollapsed(false)
+    } catch {
+      // Unknown/not-listed feedback can be submitted without disposal guidance.
+    }
+
+    openPendingSurvey('feedback-submit', context)
   }
 
   const hasResult = Boolean(result)
@@ -300,17 +358,8 @@ export function LandingPage() {
                   errorCode={errorCode}
                   inputMethod={inputMethod}
                   submittedStatus={feedbackDelivery}
-                  onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
-                  onCorrected={(correctedCode, uploaded) => {
-                    try {
-                      setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
-                      setResult(getDisposalForItem(correctedCode))
-                      setErrorCode(undefined)
-                      setResultCollapsed(false)
-                    } catch {
-                      // The feedback panel only offers active reference-data classes.
-                    }
-                  }}
+                  onSubmitted={handleFeedbackSubmitted}
+                  onCorrected={handleFeedbackCorrection}
                 />
               </div>
             ) : null}
@@ -332,17 +381,8 @@ export function LandingPage() {
               predictedItemCode={predictedItemCode}
               inputMethod={inputMethod}
               submittedStatus={feedbackDelivery}
-              onSubmitted={(uploaded) => setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')}
-              onCorrected={(correctedCode, uploaded) => {
-                try {
-                  setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
-                  setResult(getDisposalForItem(correctedCode))
-                  setErrorCode(undefined)
-                  setResultCollapsed(false)
-                } catch {
-                  // The feedback panel only offers active reference-data classes.
-                }
-              }}
+              onSubmitted={handleFeedbackSubmitted}
+              onCorrected={handleFeedbackCorrection}
             />
           }
         />
@@ -372,12 +412,15 @@ export function LandingPage() {
         />
       ) : null}
 
-      {surveyOpen && result ? (
+      {surveyOpen && surveyContext ? (
         <UserSurveyModal
-          inputMethod={inputMethod}
-          predictedItemCode={predictedItemCode}
-          destinationBinCode={result.destinationBin.code}
-          onClose={() => setSurveyOpen(false)}
+          inputMethod={surveyContext.inputMethod}
+          predictedItemCode={surveyContext.predictedItemCode}
+          destinationBinCode={surveyContext.destinationBinCode}
+          onClose={() => {
+            setSurveyOpen(false)
+            setSurveyContext(undefined)
+          }}
         />
       ) : null}
     </section>
