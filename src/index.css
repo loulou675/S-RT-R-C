@@ -1062,9 +1062,12 @@ a {
 
 .headline-line.italic {
   color: var(--black);
+  display: block;
   font-style: italic;
   font-weight: 500;
   letter-spacing: -0.045em;
+  transform: skewX(-8deg);
+  transform-origin: center;
 }
 
 .hero-copy p,
