@@ -292,7 +292,7 @@ export function LandingPage() {
             </div>
             {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
             {!result ? (
-              <div ref={feedbackSectionRef}>
+              <div ref={feedbackSectionRef} className="recognition-feedback">
                 <TrainingFeedbackPanel
                   key={imagePreview}
                   imagePreview={imagePreview}

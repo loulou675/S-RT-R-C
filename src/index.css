@@ -1086,6 +1086,17 @@ a {
   background: #ffe6be;
 }
 
+.recognition-feedback {
+  width: min(100%, 34rem);
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.recognition-feedback .training-feedback {
+  width: 100%;
+  margin-inline: auto;
+}
+
 .training-feedback {
   display: grid;
   gap: 0.8rem;
