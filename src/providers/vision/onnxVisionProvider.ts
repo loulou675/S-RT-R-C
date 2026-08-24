@@ -347,8 +347,8 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private loadBinAssets() {
-    // v69 was accepted as an item-classifier ensemble. Keep the separate bin
-    // classifier opt-in so its scores cannot silently change the evaluated v69 result.
+    // v71e was accepted as an item-classifier ensemble. Keep the separate bin
+    // classifier opt-in so its scores cannot silently change the evaluated v71e result.
     if (import.meta.env.VITE_BIN_MODEL_ENABLED !== 'true') {
       return Promise.resolve(undefined)
     }

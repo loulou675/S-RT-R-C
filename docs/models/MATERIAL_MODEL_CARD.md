@@ -1,7 +1,7 @@
 # Broad-material classifier v1
 
 This browser model is a separate seven-class YOLO26n classifier. It runs only
-after the active v69 exact-item ensemble returns `ITEM_NOT_RECOGNISED` or
+after the active v71e exact-item ensemble returns `ITEM_NOT_RECOGNISED` or
 `ITEM_AMBIGUOUS`. A sufficiently confident prediction opens the same full
 result sheet as an exact-item result, with a visible **Material-based result**
 label and material-specific caveats.
@@ -33,7 +33,7 @@ oversampling.
 ## Cascade calibration
 
 Acceptance thresholds were chosen on the validation split only, using the v66
-exact-item predecessor whose calibration is retained by v69. The selection
+exact-item predecessor whose calibration is retained by v71e. The selection
 required at least 85% precision among accepted material results and at least
 90% precision for accepted electronic/battery predictions, while maximizing
 the number of correct results recovered after v66 rejected an image.

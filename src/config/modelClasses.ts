@@ -43,7 +43,7 @@ export const trainingTargetClassCodes = [
   'vegetable_scraps',
 ] as const
 
-/** Classes currently present in every v69 ONNX component. */
+/** Classes currently present in every v71e ONNX component. */
 export const deployedModelClassCodes = trainingTargetClassCodes
 
 // Backwards-compatible name used by the existing training feedback UI.

@@ -1,7 +1,7 @@
 {
-  "version": "v69",
+  "version": "v71e",
   "modelPaths": [
-    "waste_classifier.onnx",
+    "waste_classifier_v71e_bottle_refined.onnx",
     "waste_classifier_v66_s_late.onnx",
     "waste_classifier_v66_s_frozen.onnx",
     "waste_classifier_v69_m_feedback.onnx"

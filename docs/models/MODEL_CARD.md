@@ -2,7 +2,7 @@
 
 ## Summary
 
-This browser model is the v69 calibrated 41-class ensemble for a single waste item placed
+This browser model is the v71e calibrated 41-class ensemble for a single waste item placed
 inside the camera guide. It predicts an item class; the application then maps
 that class to one of six disposal groups and applies the relevant preparation
 rules.
@@ -15,8 +15,9 @@ instead of forcing every image into a bin.
 
 - Architecture: four fine-tuned Ultralytics YOLO26 classifiers (one YOLO26n,
   two YOLO26s and one YOLO26m) with validation-fitted class-wise calibration.
-  V69 preserves the first three v66 components and refines only the YOLO26m
-  classifier rows for `plastic_takeaway_cup` and `printing_paper`.
+  V71e preserves v69's four-model calibration, retains its YOLO26m refinement
+  for `plastic_takeaway_cup` and `printing_paper`, and conservatively refines
+  only the dominant YOLO26n classifier row for `plastic_water_bottle`.
 - Browser format: four ONNX files, each with 41 outputs, plus a calibration JSON.
 - Input: one RGB image, center-cropped and resized to 224 x 224.
 - Output order: `labels.json` is the authoritative index-to-code mapping.
@@ -54,7 +55,7 @@ test images were not changed.
 
 ## Evaluation
 
-Candidate v69 evaluated once on the untouched expanded test split using the
+Candidate v71e evaluated on the untouched expanded test split using the
 same deployed class-wise calibration as v66:
 
 - single-view top-1 accuracy: 71.8% (237/330), up from v66's 71.5% (236/330);
@@ -65,10 +66,16 @@ same deployed class-wise calibration as v66:
 - grouped known-item bin accuracy: 79.8%;
 - unknown rejection recall: 85.2%.
 
-Compared with v66, v69 fixes one additional held-out
+Compared with v66, v71e fixes one additional held-out
 `plastic_takeaway_cup` image and introduces no correct-to-wrong held-out class
 regression. The two submitted training images are reported separately only as
 a sanity check and are not counted as independent evaluation evidence.
+
+Compared with active v69, v71e preserves every reported held-out metric. On
+the 21 reviewed bottle-folder images used during refinement, accepted correct
+predictions improved from 11 to 12 and accepted wrong predictions fell from 5
+to 4. That folder is training evidence, not an independent generalization set;
+the held-out bottle split contains only three images and remains 2/3 correct.
 
 The weakest test classes remain `hair_clip`, `pen_marker`, `phone_case`, and
 `tissue` at 0%, with only one to three test images in each class.

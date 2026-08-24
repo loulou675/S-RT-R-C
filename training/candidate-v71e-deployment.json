@@ -1,0 +1,48 @@
+{
+  "candidate": "v71e",
+  "predecessor": "v69",
+  "selected_at": "2026-08-24",
+  "change": {
+    "ensemble_component_index": 0,
+    "component_architecture": "YOLO26n classifier",
+    "class_index": 31,
+    "class_code": "plastic_water_bottle",
+    "scope": "classifier weight and bias row only",
+    "interpolation": 0.3
+  },
+  "browser_model": {
+    "path": "public/models/waste_classifier_v71e_bottle_refined.onnx",
+    "sha256": "f2e235d19397c9511e778fa02aec8ec121d876fc78bb495a9ffbfb8e4325f354",
+    "input_shape": [1, 3, 224, 224],
+    "output_shape": [1, 41]
+  },
+  "heldout_test": {
+    "images": 330,
+    "top1_correct": 237,
+    "top1_accuracy": 0.7182,
+    "macro_recall": 0.6136,
+    "hazardous_macro_recall": 0.7024,
+    "known_item_bin_accuracy": 0.7934,
+    "grouped_known_item_bin_accuracy": 0.7975,
+    "unknown_rejection_recall": 0.8523,
+    "plastic_water_bottle_recall": {
+      "correct": 2,
+      "total": 3
+    },
+    "comparison_to_v69": "all reported held-out metrics unchanged"
+  },
+  "reviewed_refinement_folder": {
+    "positive_images": 21,
+    "hard_negative_images": 17,
+    "v69": {
+      "accepted_correct": 11,
+      "accepted_wrong": 5
+    },
+    "v71e": {
+      "accepted_correct": 12,
+      "accepted_wrong": 4
+    },
+    "warning": "These images participated in refinement and are not independent generalization evidence."
+  },
+  "release_status": "candidate MVP; not production-ready"
+}
