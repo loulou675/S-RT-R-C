@@ -1,10 +1,10 @@
 {
-  "version": "v73-known-only-local",
+  "version": "v73r37b-supabase-feedback-safe",
   "modelPaths": [
     "known_only__waste_classifier_v71e_bottle_refined.onnx",
     "known_only__waste_classifier_v66_s_late.onnx",
     "known_only__waste_classifier_v66_s_frozen.onnx",
-    "known_only__waste_classifier_v69_m_feedback.onnx"
+    "known_only__candidate_v73r37b_feedback_safe.onnx"
   ],
   "temperatures": [
     1.0,
@@ -228,6 +228,13 @@
     "exactClasses": 40,
     "unknownOutputRemoved": true,
     "unsupportedImagesUsedForTraining": false,
-    "unsupportedImagesUsedForCalibration": false
+    "unsupportedImagesUsedForCalibration": false,
+    "feedbackRefinement": "2026-08-25",
+    "selectedRows": [
+      "tissue"
+    ],
+    "rowInterpolation": 0.1,
+    "activeReference": "v73r35",
+    "deploymentStatus": "active"
   }
 }

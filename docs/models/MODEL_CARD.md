@@ -2,10 +2,11 @@
 
 ## Summary
 
-This browser model is the v71e calibrated 41-class ensemble for a single waste item placed
-inside the camera guide. It predicts an item class; the application then maps
-that class to one of six disposal groups and applies the relevant preparation
-rules.
+This browser release is the v73r37b cascade for a single waste item placed
+inside the camera guide. Its exact ensemble predicts one of 40 supported item
+classes. When exact recognition is not trustworthy, the application checks
+destination, broad-material, and mixed-material evidence before either showing
+a broad disposal result or requesting feedback.
 
 This is an MVP checkpoint, not a production model. The app must keep its
 confidence and prediction-margin checks enabled and show an uncertain result
@@ -14,13 +15,15 @@ instead of forcing every image into a bin.
 ## Model and input
 
 - Architecture: four fine-tuned Ultralytics YOLO26 classifiers (one YOLO26n,
-  two YOLO26s and one YOLO26m) with validation-fitted class-wise calibration.
-  V71e preserves v69's four-model calibration, retains its YOLO26m refinement
-  for `plastic_takeaway_cup` and `printing_paper`, and conservatively refines
-  only the dominant YOLO26n classifier row for `plastic_water_bottle`.
-- Browser format: four ONNX files, each with 41 outputs, plus a calibration JSON.
+  two YOLO26s and one YOLO26m) with validation-fitted class-wise calibration,
+  plus detector, destination, material, and mixed-material heads. V73r37b keeps
+  v73r35's routing policy and conservatively interpolates only the fourth
+  classifier's `tissue` row by 10% toward the reviewed-feedback refinement.
+- Browser format: four exact-classifier ONNX files, each with 40 outputs, plus
+  a calibration JSON and the auxiliary cascade models.
 - Input: one RGB image, center-cropped and resized to 224 x 224.
-- Output order: `labels.json` is the authoritative index-to-code mapping.
+- Exact output order: `labels.json` is the authoritative 40-class
+  index-to-code mapping; `unknown` is not an exact output.
 - Intended scene: one item occupying most of the center camera guide.
 
 ## Dataset

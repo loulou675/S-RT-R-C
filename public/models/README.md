@@ -1,7 +1,9 @@
-# SỌRT RÁC local v73r35 MVP candidate
+# SỌRT RÁC v73r37b MVP release
 
-This local build exercises the v73 detection-to-classification cascade. It is
-not deployed and it does not replace the archived v71e rollback model.
+This build runs the v73 detection-to-classification cascade with the
+conservative v73r37b feedback refinement. The refinement changes only the
+`tissue` row of the fourth exact-classifier member at 10% interpolation; the
+other exact rows and all broad-routing models remain unchanged from v73r35.
 
 ## Runtime flow
 
@@ -23,7 +25,7 @@ not deployed and it does not replace the archived v71e rollback model.
 - `known_only__waste_classifier_v71e_bottle_refined.onnx`
 - `known_only__waste_classifier_v66_s_late.onnx`
 - `known_only__waste_classifier_v66_s_frozen.onnx`
-- `known_only__waste_classifier_v69_m_feedback.onnx`
+- `known_only__candidate_v73r37b_feedback_safe.onnx`
 - `waste_classifier_ensemble.json`
 - `labels.json` (40 supported classes)
 
@@ -37,16 +39,20 @@ The ensemble is calibrated at runtime by
 - `v73r1-destination.onnx` — v73r15 seven-destination router
 - `waste_object_detector.onnx` — generic detector used for foreground evidence
 
-## Timeboxed evaluation summary
+## Evaluation summary
 
-- Known validation: 230/283 correct destination, 16 harmful, 37 feedback.
-- Known held-out: 196/242 correct destination, 20 harmful, 26 feedback.
+- Known validation: 230/283 correct destination, 16 harmful, 37 feedback;
+  identical to v73r35.
+- Known held-out: 196/242 correct destination, 20 harmful, 26 feedback;
+  identical to v73r35.
+- Newly reviewed feedback exact result: 15/31, versus 14/31 for v73r35.
+- Newly reviewed feedback destination: 17/31, versus 16/31 for v73r35.
 - Consumed unsupported development cases: 96 helpful, 15 harmful,
   89 feedback (6.40 helpful per harmful).
 - The last untouched set was consumed to build the final narrow safety guards;
   a further untouched-set loop was skipped under the MVP timebox.
 
-This remains an MVP candidate, not a production-safety claim. Keep feedback
+This remains an MVP release, not a production-safety claim. Keep feedback
 enabled and review harmful assumptions during the user trial.
 
 ## Rollback
