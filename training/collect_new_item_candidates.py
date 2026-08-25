@@ -13,6 +13,7 @@ import html
 import json
 import mimetypes
 import re
+import shutil
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -26,6 +27,7 @@ from io import BytesIO
 ROOT = Path(__file__).resolve().parents[1]
 CANDIDATE_ROOT = ROOT / "training" / "candidate_dataset" / "new_items"
 MANIFEST = ROOT / "training" / "source_manifests" / "new-item-candidates.jsonl"
+REVIEW = ROOT / "training" / "target-expansion-review.json"
 API_URL = "https://commons.wikimedia.org/w/api.php"
 USER_AGENT = "SORT-RAC-training/1.0 (educational waste-classification dataset)"
 DOWNLOAD_DELAY = 0.0
@@ -238,7 +240,11 @@ def bing_image_search(query: str, limit: int = 70) -> list[dict[str, Any]]:
         timeout=30,
     )
     response.raise_for_status()
-    matches = re.findall(r'class="iusc"[^>]*\sm="(.*?)"', response.text)
+    matches = re.findall(
+        r'<a\b(?=[^>]*\bclass="[^"]*\biusc\b[^"]*")[^>]*\bm="(.*?)"',
+        response.text,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
     pages: list[dict[str, Any]] = []
     seen: set[str] = set()
     for index, raw_payload in enumerate(matches):
@@ -320,9 +326,10 @@ def safe_name(value: str) -> str:
     return value[:120] or "commons_image"
 
 
-def fetch_candidate(item: tuple[str, dict[str, Any], int]) -> dict[str, Any] | None:
-    class_code, page, index = item
-    if not approved_license(page):
+def fetch_candidate(item: tuple[str, dict[str, Any], int] | tuple[str, dict[str, Any], int, bool]) -> dict[str, Any] | None:
+    class_code, page, index = item[:3]
+    manually_accepted = bool(item[3]) if len(item) > 3 else False
+    if not approved_license(page) and not manually_accepted:
         return None
     info = (page.get("imageinfo") or [{}])[0]
     url = info.get("thumburl") or info.get("url")
@@ -411,6 +418,16 @@ def main() -> None:
         action="store_true",
         help="Skip Openverse and use only Wikimedia Commons sources.",
     )
+    parser.add_argument(
+        "--bing-only",
+        action="store_true",
+        help="Collect Bing candidates for manual review without querying Commons/Openverse.",
+    )
+    parser.add_argument(
+        "--rehydrate-only",
+        action="store_true",
+        help="Redownload reviewed candidate files that are missing locally.",
+    )
     args = parser.parse_args()
     DOWNLOAD_DELAY = max(0.0, args.download_delay)
     QUERY_DELAY = max(0.6, args.query_delay)
@@ -425,6 +442,54 @@ def main() -> None:
             existing[record.get("sha256", "")] = record
 
     all_records = dict(existing)
+    review = json.loads(REVIEW.read_text(encoding="utf-8")) if REVIEW.exists() else {}
+    manually_accepted_paths = set(review.get("commonsAcceptedPaths", []))
+    recovered = 0
+    for digest, record in list(all_records.items()):
+        local_path = ROOT / str(record.get("path", ""))
+        class_code = str(record.get("class", ""))
+        source_image = record.get("sourceImage")
+        if local_path.exists() or class_code not in TARGETS or not isinstance(source_image, str):
+            continue
+        page = {
+            "pageid": f"rehydrate-{digest}",
+            "title": record.get("sourceFile") or class_code,
+            "fullurl": record.get("sourcePage"),
+            "sourceName": record.get("source") or "Wikimedia Commons",
+            "license": record.get("license"),
+            "creator": record.get("creator"),
+            "imageinfo": [
+                {
+                    "url": source_image,
+                    "thumburl": source_image,
+                    "mime": "image/jpeg",
+                    "width": record.get("width") or 0,
+                    "height": record.get("height") or 0,
+                }
+            ],
+        }
+        restored = fetch_candidate((class_code, page, 0, str(record.get("path", "")) in manually_accepted_paths))
+        if restored:
+            restored_path = ROOT / str(restored["path"])
+            if restored_path != local_path:
+                local_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(restored_path, local_path)
+            restored = {**record, "sha256": restored["sha256"]}
+            all_records.pop(digest, None)
+            all_records[str(restored["sha256"])] = restored
+            recovered += 1
+    if recovered:
+        print(f"Rehydrated {recovered} reviewed Commons/Openverse files", flush=True)
+
+    if args.rehydrate_only:
+        records = sorted(all_records.values(), key=lambda record: (record.get("class", ""), record.get("path", "")))
+        MANIFEST.write_text(
+            "".join(json.dumps(record, ensure_ascii=False) + "\n" for record in records),
+            encoding="utf-8",
+        )
+        print(f"Manifest: {MANIFEST}")
+        print(f"Total candidates: {len(records)}")
+        return
     for class_code, config in TARGETS.items():
         if args.classes and class_code not in args.classes:
             continue
@@ -432,14 +497,15 @@ def main() -> None:
         current = [
             record
             for record in all_records.values()
-            if record.get("class") == class_code and approved_license(record)
+            if record.get("class") == class_code
+            and (args.bing_only or approved_license(record))
         ]
         if len(current) >= target:
             print(f"{class_code}: already has {len(current)} candidates")
             continue
 
         pages: dict[str, dict[str, Any]] = {}
-        for category in CATEGORY_TARGETS.get(class_code, []):
+        for category in ([] if args.bing_only else CATEGORY_TARGETS.get(class_code, [])):
             try:
                 for page in commons_category_search(category, args.limit_query):
                     if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
@@ -447,26 +513,27 @@ def main() -> None:
             except requests.RequestException as error:
                 print(f"{class_code}: category search failed for {category!r}: {error}")
         for query in ([] if args.categories_only else config["queries"]):
-            try:
-                for page in api_search(query, args.limit_query):
-                    if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
-                        metadata = ((page.get("imageinfo") or [{}])[0].get("extmetadata") or {})
-                        page["sourceName"] = "Wikimedia Commons"
-                        page["license"] = (metadata.get("LicenseShortName") or {}).get("value")
-                        page["creator"] = html.unescape(
-                            re.sub(r"<[^>]+>", "", (metadata.get("Artist") or {}).get("value", ""))
-                        ).strip() or None
-                        pages[f"commons-api-{page['pageid']}"] = page
-            except requests.RequestException as error:
-                print(f"{class_code}: Commons search failed for {query!r}: {error}")
-            if not args.commons_only:
+            if not args.bing_only:
                 try:
-                    for page in openverse_search(query, args.limit_query):
+                    for page in api_search(query, args.limit_query):
                         if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
-                            pages[str(page["pageid"])] = page
+                            metadata = ((page.get("imageinfo") or [{}])[0].get("extmetadata") or {})
+                            page["sourceName"] = "Wikimedia Commons"
+                            page["license"] = (metadata.get("LicenseShortName") or {}).get("value")
+                            page["creator"] = html.unescape(
+                                re.sub(r"<[^>]+>", "", (metadata.get("Artist") or {}).get("value", ""))
+                            ).strip() or None
+                            pages[f"commons-api-{page['pageid']}"] = page
                 except requests.RequestException as error:
-                    print(f"{class_code}: Openverse search failed for {query!r}: {error}")
-            if args.allow_unlicensed:
+                    print(f"{class_code}: Commons search failed for {query!r}: {error}")
+                if not args.commons_only:
+                    try:
+                        for page in openverse_search(query, args.limit_query):
+                            if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
+                                pages[str(page["pageid"])] = page
+                    except requests.RequestException as error:
+                        print(f"{class_code}: Openverse search failed for {query!r}: {error}")
+            if args.allow_unlicensed or args.bing_only:
                 try:
                     for page in bing_image_search(query, args.limit_query):
                         if page.get("pageid") and title_matches(class_code, str(page.get("title", ""))):
@@ -483,7 +550,7 @@ def main() -> None:
         # required. A 2x buffer allows for invalid URLs, undersized files, and
         # exact duplicates without making the executor drain surplus work.
         work = [
-            (class_code, page, index)
+            (class_code, page, index, args.allow_unlicensed or args.bing_only)
             for index, page in enumerate(pages.values())
         ][: max(remaining * 2, remaining)]
         added = 0
@@ -491,26 +558,25 @@ def main() -> None:
             futures = [executor.submit(fetch_candidate, item) for item in work]
             for future in as_completed(futures):
                 record = future.result()
-                if not record or not approved_license(record):
+                if not record:
                     continue
                 existing_record = all_records.get(record["sha256"])
-                if existing_record and approved_license(existing_record):
+                if existing_record:
                     continue
                 # A category or search-engine candidate may already have the
                 # same pixels but incomplete licensing. Prefer the newly
                 # resolved per-file Commons record instead of discarding it.
                 all_records[record["sha256"]] = record
                 added += 1
-                if len([
-                    row for row in all_records.values()
-                    if row.get("class") == class_code and approved_license(row)
-                ]) >= target:
+                if len([row for row in all_records.values() if row.get("class") == class_code]) >= target:
                     break
-        approved_total = len([
+        reviewed_total = len([
             row for row in all_records.values()
-            if row.get("class") == class_code and approved_license(row)
+            if row.get("class") == class_code
+            and (args.bing_only or approved_license(row))
         ])
-        print(f"{class_code}: added {added}, approved total {approved_total}")
+        label = "candidate total" if args.bing_only else "approved total"
+        print(f"{class_code}: added {added}, {label} {reviewed_total}")
 
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     records = sorted(all_records.values(), key=lambda record: (record.get("class", ""), record.get("path", "")))

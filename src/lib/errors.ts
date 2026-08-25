@@ -1,4 +1,5 @@
 export type AppErrorCode =
+  | 'CAMERA_EMBEDDED_BROWSER'
   | 'CAMERA_PERMISSION_DENIED'
   | 'CAMERA_NOT_AVAILABLE'
   | 'IMAGE_INVALID'
@@ -32,6 +33,10 @@ export const retryMessage =
   'We could not clearly identify this item. Please place one item inside the frame and take another photo.'
 
 export function messageForError(code?: AppErrorCode) {
+  if (code === 'CAMERA_EMBEDDED_BROWSER') {
+    return 'Camera scanning is not reliable inside Instagram or Facebook. Open this page in Safari or Chrome, or upload an image here.'
+  }
+
   if (code === 'CAMERA_PERMISSION_DENIED') {
     return 'Camera access was blocked. You can upload an image or search manually.'
   }

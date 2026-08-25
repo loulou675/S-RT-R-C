@@ -27,6 +27,10 @@ from ultralytics.data.augment import classify_augmentations, classify_transforms
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 
 
+def is_targeted_evidence(path: Path) -> bool:
+    return path.name.startswith(("expansion_", "feedback_"))
+
+
 class ImageDataset(Dataset):
     def __init__(self, samples: list[tuple[Path, int]], transform) -> None:
         self.samples = samples
@@ -39,7 +43,7 @@ class ImageDataset(Dataset):
         path, label = self.samples[index]
         with Image.open(path) as image:
             tensor = self.transform(image.convert("RGB"))
-        return tensor, label, path.name.startswith("expansion_")
+        return tensor, label, is_targeted_evidence(path)
 
 
 class CachedImageDataset(Dataset):
@@ -48,7 +52,7 @@ class CachedImageDataset(Dataset):
         for path, label in samples:
             with Image.open(path) as image:
                 tensor = transform(image.convert("RGB"))
-            rows.append((tensor, label, path.name.startswith("expansion_")))
+            rows.append((tensor, label, is_targeted_evidence(path)))
         self.tensors = torch.stack([row[0] for row in rows])
         self.labels = torch.tensor([row[1] for row in rows], dtype=torch.long)
         self.expansion = torch.tensor([row[2] for row in rows], dtype=torch.bool)
@@ -69,7 +73,7 @@ class CachedSourceImageDataset(Dataset):
         for path, label in samples:
             with Image.open(path) as image:
                 source = image.convert("RGB").copy()
-            self.rows.append((source, label, path.name.startswith("expansion_")))
+            self.rows.append((source, label, is_targeted_evidence(path)))
 
     def __len__(self) -> int:
         return len(self.rows)

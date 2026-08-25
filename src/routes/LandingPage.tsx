@@ -7,6 +7,7 @@ import { StatusBlock } from '../components/StatusBlock'
 import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { UserSurveyModal } from '../components/UserSurveyModal'
 import { CameraCapture } from '../features/camera/CameraCapture'
+import { isEmbeddedSocialBrowser } from '../features/camera/browserSupport'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
@@ -153,6 +154,11 @@ export function LandingPage() {
     setPredictedItemCode(undefined)
     setDetectorDebug(undefined)
     setInputMethod('camera')
+    if (isEmbeddedSocialBrowser()) {
+      setErrorCode('CAMERA_EMBEDDED_BROWSER')
+      setStage('idle')
+      return
+    }
     setStage('camera')
   }
 
@@ -199,7 +205,7 @@ export function LandingPage() {
       }
 
       setStatus('Preparing image...')
-      setStatus('Identifying item...')
+      setStatus('Identifying item... The first scan may take a little longer.')
       const provider = await createVisionProvider()
       let inferenceImage = dataUrl
       let visionResult
@@ -307,7 +313,7 @@ export function LandingPage() {
   }, [])
 
   const handleCameraCapture = useCallback(
-    (dataUrl: string) => recogniseImage(dataUrl, 'camera', true),
+    (dataUrl: string) => recogniseImage(dataUrl, 'camera'),
     [recogniseImage],
   )
 
@@ -401,6 +407,7 @@ export function LandingPage() {
                 Upload an Image
               </button>
             </div>
+            {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
             <div className="demo-palette" aria-label="Demo bin colors">
               <span>Demo bin tones</span>
               <div>
@@ -417,7 +424,6 @@ export function LandingPage() {
                 ))}
               </div>
             </div>
-            {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
             {!result ? (
               <div ref={feedbackSectionRef} className="recognition-feedback">
                 <TrainingFeedbackPanel

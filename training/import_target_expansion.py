@@ -34,6 +34,8 @@ TARGET_CLASSES = {
     "hair_tie",
     "pen_marker",
     "phone_case",
+    "disposable_cutlery",
+    "plastic_cosmetic_container",
 }
 SOURCE_MANIFESTS = {
     "taco": ROOT / "training" / "source_manifests" / "taco-expansion-candidates.jsonl",
@@ -71,9 +73,24 @@ def main() -> None:
         "taco": set(review["tacoRejectedPaths"]),
         "openimages": set(review["openImagesRejectedPaths"]),
     }
+    openimages_accepted = set(review.get("openImagesAcceptedPaths", []))
+    openimages_acceptance_required = set(review.get("openImagesAcceptanceRequiredClasses", []))
     commons_accepted = set(review["commonsAcceptedPaths"])
     validation_paths = set(review.get("validationPaths", []))
     test_paths = set(review.get("testPaths", []))
+
+    missing_reviewed_sources = sorted(
+        source_key
+        for source_key in commons_accepted | openimages_accepted
+        if not (ROOT / source_key).exists()
+    )
+    if missing_reviewed_sources:
+        preview = "\n".join(f"  - {path}" for path in missing_reviewed_sources[:20])
+        raise SystemExit(
+            "Refusing to rebuild expansion images because reviewed source files are missing:\n"
+            f"{preview}\n"
+            "Rehydrate the source manifest first; existing imported images were left untouched."
+        )
 
     for dataset_root in (CLASSIFIER, RAW_DATASET):
         for split in ("train", "val", "test"):
@@ -93,6 +110,11 @@ def main() -> None:
                 continue
             if source_name == "commons":
                 if source_key not in commons_accepted:
+                    continue
+            elif source_name == "openimages":
+                if class_name in openimages_acceptance_required and source_key not in openimages_accepted:
+                    continue
+                if source_key in rejected[source_name]:
                     continue
             elif source_key in rejected[source_name]:
                 continue

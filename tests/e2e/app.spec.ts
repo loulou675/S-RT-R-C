@@ -60,6 +60,39 @@ test('camera permission denied flow', async ({ page }) => {
   await expect(page.getByText(/Camera access was blocked/i)).toBeVisible()
 })
 
+test('Instagram in-app browser is directed to a supported camera browser', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 Instagram 371.0.0.0 Mobile',
+      configurable: true,
+    })
+  })
+
+  await page.goto('/')
+  await page.getByRole('button', { name: /^Start Scanning/i }).click()
+
+  await expect(page.getByText(/not reliable inside Instagram or Facebook/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /Upload an Image/i })).toBeVisible()
+})
+
+test('mobile survey controls stay above the bottom navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addInitScript(() => sessionStorage.setItem('sot-rac-mock-item', 'plastic_takeaway_cup'))
+  await uploadMockImage(page)
+  await page.getByRole('button', { name: /Close result panel/i }).click()
+
+  const dialog = page.getByRole('dialog', { name: /How was your first scan/i })
+  await expect(dialog).toBeVisible()
+  await dialog.evaluate((element) => element.scrollTo({ top: element.scrollHeight }))
+
+  const submitBox = await page.getByRole('button', { name: /Send feedback/i }).boundingBox()
+  const navigationBox = await page.getByLabel('Primary').boundingBox()
+
+  expect(submitBox).not.toBeNull()
+  expect(navigationBox).not.toBeNull()
+  expect(submitBox!.y + submitBox!.height).toBeLessThan(navigationBox!.y)
+})
+
 test('history stores a searched item', async ({ page }) => {
   await page.goto('/')
   await page.getByLabel(/Search waste item/i).fill('fruit peel')

@@ -128,6 +128,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--per-class", type=int, default=35)
     parser.add_argument("--workers", type=int, default=6)
+    parser.add_argument(
+        "--rehydrate-only",
+        action="store_true",
+        help="Redownload reviewed candidate crops whose local files are missing.",
+    )
     args = parser.parse_args()
 
     response = requests.get(ANNOTATIONS_URL, headers={"User-Agent": USER_AGENT}, timeout=60)
@@ -135,6 +140,7 @@ def main() -> None:
     payload = response.json()
     categories = {int(row["id"]): str(row["name"]) for row in payload["categories"]}
     images = {int(row["id"]): row for row in payload["images"]}
+    annotations_by_id = {int(row["id"]): row for row in payload["annotations"]}
 
     used_image_ids: set[int] = set()
     existing_records: list[dict[str, object]] = []
@@ -154,13 +160,37 @@ def main() -> None:
             except (json.JSONDecodeError, TypeError, ValueError):
                 continue
 
+    recovered_records: list[dict[str, object]] = []
+    for record in existing_records:
+        local_path = ROOT / str(record.get("path", ""))
+        if local_path.exists():
+            continue
+        try:
+            annotation = annotations_by_id[int(record["annotationId"])]
+            image_record = images[int(annotation["image_id"])]
+            recovered = download_candidate(
+                {
+                    "class": str(record["class"]),
+                    "source_class": categories[int(annotation["category_id"])],
+                    "annotation_id": int(annotation["id"]),
+                    "bbox": annotation["bbox"],
+                    "image": image_record,
+                }
+            )
+        except (KeyError, TypeError, ValueError):
+            recovered = None
+        if recovered:
+            recovered_records.append(recovered)
+    if recovered_records:
+        print(f"Rehydrated {len(recovered_records)} reviewed TACO crops", flush=True)
+
     candidates: dict[str, list[dict[str, object]]] = {name: [] for name in TARGETS}
     selected_images = set(used_image_ids)
     annotations = sorted(
         payload["annotations"],
         key=lambda row: hashlib.sha256(f"taco-expansion:{row['id']}".encode()).hexdigest(),
     )
-    for annotation in annotations:
+    for annotation in ([] if args.rehydrate_only else annotations):
         image_id = int(annotation["image_id"])
         if image_id in selected_images or int(annotation.get("iscrowd", 0)):
             continue
@@ -187,7 +217,7 @@ def main() -> None:
         selected_images.add(image_id)
 
     work = [candidate for class_candidates in candidates.values() for candidate in class_candidates]
-    records: list[dict[str, object]] = []
+    records: list[dict[str, object]] = list(recovered_records)
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:
         futures = [executor.submit(download_candidate, candidate) for candidate in work]
         for index, future in enumerate(as_completed(futures), start=1):

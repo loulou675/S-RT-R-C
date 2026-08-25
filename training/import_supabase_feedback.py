@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import shutil
+import ssl
 import sys
 import urllib.error
 import urllib.parse
@@ -85,8 +86,15 @@ def api_request(url: str, key: str) -> bytes:
             "Accept": "application/json",
         },
     )
+    ssl_context = ssl.create_default_context()
     try:
-        with urllib.request.urlopen(request, timeout=45) as response:
+        import certifi
+
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        pass
+    try:
+        with urllib.request.urlopen(request, timeout=45, context=ssl_context) as response:
             return response.read()
     except urllib.error.HTTPError as error:
         detail = error.read().decode("utf-8", errors="replace")[:500]

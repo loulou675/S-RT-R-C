@@ -8,10 +8,13 @@ import json
 import math
 from pathlib import Path
 
+import numpy as np
+import onnxruntime as ort
 import torch
 import torch.nn.functional as F
 from ultralytics import YOLO
 
+from evaluate_browser_bottle_refinement import browser_tensor, infer_component
 from evaluate_two_model_ensemble import infer, samples_for_split
 
 
@@ -73,6 +76,26 @@ def metric(logits, labels):
     return correct, correct / len(labels), float(F.cross_entropy(logits, labels))
 
 
+def infer_any(model_path, samples, device, batch_size, names):
+    """Run trainable checkpoints or fixed-batch browser ONNX exports."""
+    if model_path.suffix.lower() != ".onnx":
+        return infer(model_path, samples, device, batch_size)
+
+    session = ort.InferenceSession(
+        str(model_path.resolve()), providers=["CPUExecutionProvider"]
+    )
+    probabilities = [
+        infer_component(session, browser_tensor(path)) for path, _label in samples
+    ]
+    # feature_stack expects logits. Log-probabilities are equivalent logits up
+    # to an additive constant and preserve the deployed browser preprocessing.
+    logits = torch.from_numpy(
+        np.stack([np.log(np.clip(row, 1e-12, None)) for row in probabilities])
+    ).float()
+    labels = torch.tensor([label for _path, label in samples], dtype=torch.long)
+    return names, logits, labels
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     for letter in "abcd":
@@ -94,7 +117,9 @@ def main() -> None:
     all_logits = []
     labels = None
     for path in paths:
-        model_names, logits, current_labels = infer(path, samples, args.device, args.batch)
+        model_names, logits, current_labels = infer_any(
+            path, samples, args.device, args.batch, names
+        )
         if model_names != names:
             raise SystemExit("Model class orders do not align")
         if labels is not None and not torch.equal(labels, current_labels):

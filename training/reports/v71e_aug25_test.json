@@ -1,0 +1,16 @@
+{
+  "split": "test",
+  "calibration": "public/models/waste_classifier_ensemble.json",
+  "base": {
+    "correct": 239,
+    "images": 378,
+    "top1": 0.6322751322751323,
+    "nll": 1.4742499589920044
+  },
+  "calibrated": {
+    "correct": 268,
+    "images": 378,
+    "top1": 0.708994708994709,
+    "nll": 1.175658941268921
+  }
+}

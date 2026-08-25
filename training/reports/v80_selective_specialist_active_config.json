@@ -1,0 +1,47 @@
+{
+  "focus": [
+    "disposable_cutlery",
+    "drink_carton",
+    "pen_marker",
+    "snack_wrapper",
+    "tissue",
+    "plastic_bag",
+    "paperboard_packaging",
+    "plastic_takeaway_cup",
+    "plastic_food_container"
+  ],
+  "validation_baseline": {
+    "top1": 0.7329843044281006,
+    "hazardous_macro_recall": 0.7619047619047619,
+    "unknown_recall": 0.8666666666666667,
+    "known_bin_accuracy": 0.7876712328767124,
+    "grouped_known_bin_accuracy": 0.7945205479452054
+  },
+  "selected": {
+    "confidence": 0.35,
+    "margin": 0.08,
+    "fallback_count": 3,
+    "fallback_rate": 0.007853402756154537,
+    "top1": 0.735602080821991,
+    "hazardous_macro_recall": 0.7619047619047619,
+    "unknown_recall": 0.8666666666666667,
+    "known_bin_accuracy": 0.791095890410959,
+    "grouped_known_bin_accuracy": 0.797945205479452
+  },
+  "test_baseline": {
+    "top1": 0.7071239948272705,
+    "hazardous_macro_recall": 0.7023809523809524,
+    "unknown_recall": 0.8539325842696629,
+    "known_bin_accuracy": 0.7758620689655172,
+    "grouped_known_bin_accuracy": 0.7896551724137931
+  },
+  "test_selected": {
+    "fallback_count": 1,
+    "fallback_rate": 0.0026385225355625153,
+    "top1": 0.7071239948272705,
+    "hazardous_macro_recall": 0.7023809523809524,
+    "unknown_recall": 0.8539325842696629,
+    "known_bin_accuracy": 0.7758620689655172,
+    "grouped_known_bin_accuracy": 0.7896551724137931
+  }
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Collect train-only Open Images candidates for pen/marker and light bulb."""
+"""Collect train-only Open Images candidates for selected weak classes."""
 
 from __future__ import annotations
 
@@ -23,7 +23,12 @@ CLASSES_URL = "https://storage.googleapis.com/openimages/v7/oidv7-class-descript
 BOXES_URL = "https://storage.googleapis.com/openimages/v5/validation-annotations-bbox.csv"
 IMAGE_URL = "https://open-images-dataset.s3.amazonaws.com/validation/{image_id}.jpg"
 USER_AGENT = "SORT-RAC-target-expansion/1.0 (educational waste-classification dataset)"
-TARGETS = {"pen_marker": {"Pen"}, "light_bulb": {"Light bulb"}}
+TARGETS = {
+    "pen_marker": {"Pen"},
+    "light_bulb": {"Light bulb"},
+    "disposable_cutlery": {"Spoon", "Fork", "Chopsticks"},
+    "plastic_cosmetic_container": {"Cosmetics"},
+}
 
 
 def download_metadata(url: str, destination: Path) -> None:
