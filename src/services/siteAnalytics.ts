@@ -84,13 +84,13 @@ export function humanizeFeatureCode(code: string) {
     .join(' ')
 }
 
-function isDevStatsPath() {
-  return /\/devstats\/?$/.test(window.location.pathname)
+function isInternalToolPath() {
+  return /\/(?:devstats|dataset-review)\/?$/.test(window.location.pathname)
 }
 
 function analyticsAllowed() {
   const localTrackingAllowed = !import.meta.env.DEV || import.meta.env.VITE_ANALYTICS_LOCAL === 'true'
-  return localTrackingAllowed && !isDevStatsPath() && navigator.doNotTrack !== '1' && Boolean(supabase)
+  return localTrackingAllowed && !isInternalToolPath() && navigator.doNotTrack !== '1' && Boolean(supabase)
 }
 
 function randomUuid() {

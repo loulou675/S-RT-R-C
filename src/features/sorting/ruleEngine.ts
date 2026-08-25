@@ -160,6 +160,14 @@ const materialFallbackGuidance: Record<BroadMaterialCode, {
     steps: ['Do not place it in a regular bin.', 'Keep damaged or swollen batteries away from heat.', 'Use an approved electronics or battery collection point.'],
     warning: 'Do not open, crush, puncture, or burn the item.',
   },
+  landfill: {
+    name: 'Likely general landfill item',
+    materialCode: 'mixed_material',
+    destinationBinCode: 'landfill',
+    why: 'The exact item was approximate, but the reviewed destination router identified it as a general mixed-material household item for Landfill.',
+    steps: ['Remove any battery or electronic part.', 'Keep liquids and recyclable parts separate.', 'Place the remaining item in Landfill.'],
+    warning: 'This is a destination-level assumption. Use Special Handling instead if the item contains electronics, batteries, chemicals, or sharp hazardous parts.',
+  },
   mixed_uncertain: {
     name: 'Mixed or uncertain material',
     materialCode: 'mixed_material',

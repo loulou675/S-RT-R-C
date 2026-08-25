@@ -1,52 +1,62 @@
-# SỌRT RÁC ONNX model files
+# SỌRT RÁC local v73r35 MVP candidate
 
-The browser uses the calibrated v71e four-model item-classifier ensemble:
+This local build exercises the v73 detection-to-classification cascade. It is
+not deployed and it does not replace the archived v71e rollback model.
 
-- `waste_classifier_v71e_bottle_refined.onnx`
-- `waste_classifier_v66_s_late.onnx`
-- `waste_classifier_v66_s_frozen.onnx`
-- `waste_classifier_v69_m_feedback.onnx`
+## Runtime flow
+
+1. A generic object detector finds a likely foreground object. The full focus
+   frame remains the primary classifier input; the box is used as supporting
+   evidence and as an uncertain-scan rescue crop.
+2. The calibrated four-model exact-item ensemble scores the 40 supported item
+   classes. `unknown` is not an exact-item output.
+3. Exact predictions are aggregated into disposal destinations and filtered by
+   destination thresholds, reviewed-pair rules, and the v73r35 pair-specific
+   minimums in `src/providers/vision/onnxVisionProvider.ts`.
+4. The v73r17 material and mixed heads, plus the v73r15 destination head, may
+   provide a broad destination when exact recognition is not trustworthy.
+5. When the cascade cannot support a safe destination, the app asks for user
+   feedback instead of forcing an exact class.
+
+## Exact-item ensemble
+
+- `known_only__waste_classifier_v71e_bottle_refined.onnx`
+- `known_only__waste_classifier_v66_s_late.onnx`
+- `known_only__waste_classifier_v66_s_frozen.onnx`
+- `known_only__waste_classifier_v69_m_feedback.onnx`
 - `waste_classifier_ensemble.json`
-- `labels.json`
+- `labels.json` (40 supported classes)
 
-All four models expect a 224 x 224 RGB image. Their probabilities are
-temperature-scaled and combined with class-wise weights and biases from the
-runtime JSON by `src/providers/vision/calibratedEnsemble.ts`. The first ONNX
-file is the v29 YOLO26n component; the other components are two YOLO26s models
-and one YOLO26m model.
+The ensemble is calibrated at runtime by
+`src/providers/vision/calibratedEnsemble.ts`.
 
-The deployed item ensemble is candidate v71e with 41 outputs, including
-`disposable_cutlery` and `unknown`. It keeps the first three v66 components and
-replaces the YOLO26m component with a validation-selected feedback refinement
-for `plastic_takeaway_cup` and `printing_paper`, then conservatively refines
-only the dominant YOLO26n classifier row for `plastic_water_bottle`. It has not
-passed the production release gates. Previous browser bundles remain
-recoverable from Git history and the local model archive.
+## Fallback heads
 
-On the unchanged 330-image held-out test set, v71e reaches 71.8% single-view
-item top-1 accuracy (237/330), compared with v66's 71.5% (236/330). It fixes
-one additional `plastic_takeaway_cup` image, has no correct-to-wrong held-out
-class regression, preserves 85.2% unknown rejection recall, and keeps
-hazardous-class macro recall at 70.2%. These figures are not production-ready;
-see `training/candidate-v69-vs-v66-heldout.json`.
+- `v73r1-material.onnx` — v73r17 seven-class material head
+- `v73r1-mixed.onnx` — v73r17 single-vs-mixed head
+- `v73r1-destination.onnx` — v73r15 seven-destination router
+- `waste_object_detector.onnx` — generic detector used for foreground evidence
 
-The separate `waste_bin_classifier.onnx` remains available for experiments but
-is disabled by default because it was not part of the accepted v71e evaluation.
-Set `VITE_BIN_MODEL_ENABLED=true` only when deliberately evaluating that hybrid.
+## Timeboxed evaluation summary
 
-When the exact v71e ensemble rejects an image, the app can lazily load the
-separate `waste_material_classifier.onnx` seven-class broad-material model. It
-does not replace or change accepted v71e predictions. Accepted material
-predictions use the normal result sheet with explicit material-only caveats.
-See `MATERIAL_MODEL_CARD.md` and
-`training/material-fallback-v1-evaluation.json` for its data, thresholds,
-held-out results, and limitations.
+- Known validation: 230/283 correct destination, 16 harmful, 37 feedback.
+- Known held-out: 196/242 correct destination, 20 harmful, 26 feedback.
+- Consumed unsupported development cases: 96 helpful, 15 harmful,
+  89 feedback (6.40 helpful per harmful).
+- The last untouched set was consumed to build the final narrow safety guards;
+  a further untouched-set loop was skipped under the MVP timebox.
 
-The original v66 bundle remains reproducible with
-`training/export_v66_browser_ensemble.py`; the v71e deployment keeps v69's
-fourth exported component and changes only the dominant component's
-`plastic_water_bottle` classifier row plus the runtime version/path.
-The app rejects any component whose output count differs from `labels.json`.
-`disposable_cutlery` is now present at index 6 in every ensemble component.
+This remains an MVP candidate, not a production-safety claim. Keep feedback
+enabled and review harmful assumptions during the user trial.
 
-Local development can use `VITE_USE_MOCK_VISION=true`, but mock mode is disabled by default.
+## Rollback
+
+The original v71e model remains archived at:
+
+`training/model_archive/candidate-v71-bottle-refinement-20260824/candidate_v71e_v64a_bottle_heldout_guarded.onnx`
+
+Its SHA-256 is
+`f2e235d19397c9511e778fa02aec8ec121d876fc78bb495a9ffbfb8e4325f354`.
+
+Local development can use `VITE_USE_MOCK_VISION=true`, but mock mode is
+disabled by default.

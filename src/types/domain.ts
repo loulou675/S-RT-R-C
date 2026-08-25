@@ -22,6 +22,7 @@ export type BroadMaterialCode =
   | 'organic'
   | 'glass'
   | 'electronic_battery'
+  | 'landfill'
   | 'mixed_uncertain'
 
 export type MaterialCode =

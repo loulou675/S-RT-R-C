@@ -1,0 +1,12 @@
+{
+  "labels": [
+    {
+      "index": 0,
+      "code": "single_material"
+    },
+    {
+      "index": 1,
+      "code": "mixed_material"
+    }
+  ]
+}

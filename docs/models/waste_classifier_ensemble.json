@@ -1,10 +1,10 @@
 {
-  "version": "v71e",
+  "version": "v73-known-only-local",
   "modelPaths": [
-    "waste_classifier_v71e_bottle_refined.onnx",
-    "waste_classifier_v66_s_late.onnx",
-    "waste_classifier_v66_s_frozen.onnx",
-    "waste_classifier_v69_m_feedback.onnx"
+    "known_only__waste_classifier_v71e_bottle_refined.onnx",
+    "known_only__waste_classifier_v66_s_late.onnx",
+    "known_only__waste_classifier_v66_s_frozen.onnx",
+    "known_only__waste_classifier_v69_m_feedback.onnx"
   ],
   "temperatures": [
     1.0,
@@ -53,7 +53,6 @@
       -0.5052902102470398,
       -1.6474664211273193,
       -1.6756343841552734,
-      -0.4244648218154907,
       -2.3886327743530273
     ],
     [
@@ -96,7 +95,6 @@
       -1.9212220907211304,
       -0.12268804013729095,
       -2.324946880340576,
-      -2.421917200088501,
       -2.274352788925171
     ],
     [
@@ -139,7 +137,6 @@
       -1.7379064559936523,
       -2.085097551345825,
       -1.9306321144104004,
-      -1.0965358018875122,
       -1.7913659811019897
     ],
     [
@@ -182,7 +179,6 @@
       -1.9324064254760742,
       -2.2415361404418945,
       -0.16561666131019592,
-      -2.1538302898406982,
       0.3577929735183716
     ]
   ],
@@ -226,7 +222,12 @@
     -0.19191142916679382,
     -0.0982530266046524,
     -0.40291303396224976,
-    -0.9351059198379517,
     -1.1143783330917358
-  ]
+  ],
+  "candidatePolicy": {
+    "exactClasses": 40,
+    "unknownOutputRemoved": true,
+    "unsupportedImagesUsedForTraining": false,
+    "unsupportedImagesUsedForCalibration": false
+  }
 }

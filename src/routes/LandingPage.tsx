@@ -11,6 +11,11 @@ import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
 import { createVisionProvider } from '../providers/vision'
+import {
+  focusPrimaryObject,
+  prepareObjectDetector,
+  type ObjectDetection,
+} from '../providers/vision/objectDetector'
 import { saveScanHistory } from '../services/history'
 import { trackFeature } from '../services/siteAnalytics'
 import type { AppErrorCode } from '../lib/errors'
@@ -27,6 +32,11 @@ interface SurveyContext {
 interface PendingSurvey {
   after: 'result-close' | 'feedback-submit'
   context: SurveyContext
+}
+
+interface DetectorDebugState {
+  image: string
+  detection?: ObjectDetection
 }
 
 const demoItems = [
@@ -69,6 +79,7 @@ export function LandingPage() {
   const [feedbackDelivery, setFeedbackDelivery] = useState<'uploaded' | 'queued'>()
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [surveyContext, setSurveyContext] = useState<SurveyContext>()
+  const [detectorDebug, setDetectorDebug] = useState<DetectorDebugState>()
   const recognitionIdRef = useRef(0)
   const pendingSurveyRef = useRef<PendingSurvey | undefined>(undefined)
   const feedbackSectionRef = useRef<HTMLDivElement | null>(null)
@@ -79,6 +90,7 @@ export function LandingPage() {
   useEffect(() => {
     const prepareModel = () => {
       void createVisionProvider().then((provider) => provider.prepare?.()).catch(() => undefined)
+      void prepareObjectDetector().catch(() => undefined)
     }
     const idleId = window.setTimeout(prepareModel, 150)
     return () => window.clearTimeout(idleId)
@@ -139,6 +151,7 @@ export function LandingPage() {
     setFeedbackDelivery(undefined)
     setImagePreview(undefined)
     setPredictedItemCode(undefined)
+    setDetectorDebug(undefined)
     setInputMethod('camera')
     setStage('camera')
   }
@@ -149,6 +162,7 @@ export function LandingPage() {
     setFeedbackDelivery(undefined)
     setImagePreview(undefined)
     setPredictedItemCode(undefined)
+    setDetectorDebug(undefined)
     setUploadOpen(true)
   }
 
@@ -158,15 +172,69 @@ export function LandingPage() {
     pendingSurveyRef.current = undefined
     setFeedbackDelivery(undefined)
     setImagePreview(dataUrl)
+    if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
+      setDetectorDebug({ image: dataUrl })
+    }
     setInputMethod(method)
     setErrorCode(undefined)
     if (!keepCameraOpen) setStage('processing')
 
     try {
+      let focusedImage: string | undefined
+      let focusedDetection: ObjectDetection | undefined
+      setStatus('Finding the main object...')
+      try {
+        const focused = await focusPrimaryObject(dataUrl)
+        if (recognitionId !== recognitionIdRef.current) return false
+        focusedImage = focused.image
+        focusedDetection = focused.detection
+        if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
+          setDetectorDebug({ image: dataUrl, detection: focused.detection })
+        }
+      } catch (error) {
+        // Detection is an assistive first stage. If it cannot find an object,
+        // preserve the original indicator-square crop for the classifier and
+        // material fallback instead of blocking the scan.
+        if (import.meta.env.DEV) console.warn('Object-focused crop was skipped.', error)
+      }
+
       setStatus('Preparing image...')
       setStatus('Identifying item...')
       const provider = await createVisionProvider()
-      const visionResult = await provider.identify(dataUrl)
+      let inferenceImage = dataUrl
+      let visionResult
+      try {
+        // The indicator-square image is authoritative. A generic detector may
+        // find a useful object box, but it must not replace a successful scan.
+        visionResult = await provider.identify(dataUrl)
+      } catch (originalError) {
+        const appError = originalError instanceof AppError
+          ? originalError
+          : toAppError(originalError, 'INFERENCE_FAILED')
+        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
+        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
+        const detectedArea = focusedDetection ? focusedDetection.width * focusedDetection.height : 0
+        const eligibleError = ['ITEM_NOT_RECOGNISED', 'ITEM_AMBIGUOUS', 'MATERIAL_NOT_RECOGNISED']
+          .includes(appError.code)
+        const canRescue = eligibleError
+          && Boolean(focusedDetection)
+          && focusedDetection!.confidence >= rescueConfidence
+          && detectedArea >= rescueArea
+          && Boolean(focusedImage)
+          && focusedImage !== dataUrl
+
+        if (!canRescue) throw originalError
+
+        try {
+          inferenceImage = focusedImage!
+          visionResult = await provider.identify(inferenceImage)
+          setImagePreview(inferenceImage)
+        } catch {
+          // Preserve the original failure as the user-facing reason. The crop
+          // is only allowed to rescue a scan, never replace it with a new error.
+          throw originalError
+        }
+      }
       if (recognitionId !== recognitionIdRef.current) return false
 
       setStatus('Checking disposal guidance...')
@@ -194,7 +262,7 @@ export function LandingPage() {
       }
 
       if (visionResult.kind === 'item' && provider.identifyComponents) {
-        void provider.identifyComponents(dataUrl, visionResult.itemCode).then((components) => {
+        void provider.identifyComponents(inferenceImage, visionResult.itemCode).then((components) => {
           if (recognitionId === recognitionIdRef.current && components?.length) {
             setResult(getDisposalForItem(visionResult.itemCode, components))
           }
@@ -234,6 +302,7 @@ export function LandingPage() {
     setFeedbackDelivery(undefined)
     setSurveyOpen(false)
     setSurveyContext(undefined)
+    setDetectorDebug(undefined)
     pendingSurveyRef.current = undefined
   }, [])
 
@@ -366,6 +435,34 @@ export function LandingPage() {
           </div>
         )}
       </div>
+
+      {detectorDebug && import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true' ? (
+        <details className="detector-debug-panel" open>
+          <summary>
+            <span>YOLO focus check</span>
+            <strong>
+              {detectorDebug.detection
+                ? `${Math.round(detectorDebug.detection.confidence * 100)}% box`
+                : 'No reliable box'}
+            </strong>
+          </summary>
+          <div className="detector-debug-image">
+            <img src={detectorDebug.image} alt="YOLO detector input" />
+            {detectorDebug.detection ? (
+              <i
+                aria-label="Selected object bounding box"
+                style={{
+                  left: `${detectorDebug.detection.x * 100}%`,
+                  top: `${detectorDebug.detection.y * 100}%`,
+                  width: `${detectorDebug.detection.width * 100}%`,
+                  height: `${detectorDebug.detection.height * 100}%`,
+                }}
+              />
+            ) : null}
+          </div>
+          <p>The full focus frame is classified first. This box is used only to rescue an otherwise uncertain scan.</p>
+        </details>
+      ) : null}
 
       {result ? (
         <BinPanel

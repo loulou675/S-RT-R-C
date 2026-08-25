@@ -1,10 +1,9 @@
-# Broad-material classifier v1
+# v73r17 broad-material head
 
-This browser model is a separate seven-class YOLO26n classifier. It runs only
-after the active v71e exact-item ensemble returns `ITEM_NOT_RECOGNISED` or
-`ITEM_AMBIGUOUS`. A sufficiently confident prediction opens the same full
-result sheet as an exact-item result, with a visible **Material-based result**
-label and material-specific caveats.
+This seven-class ONNX classifier is one part of the local v73r35 cascade. It
+does not independently decide every fallback result: its scores are combined
+with the exact-destination probabilities, the v73r15 destination router, the
+single-vs-mixed head, and generic detector evidence.
 
 ## Outputs
 
@@ -16,48 +15,33 @@ label and material-specific caveats.
 - `electronic_battery`
 - `mixed_uncertain`
 
-## Data and training
+The paired mixed head outputs `single_material` or `mixed_material`. The
+destination head outputs the six disposal destinations plus
+`mixed_uncertain`.
 
-The model was fine-tuned for five epochs at 224 x 224 from the existing
-YOLO26n bin-classifier checkpoint. Its data was derived from the preserved v66
-41-item-class train, validation, and test splits by mapping each item class to
-one broad material class. Only the training split was oversampled, to at least
-800 files per material class; validation and test were left untouched. The
-standalone validation top-1 score was 73.5% (373 images).
+## Runtime safeguards
 
-This is not an independently annotated material dataset. In particular,
-composite objects and packaging can contain materials that are not visible in a
-single image, and the glass class has only 92 distinct training images before
-oversampling.
+The runtime applies thresholds for organic and electronic results, requires
+multi-head agreement for mixed-material results, permits a small reviewed set
+of generic detector identity overrides, and sends unsupported or conflicting
+cases to feedback. Exact-item pair minimums additionally veto several common
+harmful assumptions.
 
-## Cascade calibration
+## Evaluation status
 
-Acceptance thresholds were chosen on the validation split only, using the v66
-exact-item predecessor whose calibration is retained by v71e. The selection
-required at least 85% precision among accepted material results and at least
-90% precision for accepted electronic/battery predictions, while maximizing
-the number of correct results recovered after v66 rejected an image.
+The policy passes the minimum known-item held-out limits (195/242 correct and
+21 harmful) and scored 78 helpful to 11 harmful on six consumed unsupported
+development sets. Its final time-bounded independent evaluation scored 10
+helpful, 5 harmful, and 9 feedback results.
 
-- Minimum material confidence: 0.95
-- Minimum top-1 margin: 0.05
-- Minimum electronic/battery confidence: 0.70
-- Validation: 49/57 accepted material results correct (85.96% precision),
-  covering 37.25% of v66-rejected images
-- Untouched test: 46/54 accepted material results correct (85.19% precision),
-  covering 40.91% of v66-rejected images
-- Untouched test electronic/battery results: 2/2 correct
-
-See `training/material-fallback-v1-evaluation.json` for the complete report and
-confusion details. The evaluator reproduces the calibrated four-model item
-ensemble and then scores this material model only on its rejected images.
+That 2.00:1 independent helpful-to-harmful ratio misses the original 4:1 gate.
+The shortfall is accepted for local MVP integration only. This cascade remains
+experimental and must retain feedback and rollback paths.
 
 ## Limitations
 
-Material appearance alone cannot reliably determine cleanliness, coatings,
-hidden layers, chemical contamination, sharps, pressurisation, or local
-acceptance rules. The app therefore gives cautious preparation instructions,
-marks every such sheet as material-based, and withholds a material result when
-the thresholds are not met. `mixed_uncertain` deliberately does not select a
-disposal bin.
-
-This model is suitable for controlled field testing, not a production release.
+Appearance alone cannot reliably determine cleanliness, coatings, hidden
+layers, contamination, sharps, pressurisation, or local acceptance rules.
+Detector identity is closed-set and cannot prove that an unsupported object is
+a supported exact item. The app must keep visible material-only caveats and a
+feedback path for uncertain cases.

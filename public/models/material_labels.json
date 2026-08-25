@@ -1,11 +1,28 @@
 {
   "labels": [
-    { "index": 0, "code": "electronic_battery" },
-    { "index": 1, "code": "glass" },
-    { "index": 2, "code": "metal" },
-    { "index": 3, "code": "mixed_uncertain" },
-    { "index": 4, "code": "organic" },
-    { "index": 5, "code": "paper_cardboard" },
-    { "index": 6, "code": "plastic" }
+    {
+      "index": 0,
+      "code": "electronic_battery"
+    },
+    {
+      "index": 1,
+      "code": "glass"
+    },
+    {
+      "index": 2,
+      "code": "metal"
+    },
+    {
+      "index": 3,
+      "code": "organic"
+    },
+    {
+      "index": 4,
+      "code": "paper_cardboard"
+    },
+    {
+      "index": 5,
+      "code": "plastic"
+    }
   ]
 }
