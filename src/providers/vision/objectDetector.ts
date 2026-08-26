@@ -69,7 +69,7 @@ export async function detectPrimaryObject(source: string): Promise<ObjectDetecti
 
   const result = await runOnnxExclusive(() => session.run({ [inputName]: prepared.tensor }))
   const values = Array.from((result[outputName]?.data ?? []) as ArrayLike<number>).map(Number)
-  const confidenceThreshold = Number(import.meta.env.VITE_OBJECT_DETECTOR_MIN_CONFIDENCE ?? 0.3)
+  const confidenceThreshold = Number(import.meta.env.VITE_OBJECT_DETECTOR_MIN_CONFIDENCE || 0.3)
 
   return selectPrimaryDetection(
     values,
@@ -240,7 +240,7 @@ async function prepareDetectorImage(source: string): Promise<PreparedDetectorIma
 function loadSession() {
   if (!sessionPromise) {
     const modelPath =
-      import.meta.env.VITE_OBJECT_DETECTOR_MODEL_PATH ??
+      import.meta.env.VITE_OBJECT_DETECTOR_MODEL_PATH ||
       `${import.meta.env.BASE_URL}models/waste_object_detector.onnx`
     sessionPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
   }

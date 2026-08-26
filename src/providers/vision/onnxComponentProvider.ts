@@ -14,7 +14,7 @@ export class OnnxComponentProvider {
 
   async detect(image: Blob | string | HTMLCanvasElement, itemCode: string): Promise<DetectedComponent[]> {
     const [session, labels] = await Promise.all([this.loadSession(), this.loadLabels()])
-    const inputSize = Number(import.meta.env.VITE_COMPONENT_INPUT_SIZE ?? 416)
+    const inputSize = Number(import.meta.env.VITE_COMPONENT_INPUT_SIZE || 416)
     const tensor = await preprocessImageToTensor(image, {
       width: inputSize,
       height: inputSize,
@@ -33,7 +33,7 @@ export class OnnxComponentProvider {
       Array.from(output.data as ArrayLike<number>).map(Number),
       output.dims.map(Number),
       labels,
-      Number(import.meta.env.VITE_COMPONENT_MIN_ACCEPTANCE ?? 0.5),
+      Number(import.meta.env.VITE_COMPONENT_MIN_ACCEPTANCE || 0.5),
       inputSize,
     )
     const mappedParts = optionalParts.flatMap((part) => {

@@ -207,8 +207,8 @@ export function LandingPage() {
           throw originalError
         }
 
-        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
-        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
+        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE || 0.70)
+        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA || 0.10)
         const detectedArea = focused.detection ? focused.detection.width * focused.detection.height : 0
         const canRescue = Boolean(focused.detection)
           && focused.detection!.confidence >= rescueConfidence

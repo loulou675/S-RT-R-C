@@ -6,7 +6,7 @@ export async function createVisionProvider(mockItemCode?: string): Promise<Visio
   if (import.meta.env.VITE_USE_MOCK_VISION === 'true') {
     const { MockVisionProvider } = await import('./mockVisionProvider')
     return new MockVisionProvider(
-      mockItemCode ?? import.meta.env.VITE_MOCK_VISION_RESULT ?? 'plastic_water_bottle',
+      mockItemCode || import.meta.env.VITE_MOCK_VISION_RESULT || 'plastic_water_bottle',
     )
   }
 

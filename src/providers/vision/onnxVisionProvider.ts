@@ -224,7 +224,7 @@ export class OnnxVisionProvider implements VisionProvider {
   private warmupPromise?: Promise<void>
 
   async identify(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
-    const timeoutMs = Number(import.meta.env.VITE_AI_TIMEOUT_MS ?? 60000)
+    const timeoutMs = Number(import.meta.env.VITE_AI_TIMEOUT_MS || 60000)
     return withTimeout(this.runInference(image), timeoutMs)
   }
 
@@ -269,7 +269,7 @@ export class OnnxVisionProvider implements VisionProvider {
 
     try {
       const componentProvider = await this.loadComponentProvider()
-      const componentTimeoutMs = Number(import.meta.env.VITE_COMPONENT_TIMEOUT_MS ?? 2500)
+      const componentTimeoutMs = Number(import.meta.env.VITE_COMPONENT_TIMEOUT_MS || 2500)
       return await withTimeout(componentProvider.detect(image, itemCode), componentTimeoutMs)
     } catch (error) {
       console.warn('Component detection was skipped; sorting rules will provide the component guide.', error)
@@ -693,9 +693,9 @@ export class OnnxVisionProvider implements VisionProvider {
         .sort((left, right) => right.score - left.score)
       const top = ranked[0]
       const runnerUp = ranked[1]
-      const minConfidence = Number(import.meta.env.VITE_MATERIAL_MIN_ACCEPTANCE ?? 0.95)
-      const minMargin = Number(import.meta.env.VITE_MATERIAL_MIN_MARGIN ?? 0.05)
-      const electronicMinConfidence = Number(import.meta.env.VITE_MATERIAL_ELECTRONIC_MIN_ACCEPTANCE ?? 0.70)
+      const minConfidence = Number(import.meta.env.VITE_MATERIAL_MIN_ACCEPTANCE || 0.95)
+      const minMargin = Number(import.meta.env.VITE_MATERIAL_MIN_MARGIN || 0.05)
+      const electronicMinConfidence = Number(import.meta.env.VITE_MATERIAL_ELECTRONIC_MIN_ACCEPTANCE || 0.70)
       const requiredConfidence = top?.code === 'electronic_battery' ? electronicMinConfidence : minConfidence
 
       if (
@@ -746,7 +746,7 @@ export class OnnxVisionProvider implements VisionProvider {
       .map((score, index) => ({ score, code: assets.labels[index]!.code }))
       .sort((left, right) => right.score - left.score)
     const top = ranked[0]
-    const minimum = Number(import.meta.env.VITE_MIXED_MIN_ACCEPTANCE ?? 0.53)
+    const minimum = Number(import.meta.env.VITE_MIXED_MIN_ACCEPTANCE || 0.53)
     if (!top || top.score < minimum) {
       throw new AppError('MATERIAL_NOT_RECOGNISED', 'Mixed-material decision was uncertain.')
     }
@@ -757,12 +757,12 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   private resolveEnsembledResult(itemClasses: ScoredClass[], binClasses: ScoredClass[]): VisionResult {
-    const directBinWeight = Number(import.meta.env.VITE_BIN_ENSEMBLE_WEIGHT ?? 0.53)
+    const directBinWeight = Number(import.meta.env.VITE_BIN_ENSEMBLE_WEIGHT || 0.53)
     const selected = selectEnsembledItem(itemClasses, binClasses, directBinWeight)
-    const minBinAcceptance = Number(import.meta.env.VITE_BIN_MIN_ACCEPTANCE ?? 0.45)
-    const minBinMargin = Number(import.meta.env.VITE_BIN_MIN_MARGIN ?? 0.05)
-    const minItemAcceptance = Number(import.meta.env.VITE_AI_WITHIN_BIN_MIN_ACCEPTANCE ?? 0.18)
-    const minItemMargin = Number(import.meta.env.VITE_AI_WITHIN_BIN_MIN_MARGIN ?? 0.02)
+    const minBinAcceptance = Number(import.meta.env.VITE_BIN_MIN_ACCEPTANCE || 0.45)
+    const minBinMargin = Number(import.meta.env.VITE_BIN_MIN_MARGIN || 0.05)
+    const minItemAcceptance = Number(import.meta.env.VITE_AI_WITHIN_BIN_MIN_ACCEPTANCE || 0.18)
+    const minItemMargin = Number(import.meta.env.VITE_AI_WITHIN_BIN_MIN_MARGIN || 0.02)
 
     if (!selected) {
       throw new AppError('ITEM_NOT_RECOGNISED', 'Unknown class')
@@ -778,7 +778,7 @@ export class OnnxVisionProvider implements VisionProvider {
     }
 
     const supported = this.getSupportedItem(selected.itemCode)
-    const specialHandlingMinAcceptance = Number(import.meta.env.VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE ?? 0.8)
+    const specialHandlingMinAcceptance = Number(import.meta.env.VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE || 0.8)
 
     if (supported.specialHandling && selected.itemScore < specialHandlingMinAcceptance) {
       throw new AppError('ITEM_AMBIGUOUS', 'Special-handling item result is uncertain')
@@ -796,8 +796,8 @@ export class OnnxVisionProvider implements VisionProvider {
 
     const top = ranked[0]
     const runnerUp = ranked[1]
-    const minAcceptance = Number(import.meta.env.VITE_AI_MIN_ACCEPTANCE ?? 0.55)
-    const minMargin = Number(import.meta.env.VITE_AI_MIN_MARGIN ?? 0.15)
+    const minAcceptance = Number(import.meta.env.VITE_AI_MIN_ACCEPTANCE || 0.55)
+    const minMargin = Number(import.meta.env.VITE_AI_MIN_MARGIN || 0.15)
 
     if (!top || top.code === 'unknown') {
       throw new AppError('ITEM_NOT_RECOGNISED', 'Unknown class')
@@ -809,7 +809,7 @@ export class OnnxVisionProvider implements VisionProvider {
 
     const supported = this.getSupportedItem(top.code)
 
-    const specialHandlingMinAcceptance = Number(import.meta.env.VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE ?? 0.8)
+    const specialHandlingMinAcceptance = Number(import.meta.env.VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE || 0.8)
 
     if (supported.specialHandling && top.score < specialHandlingMinAcceptance) {
       throw new AppError('ITEM_AMBIGUOUS', 'Special-handling item result is uncertain')
@@ -910,7 +910,7 @@ export class OnnxVisionProvider implements VisionProvider {
     if (!this.itemAssetsPromise) {
       if (import.meta.env.VITE_AI_ENSEMBLE_ENABLED === 'false') {
         const modelPath =
-          import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
+          import.meta.env.VITE_AI_MODEL_PATH || `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
         this.itemAssetsPromise = isMemoryConstrainedDevice()
           ? Promise.resolve({ sessions: [], modelPaths: [modelPath] })
           : ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
@@ -920,7 +920,7 @@ export class OnnxVisionProvider implements VisionProvider {
           })
       } else {
         const configPath =
-          import.meta.env.VITE_AI_ENSEMBLE_CONFIG_PATH ??
+          import.meta.env.VITE_AI_ENSEMBLE_CONFIG_PATH ||
           `${import.meta.env.BASE_URL}models/waste_classifier_ensemble.json`
         this.itemAssetsPromise = fetch(configPath)
           .then((response) => {
@@ -957,7 +957,7 @@ export class OnnxVisionProvider implements VisionProvider {
 
   private loadLabels() {
     if (!this.labelsPromise) {
-      const labelsPath = import.meta.env.VITE_AI_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/labels.json`
+      const labelsPath = import.meta.env.VITE_AI_LABELS_PATH || `${import.meta.env.BASE_URL}models/labels.json`
       this.labelsPromise = fetch(labelsPath)
         .then((response) => {
           if (!response.ok) {
@@ -990,8 +990,8 @@ export class OnnxVisionProvider implements VisionProvider {
 
     if (!this.binAssetsPromise) {
       const modelPath =
-        import.meta.env.VITE_BIN_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_bin_classifier.onnx`
-      const labelsPath = import.meta.env.VITE_BIN_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/bin_labels.json`
+        import.meta.env.VITE_BIN_MODEL_PATH || `${import.meta.env.BASE_URL}models/waste_bin_classifier.onnx`
+      const labelsPath = import.meta.env.VITE_BIN_LABELS_PATH || `${import.meta.env.BASE_URL}models/bin_labels.json`
       this.binAssetsPromise = Promise.all([
         ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] }),
         fetch(labelsPath)
@@ -1019,9 +1019,9 @@ export class OnnxVisionProvider implements VisionProvider {
   private loadMaterialAssets() {
     if (!this.materialAssetsPromise) {
       const modelPath =
-        import.meta.env.VITE_MATERIAL_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_material_classifier.onnx`
+        import.meta.env.VITE_MATERIAL_MODEL_PATH || `${import.meta.env.BASE_URL}models/waste_material_classifier.onnx`
       const labelsPath =
-        import.meta.env.VITE_MATERIAL_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/material_labels.json`
+        import.meta.env.VITE_MATERIAL_LABELS_PATH || `${import.meta.env.BASE_URL}models/material_labels.json`
       this.materialAssetsPromise = Promise.all([
         ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] }),
         fetch(labelsPath)
@@ -1051,9 +1051,9 @@ export class OnnxVisionProvider implements VisionProvider {
   private loadMixedAssets() {
     if (!this.mixedAssetsPromise) {
       const modelPath =
-        import.meta.env.VITE_MIXED_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_mixed_classifier.onnx`
+        import.meta.env.VITE_MIXED_MODEL_PATH || `${import.meta.env.BASE_URL}models/waste_mixed_classifier.onnx`
       const labelsPath =
-        import.meta.env.VITE_MIXED_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/mixed_labels.json`
+        import.meta.env.VITE_MIXED_LABELS_PATH || `${import.meta.env.BASE_URL}models/mixed_labels.json`
       this.mixedAssetsPromise = Promise.all([
         ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] }),
         fetch(labelsPath)
@@ -1079,9 +1079,9 @@ export class OnnxVisionProvider implements VisionProvider {
   private loadDestinationAssets() {
     if (!this.destinationAssetsPromise) {
       const modelPath =
-        import.meta.env.VITE_DESTINATION_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/v73r1-destination.onnx`
+        import.meta.env.VITE_DESTINATION_MODEL_PATH || `${import.meta.env.BASE_URL}models/v73r1-destination.onnx`
       const labelsPath =
-        import.meta.env.VITE_DESTINATION_LABELS_PATH ?? `${import.meta.env.BASE_URL}models/v73r1-destination-labels.json`
+        import.meta.env.VITE_DESTINATION_LABELS_PATH || `${import.meta.env.BASE_URL}models/v73r1-destination-labels.json`
       this.destinationAssetsPromise = Promise.all([
         ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] }),
         fetch(labelsPath)
