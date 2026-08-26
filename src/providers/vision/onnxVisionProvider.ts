@@ -2,6 +2,7 @@ import * as ort from 'onnxruntime-web'
 import { getClassifierBin, toAppBinCode } from '../../config/classifierBins'
 import { wasteItems } from '../../data/referenceData'
 import { AppError } from '../../lib/errors'
+import { isMemoryConstrainedDevice } from '../../lib/deviceCapabilities'
 import { preprocessImageToTensor } from '../../lib/image-processing/preprocess'
 import { visionLabelSchema } from '../../lib/validation/schemas'
 import {
@@ -18,7 +19,11 @@ import type { BinCode, BroadMaterialCode } from '../../types/domain'
 // Static hosts such as GitHub Pages do not provide the isolation headers that
 // SharedArrayBuffer-based WASM workers require. Keep inference single-threaded
 // there while the runtime queue prevents overlapping model executions.
-if (typeof crossOriginIsolated === 'undefined' || !crossOriginIsolated) {
+if (
+  typeof crossOriginIsolated === 'undefined'
+  || !crossOriginIsolated
+  || isMemoryConstrainedDevice()
+) {
   ort.env.wasm.numThreads = 1
   ort.env.wasm.proxy = false
 }
@@ -204,6 +209,7 @@ const v73r35Policy = {
 export class OnnxVisionProvider implements VisionProvider {
   private itemAssetsPromise?: Promise<{
     sessions: ort.InferenceSession[]
+    modelPaths: string[]
     config?: CalibratedEnsembleConfig
   }>
   private labelsPromise?: Promise<LabelRecord[]>
@@ -223,6 +229,10 @@ export class OnnxVisionProvider implements VisionProvider {
   }
 
   async prepare() {
+    // Mobile Safari is most reliable when sessions are created only when a scan
+    // needs them and released immediately after their probabilities are copied.
+    if (isMemoryConstrainedDevice()) return
+
     if (!this.warmupPromise) {
       this.warmupPromise = (async () => {
         const [itemAssets, , binAssets] = await Promise.all([
@@ -275,10 +285,7 @@ export class OnnxVisionProvider implements VisionProvider {
     ])
     const normalization = import.meta.env.VITE_AI_NORMALIZATION === 'imagenet' ? 'imagenet' : 'zero-one'
     const tensor = await preprocessImageToTensor(image, { width: 224, height: 224, normalization })
-    const modelProbabilities = [] as number[][]
-    for (const session of itemAssets.sessions) {
-      modelProbabilities.push(await this.runRawClassifier(session, labels.length, tensor))
-    }
+    const modelProbabilities = await this.runItemClassifiers(itemAssets, labels.length, tensor)
     const itemClasses = itemAssets.config
       ? combineCalibratedProbabilities(
           modelProbabilities,
@@ -322,23 +329,55 @@ export class OnnxVisionProvider implements VisionProvider {
     exactResult: VisionResult | undefined,
     exactError: AppError | undefined,
   ): Promise<VisionResult> {
-    const [destinationAssets, materialAssets, mixedAssets, detection] = await Promise.all([
-      this.loadDestinationAssets(),
-      this.loadMaterialAssets(),
-      this.loadMixedAssets(),
-      typeof image === 'string'
-        ? detectPrimaryObject(image).catch(() => undefined)
-        : Promise.resolve(undefined),
-    ])
-    const destinationScores = normalizeScores(
-      await this.runRawClassifier(destinationAssets.session, destinationAssets.labels.length, tensor),
-    )
-    const materialScores = normalizeScores(
-      await this.runRawClassifier(materialAssets.session, materialAssets.labels.length, tensor),
-    )
-    const mixedScores = normalizeScores(
-      await this.runRawClassifier(mixedAssets.session, mixedAssets.labels.length, tensor),
-    )
+    let destinationAssets: Awaited<ReturnType<OnnxVisionProvider['loadDestinationAssets']>>
+    let materialAssets: Awaited<ReturnType<OnnxVisionProvider['loadMaterialAssets']>>
+    let mixedAssets: Awaited<ReturnType<OnnxVisionProvider['loadMixedAssets']>>
+    let destinationScores: number[]
+    let materialScores: number[]
+    let mixedScores: number[]
+    let detection
+
+    if (isMemoryConstrainedDevice()) {
+      destinationAssets = await this.loadDestinationAssets()
+      destinationScores = normalizeScores(await this.runClassifierAndRelease(
+        destinationAssets,
+        tensor,
+        () => { this.destinationAssetsPromise = undefined },
+      ))
+      materialAssets = await this.loadMaterialAssets()
+      materialScores = normalizeScores(await this.runClassifierAndRelease(
+        materialAssets,
+        tensor,
+        () => { this.materialAssetsPromise = undefined },
+      ))
+      mixedAssets = await this.loadMixedAssets()
+      mixedScores = normalizeScores(await this.runClassifierAndRelease(
+        mixedAssets,
+        tensor,
+        () => { this.mixedAssetsPromise = undefined },
+      ))
+      detection = typeof image === 'string'
+        ? await detectPrimaryObject(image).catch(() => undefined)
+        : undefined
+    } else {
+      [destinationAssets, materialAssets, mixedAssets, detection] = await Promise.all([
+        this.loadDestinationAssets(),
+        this.loadMaterialAssets(),
+        this.loadMixedAssets(),
+        typeof image === 'string'
+          ? detectPrimaryObject(image).catch(() => undefined)
+          : Promise.resolve(undefined),
+      ])
+      destinationScores = normalizeScores(
+        await this.runRawClassifier(destinationAssets.session, destinationAssets.labels.length, tensor),
+      )
+      materialScores = normalizeScores(
+        await this.runRawClassifier(materialAssets.session, materialAssets.labels.length, tensor),
+      )
+      mixedScores = normalizeScores(
+        await this.runRawClassifier(mixedAssets.session, mixedAssets.labels.length, tensor),
+      )
+    }
     const destinationRanked = destinationScores
       .map((score, index) => ({ score, code: destinationAssets.labels[index]!.code }))
       .sort((left, right) => right.score - left.score)
@@ -643,7 +682,11 @@ export class OnnxVisionProvider implements VisionProvider {
 
     try {
       const assets = await this.loadMaterialAssets()
-      const rawScores = await this.runRawClassifier(assets.session, assets.labels.length, tensor)
+      const rawScores = await this.runClassifierAndRelease(
+        assets,
+        tensor,
+        () => { this.materialAssetsPromise = undefined },
+      )
       const probabilities = normalizeScores(rawScores)
       const ranked = probabilities
         .map((score, index) => ({ score, code: assets.labels[index]!.code }))
@@ -694,7 +737,11 @@ export class OnnxVisionProvider implements VisionProvider {
     }
 
     const assets = await this.loadMixedAssets()
-    const scores = normalizeScores(await this.runRawClassifier(assets.session, assets.labels.length, tensor))
+    const scores = normalizeScores(await this.runClassifierAndRelease(
+      assets,
+      tensor,
+      () => { this.mixedAssetsPromise = undefined },
+    ))
     const ranked = scores
       .map((score, index) => ({ score, code: assets.labels[index]!.code }))
       .sort((left, right) => right.score - left.score)
@@ -811,6 +858,45 @@ export class OnnxVisionProvider implements VisionProvider {
     return scores
   }
 
+  private async runItemClassifiers(
+    itemAssets: Awaited<ReturnType<OnnxVisionProvider['loadItemAssets']>>,
+    expectedClassCount: number,
+    tensor: ort.Tensor,
+  ) {
+    const probabilities: number[][] = []
+    if (!isMemoryConstrainedDevice()) {
+      for (const session of itemAssets.sessions) {
+        probabilities.push(await this.runRawClassifier(session, expectedClassCount, tensor))
+      }
+      return probabilities
+    }
+
+    for (const modelPath of itemAssets.modelPaths) {
+      const session = await ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
+      try {
+        probabilities.push(await this.runRawClassifier(session, expectedClassCount, tensor))
+      } finally {
+        await session.release()
+      }
+    }
+    return probabilities
+  }
+
+  private async runClassifierAndRelease<T extends { session: ort.InferenceSession; labels: LabelRecord[] }>(
+    assets: T,
+    tensor: ort.Tensor,
+    reset: () => void,
+  ) {
+    try {
+      return await this.runRawClassifier(assets.session, assets.labels.length, tensor)
+    } finally {
+      if (isMemoryConstrainedDevice()) {
+        reset()
+        await assets.session.release()
+      }
+    }
+  }
+
   private loadComponentProvider() {
     if (!this.componentProviderPromise) {
       this.componentProviderPromise = import('./onnxComponentProvider').then(
@@ -825,8 +911,10 @@ export class OnnxVisionProvider implements VisionProvider {
       if (import.meta.env.VITE_AI_ENSEMBLE_ENABLED === 'false') {
         const modelPath =
           import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
-        this.itemAssetsPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
-          .then((session) => ({ sessions: [session] }))
+        this.itemAssetsPromise = isMemoryConstrainedDevice()
+          ? Promise.resolve({ sessions: [], modelPaths: [modelPath] })
+          : ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
+            .then((session) => ({ sessions: [session], modelPaths: [modelPath] }))
           .catch((error) => {
             throw new AppError('MODEL_LOAD_FAILED', 'Model failed to load', error)
           })
@@ -842,16 +930,20 @@ export class OnnxVisionProvider implements VisionProvider {
           .then(validateCalibratedEnsembleConfig)
           .then(async (config) => {
             const modelBase = `${import.meta.env.BASE_URL}models/`
+            const modelPaths = config.modelPaths.map((path) =>
+              /^(?:https?:)?\//.test(path) ? path : `${modelBase}${path}`,
+            )
+            if (isMemoryConstrainedDevice()) return { sessions: [], modelPaths, config }
+
             const sessions = [] as ort.InferenceSession[]
-            for (const path of config.modelPaths) {
-              const resolvedPath = /^(?:https?:)?\//.test(path) ? path : `${modelBase}${path}`
+            for (const resolvedPath of modelPaths) {
               sessions.push(
                 await ort.InferenceSession.create(resolvedPath, {
                   executionProviders: ['wasm'],
                 }),
               )
             }
-            return { sessions, config }
+            return { sessions, modelPaths, config }
           })
           .catch((error) => {
             if (error instanceof AppError) throw error

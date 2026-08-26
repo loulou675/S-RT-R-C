@@ -49,6 +49,16 @@ export async function prepareObjectDetector() {
   await warmupPromise
 }
 
+export async function releaseObjectDetector() {
+  const activeSession = sessionPromise
+  sessionPromise = undefined
+  warmupPromise = undefined
+  if (!activeSession) return
+
+  const session = await activeSession.catch(() => undefined)
+  await session?.release()
+}
+
 export async function detectPrimaryObject(source: string): Promise<ObjectDetection | undefined> {
   if (!objectDetectorEnabled()) return undefined
 

@@ -1,6 +1,7 @@
 import { Camera, RotateCcw, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toAppError, type AppErrorCode } from '../../lib/errors'
+import { preferredCameraSize } from '../../lib/deviceCapabilities'
 import { measureFrameQuality } from './frameQuality'
 
 interface CameraCaptureProps {
@@ -51,11 +52,12 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
       try {
         stopCamera()
+        const cameraSize = preferredCameraSize()
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: { ideal: facingMode },
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: cameraSize.width },
+            height: { ideal: cameraSize.height },
           },
           audio: false,
         })

@@ -11,10 +11,11 @@ import { isEmbeddedSocialBrowser } from '../features/camera/browserSupport'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, toAppError } from '../lib/errors'
+import { isMemoryConstrainedDevice } from '../lib/deviceCapabilities'
 import { createVisionProvider } from '../providers/vision'
 import {
   focusPrimaryObject,
-  prepareObjectDetector,
+  releaseObjectDetector,
   type ObjectDetection,
 } from '../providers/vision/objectDetector'
 import { saveScanHistory } from '../services/history'
@@ -87,15 +88,6 @@ export function LandingPage() {
   const searchedItemCode = searchParams.get('item')
   const searchedMaterialCode = searchParams.get('material') as BroadMaterialCode | null
   const searchedSource = searchParams.get('source')
-
-  useEffect(() => {
-    const prepareModel = () => {
-      void createVisionProvider().then((provider) => provider.prepare?.()).catch(() => undefined)
-      void prepareObjectDetector().catch(() => undefined)
-    }
-    const idleId = window.setTimeout(prepareModel, 150)
-    return () => window.clearTimeout(idleId)
-  }, [])
 
   useEffect(() => {
     if (!searchedItemCode && !searchedMaterialCode) return
@@ -289,6 +281,10 @@ export function LandingPage() {
         context: { inputMethod: method },
       }
       return false
+    } finally {
+      if (isMemoryConstrainedDevice()) {
+        await releaseObjectDetector().catch(() => undefined)
+      }
     }
   }, [])
 
