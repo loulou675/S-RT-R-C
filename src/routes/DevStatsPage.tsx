@@ -100,10 +100,11 @@ export function DevStatsPage() {
       </header>
 
       <section className="devstats-intro">
-        <p className="devstats-kicker">Field telemetry / aggregate view</p>
-        <h1>How people use<br /><em>the sorter.</em></h1>
+        <p className="devstats-kicker">Field telemetry / aggregate view<span className="vi-note">Dữ liệu sử dụng tổng hợp</span></p>
+        <h1>How people use<br /><em>the sorter.</em><span className="vi-note">Cách mọi người sử dụng công cụ phân loại</span></h1>
         <p className="devstats-intro-copy">
           Anonymous, privacy-minimized signals from real sessions. Dashboard visits are excluded from every figure below.
+          <span className="vi-note">Dữ liệu ẩn danh, tối giản quyền riêng tư từ các phiên sử dụng thật. Lượt xem trang thống kê không được tính.</span>
         </p>
       </section>
 
@@ -111,34 +112,34 @@ export function DevStatsPage() {
 
       {error ? (
         <section className="devstats-message devstats-error" role="alert">
-          <p className="devstats-kicker">Connection needed</p>
-          <h2>The statistics endpoint is not ready.</h2>
+          <p className="devstats-kicker">Connection needed<span className="vi-note">Cần kết nối</span></p>
+          <h2>The statistics endpoint is not ready.<span className="vi-note">Điểm kết nối thống kê chưa sẵn sàng.</span></h2>
           <p>{error}</p>
-          <p>Apply Supabase migration 005 to enable anonymous collection and aggregate reads.</p>
-          <button type="button" onClick={loadStats}>Try again</button>
+          <p>Apply Supabase migration 005 to enable anonymous collection and aggregate reads.<span className="vi-note">Chạy Supabase migration 005 để bật thu thập ẩn danh và đọc dữ liệu tổng hợp.</span></p>
+          <button type="button" onClick={loadStats}>Try again<span className="vi-note">Thử lại</span></button>
         </section>
       ) : null}
 
       {!loading && stats && !hasData ? (
         <section className="devstats-message">
-          <p className="devstats-kicker">Ready to collect</p>
-          <h2>No tracked visits in this period yet.</h2>
-          <p>Once people use the deployed sorter, daily visitors, active time, and feature activity will appear here.</p>
+          <p className="devstats-kicker">Ready to collect<span className="vi-note">Sẵn sàng thu thập</span></p>
+          <h2>No tracked visits in this period yet.<span className="vi-note">Chưa có lượt truy cập nào trong khoảng thời gian này.</span></h2>
+          <p>Once people use the deployed sorter, daily visitors, active time, and feature activity will appear here.<span className="vi-note">Khi người dùng trải nghiệm bản đã triển khai, lượt truy cập, thời gian hoạt động và thao tác tính năng sẽ xuất hiện tại đây.</span></p>
         </section>
       ) : null}
 
       {stats && hasData ? (
         <>
           <section className="devstats-kpi-grid" aria-label="Key metrics">
-            <MetricCard icon={<UsersRound />} label="Visitors" value={formatCompact(stats.totals.visitors)} note={`Unique browsers / ${range} days`} tone="orange" />
-            <MetricCard icon={<Activity />} label="Sessions" value={formatCompact(stats.totals.sessions)} note="Tracked site visits" tone="blue" />
-            <MetricCard icon={<Clock3 />} label="Avg. active time" value={formatDuration(stats.totals.avgActiveSeconds)} note="Visible, engaged time" tone="yellow" />
-            <MetricCard icon={<MousePointerClick />} label="Feature actions" value={formatCompact(stats.totals.featureUses)} note="Scans, uploads, feedback + more" tone="red" />
+            <MetricCard icon={<UsersRound />} label="Visitors" labelVi="Người truy cập" value={formatCompact(stats.totals.visitors)} note={`Unique browsers / ${range} days`} noteVi={`Trình duyệt riêng biệt / ${range} ngày`} tone="orange" />
+            <MetricCard icon={<Activity />} label="Sessions" labelVi="Phiên sử dụng" value={formatCompact(stats.totals.sessions)} note="Tracked site visits" noteVi="Lượt truy cập được ghi nhận" tone="blue" />
+            <MetricCard icon={<Clock3 />} label="Avg. active time" labelVi="Thời gian hoạt động TB" value={formatDuration(stats.totals.avgActiveSeconds)} note="Visible, engaged time" noteVi="Thời gian tương tác thực" tone="yellow" />
+            <MetricCard icon={<MousePointerClick />} label="Feature actions" labelVi="Thao tác tính năng" value={formatCompact(stats.totals.featureUses)} note="Scans, uploads, feedback + more" noteVi="Quét, tải ảnh, phản hồi và hơn thế nữa" tone="red" />
           </section>
 
           <section className="devstats-dashboard-grid">
             <article className="devstats-panel devstats-traffic-panel">
-              <PanelHeader index="01" title="Daily visitors" meta={`${range}-day view`} />
+              <PanelHeader index="01" title="Daily visitors" titleVi="Người truy cập mỗi ngày" meta={`${range}-day view`} metaVi={`Trong ${range} ngày`} />
               <div className={`devstats-bars range-${range}`} role="img" aria-label="Daily unique visitors bar chart">
                 {stats.daily.map((day, index) => (
                   <div className="devstats-bar-column" key={day.date} title={`${formatDay(day.date, range)}: ${day.visitors} visitors`}>
@@ -155,7 +156,7 @@ export function DevStatsPage() {
             </article>
 
             <article className="devstats-panel">
-              <PanelHeader index="02" title="Top features" meta="By action count" />
+              <PanelHeader index="02" title="Top features" titleVi="Tính năng phổ biến" meta="By action count" metaVi="Theo số thao tác" />
               <div className="devstats-ranking">
                 {stats.features.map((feature, index) => (
                   <div className="devstats-rank-row" key={feature.code}>
@@ -173,7 +174,7 @@ export function DevStatsPage() {
             </article>
 
             <article className="devstats-panel">
-              <PanelHeader index="03" title="Top pages" meta="By page views" />
+              <PanelHeader index="03" title="Top pages" titleVi="Trang phổ biến" meta="By page views" metaVi="Theo lượt xem" />
               <div className="devstats-page-list">
                 {stats.pages.map((page) => (
                   <div key={page.path}>
@@ -186,7 +187,7 @@ export function DevStatsPage() {
             </article>
 
             <article className="devstats-panel">
-              <PanelHeader index="04" title="Device mix" meta="By sessions" />
+              <PanelHeader index="04" title="Device mix" titleVi="Thiết bị sử dụng" meta="By sessions" metaVi="Theo phiên" />
               <div className="devstats-device-list">
                 {stats.devices.map((device) => {
                   const percentage = totalDeviceSessions ? Math.round((device.sessions / totalDeviceSessions) * 100) : 0
@@ -202,7 +203,7 @@ export function DevStatsPage() {
             </article>
 
             <article className="devstats-panel devstats-sources-panel">
-              <PanelHeader index="05" title="Traffic sources" meta="Referral host only" />
+              <PanelHeader index="05" title="Traffic sources" titleVi="Nguồn truy cập" meta="Referral host only" metaVi="Chỉ hiển thị tên miền giới thiệu" />
               <div className="devstats-source-list">
                 {stats.sources.map((source) => (
                   <div key={source.host}>
@@ -215,8 +216,8 @@ export function DevStatsPage() {
           </section>
 
           <footer className="devstats-footer">
-            <p>Last updated {new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(stats.generatedAt))}</p>
-            <p>Daily totals use Vietnam time (UTC+7). No names, images, precise device fingerprints, or raw visitor records are shown.</p>
+            <p>Last updated {new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(stats.generatedAt))}<span className="vi-note">Cập nhật gần nhất</span></p>
+            <p>Daily totals use Vietnam time (UTC+7). No names, images, precise device fingerprints, or raw visitor records are shown.<span className="vi-note">Tổng số theo ngày dùng giờ Việt Nam (UTC+7). Không hiển thị tên, hình ảnh, dấu vân tay thiết bị chi tiết hoặc dữ liệu thô của người truy cập.</span></p>
           </footer>
         </>
       ) : null}
@@ -224,23 +225,23 @@ export function DevStatsPage() {
   )
 }
 
-function MetricCard({ icon, label, value, note, tone }: { icon: ReactNode; label: string; value: string; note: string; tone: string }) {
+function MetricCard({ icon, label, labelVi, value, note, noteVi, tone }: { icon: ReactNode; label: string; labelVi: string; value: string; note: string; noteVi: string; tone: string }) {
   return (
     <article className={`devstats-kpi tone-${tone}`}>
       <span className="devstats-kpi-icon">{icon}</span>
-      <span className="devstats-kpi-label">{label}</span>
+      <span className="devstats-kpi-label">{label}<span className="vi-note">{labelVi}</span></span>
       <strong>{value}</strong>
-      <small>{note}</small>
+      <small>{note}<span className="vi-note">{noteVi}</span></small>
     </article>
   )
 }
 
-function PanelHeader({ index, title, meta }: { index: string; title: string; meta: string }) {
+function PanelHeader({ index, title, titleVi, meta, metaVi }: { index: string; title: string; titleVi: string; meta: string; metaVi: string }) {
   return (
     <header className="devstats-panel-header">
       <span>{index}</span>
-      <h2>{title}</h2>
-      <small>{meta}</small>
+      <h2>{title}<span className="vi-note">{titleVi}</span></h2>
+      <small>{meta}<span className="vi-note">{metaVi}</span></small>
     </header>
   )
 }
@@ -254,7 +255,7 @@ function friendlyPath(path: string) {
 function DevStatsLoading() {
   return (
     <section className="devstats-loading" aria-label="Loading statistics" aria-live="polite">
-      <span>Loading aggregate data</span>
+      <span>Loading aggregate data<span className="vi-note">Đang tải dữ liệu tổng hợp</span></span>
       <i /><i /><i /><i />
     </section>
   )

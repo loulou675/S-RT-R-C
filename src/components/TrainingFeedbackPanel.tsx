@@ -108,6 +108,9 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
                 ? 'Thanks. This image was sent to the review queue.'
                 : 'Thanks. Your feedback was sent for review.'
               : 'Thanks. Your feedback is saved and will send automatically when online.'}
+            <span className="vi-note">
+              {wasUploaded ? 'Cảm ơn bạn. Phản hồi đã được gửi để duyệt.' : 'Cảm ơn bạn. Phản hồi đã được lưu và sẽ tự gửi khi có mạng.'}
+            </span>
           </span>
         </div>
       </section>
@@ -121,16 +124,17 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
           <h2>Is this result correct?</h2>
           <p>
             Selecting Yes privately saves this cropped image and result for review and future AI training.
+            <span className="vi-note">Chọn Có sẽ lưu riêng ảnh đã cắt và kết quả để duyệt trước khi dùng cho việc huấn luyện AI.</span>
           </p>
         </div>
         <div className="feedback-verdict-actions">
           <button type="button" className="feedback-verdict-button yes" onClick={confirmPrediction} disabled={saving}>
             <Check size={16} aria-hidden="true" />
-            {saving ? 'Saving…' : 'Yes'}
+            <span>{saving ? 'Saving…' : 'Yes'}</span>
           </button>
           <button type="button" className="feedback-verdict-button no" onClick={() => setView('correction')} disabled={saving}>
             <X size={16} aria-hidden="true" />
-            No
+            <span>No</span>
           </button>
         </div>
         {saveError ? <p className="inline-error">{saveError}</p> : null}
@@ -143,14 +147,23 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       <div className="training-feedback-heading">
         <MessageSquareWarning size={18} aria-hidden="true" />
         <div>
-          <p className="eyebrow">{recognitionFailed ? 'Give feedback' : 'Improve this result'}</p>
-          <h2>{recognitionFailed ? 'Help identify this scan' : 'What is this item?'}</h2>
+          <p className="eyebrow">
+            {recognitionFailed ? 'Give feedback' : 'Improve this result'}
+          </p>
+          <h2>
+            {recognitionFailed ? 'Help identify this scan' : 'What is this item?'}
+          </h2>
         </div>
       </div>
       <p className="training-feedback-copy">
         {recognitionFailed
           ? 'Exact-item and broad-material recognition both abstained. Choose the correct item so this scan can be reviewed.'
           : 'Choose the closest match. We review corrections before using them to train the AI.'}
+        <span className="vi-note">
+          {recognitionFailed
+            ? 'Hệ thống chưa nhận diện đủ chắc chắn. Hãy chọn đúng vật để ảnh quét được duyệt.'
+            : 'Hãy chọn vật gần đúng nhất. Mọi chỉnh sửa đều được duyệt trước khi dùng để huấn luyện AI.'}
+        </span>
       </p>
 
       <label className="feedback-search">
@@ -159,7 +172,7 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search item name"
+          placeholder="Search item name / Tìm tên vật"
           autoComplete="off"
         />
       </label>
@@ -176,45 +189,56 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
               onClick={() => setCorrectedItemCode(item.code)}
               key={item.code}
             >
-              <span>{item.code === 'unknown' ? 'Something else / not listed' : item.nameEn}</span>
+              <span>
+                {item.code === 'unknown' ? 'Something else / not listed' : item.nameEn}
+                <span className="vi-note">{item.code === 'unknown' ? 'Vật khác / chưa có trong danh sách' : item.nameVi}</span>
+              </span>
               {item.code === 'unknown' ? null : <small>{item.category}</small>}
               {selected ? <Check size={16} aria-hidden="true" /> : null}
             </button>
           )
         })}
-        {visibleOptions.length === 0 ? <p className="feedback-empty">No matching item found.</p> : null}
+        {visibleOptions.length === 0 ? <p className="feedback-empty">No matching item found.<span className="vi-note">Không tìm thấy vật phù hợp.</span></p> : null}
       </div>
 
       {selectedItem ? (
         <label className="training-feedback-field">
-          <span>{selectedItem.code === 'unknown' ? 'What is it called?' : 'Optional note'}</span>
+          <span>
+            {selectedItem.code === 'unknown' ? 'What is it called?' : 'Optional note'}
+            <span className="vi-note">{selectedItem.code === 'unknown' ? 'Vật này được gọi là gì?' : 'Ghi chú không bắt buộc'}</span>
+          </span>
           <input
             value={note}
             onChange={(event) => setNote(event.target.value)}
-            placeholder={selectedItem.code === 'unknown' ? 'Enter the item name' : 'Lighting, condition, or anything unusual'}
+            placeholder={selectedItem.code === 'unknown' ? 'Enter the item name / Nhập tên vật' : 'Lighting, condition, or anything unusual / Ánh sáng, tình trạng hoặc điểm bất thường'}
           />
         </label>
       ) : null}
 
       <label className="feedback-consent">
         <input type="checkbox" checked={consented} onChange={(event) => setConsented(event.target.checked)} />
-        <span>I agree to save the cropped item image and this correction for AI review.</span>
+        <span>I agree to save the cropped item image and this correction for AI review.<span className="vi-note">Tôi đồng ý lưu ảnh vật thể đã cắt và chỉnh sửa này để duyệt AI.</span></span>
       </label>
       <p className="feedback-privacy-note">
         {automaticFeedbackUploadConfigured()
           ? 'After you send, the cropped image and correction are uploaded privately for review.'
           : 'Saved on this device. Automatic upload will start after the project review queue is connected.'}
+        <span className="vi-note">
+          {automaticFeedbackUploadConfigured()
+            ? 'Sau khi gửi, ảnh đã cắt và chỉnh sửa sẽ được tải lên riêng tư để duyệt.'
+            : 'Dữ liệu được lưu trên thiết bị và sẽ tự tải lên khi hàng đợi duyệt được kết nối.'}
+        </span>
       </p>
 
       <div className="feedback-actions">
         {predictedItemCode ? (
           <button type="button" className="ghost-action" onClick={() => setView('prompt')}>
-            Cancel
+            <span>Cancel<span className="vi-note">Hủy</span></span>
           </button>
         ) : null}
         <button type="button" className="secondary-action" onClick={submitCorrection} disabled={!correctedItemCode || !consented || saving}>
           <Send size={16} aria-hidden="true" />
-          {saving ? 'Saving…' : 'Send correction'}
+          <span>{saving ? 'Saving…' : 'Send correction'}<span className="vi-note">{saving ? 'Đang lưu…' : 'Gửi chỉnh sửa'}</span></span>
         </button>
       </div>
       {saveError ? <p className="inline-error">{saveError}</p> : null}

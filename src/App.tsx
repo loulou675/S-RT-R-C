@@ -13,6 +13,7 @@ import { ReusePage } from './routes/ReusePage'
 import { ScanPage } from './routes/ScanPage'
 import { SearchPage } from './routes/SearchPage'
 import { DevStatsPage } from './routes/DevStatsPage'
+import { EcoTipsPage } from './routes/EcoTipsPage'
 
 const router = createHashRouter([
   {
@@ -28,6 +29,8 @@ const router = createHashRouter([
       { path: 'result', element: <ResultPage /> },
       { path: 'search', element: <SearchPage /> },
       { path: 'history', element: <HistoryPage /> },
+      { path: 'eco-tips', element: <EcoTipsPage /> },
+      { path: 'eco-tips/:id', element: <ReusePage /> },
       { path: 'reuse/:id', element: <ReusePage /> },
       { path: 'about', element: <AboutPage /> },
     ],

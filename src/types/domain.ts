@@ -195,6 +195,7 @@ export interface RuleEngineInput {
 
 export interface PreparationStepResult {
   text: string
+  textVi: string
   components: Array<ComponentAction & { destinationBin: Bin }>
 }
 
@@ -204,10 +205,15 @@ export interface RuleEngineResult {
   mainInstruction: string
   detailedInstruction: string
   whyCategory: string
+  mainInstructionVi: string
+  detailedInstructionVi: string
+  whyCategoryVi: string
   preparationSteps: string[]
+  preparationStepsVi: string[]
   preparationActions: PreparationStepResult[]
   componentActions: Array<ComponentAction & { destinationBin: Bin }>
   warning?: string
+  warningVi?: string
   reuseSuggestions: ReuseSuggestion[]
   specialHandling: boolean
   matchLevel?: 'item' | 'material'

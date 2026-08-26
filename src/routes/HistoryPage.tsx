@@ -16,7 +16,7 @@ export function HistoryPage() {
       <div className="page-heading">
         <p className="eyebrow">History</p>
         <h1>Recently scanned items</h1>
-        <p>Items are saved on this device only. Photos are not stored.</p>
+        <p>Items are saved on this device only. Photos are not stored.<span className="vi-note">Thông tin vật thể chỉ được lưu trên thiết bị này. Ảnh không được lưu.</span></p>
       </div>
 
       {entries.length ? (
@@ -45,10 +45,10 @@ export function HistoryPage() {
         </div>
       ) : (
         <div className="empty-search">
-          <h2>No scan history yet.</h2>
+          <h2>No scan history yet.<span className="vi-note">Chưa có lịch sử quét.</span></h2>
           <button type="button" className="primary-action large" onClick={() => navigate('/')}>
             <RotateCcw size={18} aria-hidden="true" />
-            Start scanning
+            <span>Start scanning</span>
           </button>
         </div>
       )}
@@ -63,7 +63,7 @@ export function HistoryPage() {
           }}
         >
           <Trash2 size={17} aria-hidden="true" />
-          Clear history
+          <span>Clear history</span>
         </button>
       ) : null}
     </section>

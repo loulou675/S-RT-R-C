@@ -48,7 +48,7 @@ export function AppShell() {
                 onChange={(event) => setQuery(event.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => window.setTimeout(() => setFocused(false), 120)}
-                placeholder="Search waste item"
+                placeholder="Search waste item / Tìm vật phẩm"
                 aria-label="Search waste item"
               />
             </div>
@@ -62,7 +62,7 @@ export function AppShell() {
                     </button>
                   ))
                 ) : (
-                  <p>No item found</p>
+                  <p>No item found<span className="vi-note">Không tìm thấy vật phẩm</span></p>
                 )}
               </div>
             ) : null}
@@ -77,7 +77,12 @@ export function AppShell() {
       {/* Keep navigation outside the result content surface so result sheets
           cannot unmount or cover it while they are open. */}
       <aside className="rail" aria-label="Primary">
-        <button type="button" aria-label="Eco Tips coming soon" title="Eco Tips coming soon" onClick={() => void trackFeature('eco_tips')}>
+        <button
+          type="button"
+          aria-label="Eco Tips"
+          className={location.pathname.startsWith('/eco-tips') ? 'active' : ''}
+          onClick={() => { void trackFeature('eco_tips'); navigate('/eco-tips') }}
+        >
           <Lightbulb size={18} aria-hidden="true" />
           <span className="nav-label">Eco Tips</span>
         </button>

@@ -27,6 +27,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
     window.matchMedia('(max-width: 860px)').matches ? 'environment' : 'user',
   )
   const [status, setStatus] = useState('Starting camera...')
+  const [statusVi, setStatusVi] = useState('Đang khởi động camera...')
   const [captureState, setCaptureState] = useState<CaptureState>('preview')
   const [capturedImage, setCapturedImage] = useState<string>()
   const isFrontCamera = facingMode === 'user'
@@ -41,6 +42,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
     async function startCamera() {
       setStatus('Starting camera...')
+      setStatusVi('Đang khởi động camera...')
       setCaptureState('preview')
       setCapturedImage(undefined)
 
@@ -73,7 +75,10 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
           await videoRef.current.play()
         }
 
-        if (!cancelled) setStatus('Place one item inside the frame, then take a photo.')
+        if (!cancelled) {
+          setStatus('Place one item inside the frame, then take a photo.')
+          setStatusVi('Đặt một vật vào trong khung rồi chụp ảnh.')
+        }
       } catch (error) {
         const appError = toAppError(
           error,
@@ -108,6 +113,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
       setCapturedImage(undefined)
       setCaptureState('preview')
       setStatus('Place one item inside the frame, then take a photo.')
+      setStatusVi('Đặt một vật vào trong khung rồi chụp ảnh.')
       try {
         await video?.play()
       } catch {
@@ -133,16 +139,21 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
     if (!quality.good) {
       setCaptureState('needs-retake')
       setStatus(`${quality.message} Retake the photo.`)
+      setStatusVi('Ảnh chưa đủ rõ. Hãy điều chỉnh ánh sáng hoặc giữ máy ổn định rồi chụp lại.')
       return
     }
 
     setCaptureState('processing')
     setStatus('Identifying item...')
+    setStatusVi('Đang nhận diện vật thể...')
     stopStream(streamRef)
     const recognised = await onCapture(frame.dataUrl)
     if (!mountedRef.current) return
 
-    if (!recognised) setStatus('No confident match. Opening the feedback form...')
+    if (!recognised) {
+      setStatus('No confident match. Opening the feedback form...')
+      setStatusVi('Chưa có kết quả đủ chắc chắn. Đang mở biểu mẫu phản hồi...')
+    }
   }
 
   return (
@@ -156,7 +167,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
           </div>
         </div>
       </div>
-      <p className="status-line" role="status">{status}</p>
+      <p className="status-line" role="status">{status}<span className="vi-note">{statusVi}</span></p>
       <div className="camera-controls">
         <button type="button" className="camera-cancel-button" onClick={onCancel} aria-label="Close camera">
           <X size={20} aria-hidden="true" />

@@ -3,7 +3,9 @@ import { useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { ReactNode } from 'react'
+import { getEcoTip } from '../data/ecoTips'
 import type { Bin, RuleEngineResult } from '../types/domain'
+import { EcoTipCard } from './EcoTipCard'
 
 interface BinPanelProps {
   bin: Bin
@@ -27,7 +29,8 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
     .join(' ')
   const heading = result?.specialHandling ? 'Hazardous' : bin.nameEn
   const panelInk = bin.code === 'special_handling' ? '#171411' : '#fffaf4'
-  const visibleSteps = result?.preparationActions.slice(0, 5) ?? []
+  const visibleSteps = compactSteps(result?.preparationActions ?? [])
+  const featuredTip = getEcoTip(result?.reuseSuggestions[0]?.code)
   const lastStepForComponent = new Map<string, number>()
 
   visibleSteps.forEach((step, index) => {
@@ -138,10 +141,17 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
       ) : null}
       <div className="result-panel-body" aria-hidden={resultPanel && collapsed ? true : undefined}>
         <div className="result-heading">
-          <p className="eyebrow">{result?.matchLevel === 'material' ? 'Material-based result' : 'This object belongs to'}</p>
+          <p className="eyebrow">
+            {result?.matchLevel === 'material' ? 'Material-based result' : 'This object belongs to'}
+          </p>
           <h2>{heading}</h2>
-          <p className="object-name">{result?.item.nameEn ?? 'Object name'}</p>
-          {result?.specialHandling ? <p className="special-note">Special handling required</p> : null}
+          <p className="object-name">
+            {result?.item.nameEn ?? 'Object name'}
+            <span className="vi-note">{result?.item.nameVi ?? 'Tên vật thể'}</span>
+          </p>
+          {result?.specialHandling ? (
+            <p className="special-note">Special handling required</p>
+          ) : null}
           {!resultPanel ? <p className="bin-color">{bin.colorName} Bin</p> : null}
         </div>
 
@@ -149,18 +159,18 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
           <div className="panel-card-stack steps-only">
             {result.matchLevel === 'material' ? (
               <section className="material-result-note" aria-label="Material result notice">
-                <strong>Exact item not identified</strong>
-                <p>This guidance comes from a separate broad-material model.</p>
+                <strong>Exact item not identified<span className="vi-note">Chưa xác định chính xác vật thể</span></strong>
+                <p>This guidance comes from a separate broad-material model.<span className="vi-note">Hướng dẫn này dựa trên mô hình nhận diện nhóm vật liệu.</span></p>
               </section>
             ) : null}
             <section className="why-bin-section" aria-labelledby="why-bin-heading">
               <h3 id="why-bin-heading">Why this bin?</h3>
-              <p>{result.whyCategory}</p>
+              <p>{result.whyCategory}<span className="vi-note">{result.whyCategoryVi}</span></p>
             </section>
             {result.matchLevel === 'material' && result.warning ? (
               <section className="material-result-warning" aria-label="Important material guidance">
                 <strong>Important</strong>
-                <p>{result.warning}</p>
+                <p>{result.warning}<span className="vi-note">{result.warningVi}</span></p>
               </section>
             ) : null}
             <section className="steps-section">
@@ -175,7 +185,7 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
                     <li key={`${index}-${step.text}`}>
                       <span className="step-number" aria-hidden="true">{index + 1}</span>
                       <div className="step-copy">
-                        <p>{step.text}</p>
+                        <p>{step.text}<span className="vi-note">{step.textVi}</span></p>
                         {partsToRoute.length ? (
                           <ul className="step-part-routes" aria-label="Separate these parts">
                             {partsToRoute.map((component) => (
@@ -185,10 +195,17 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
                                   style={{ '--route-color': component.destinationBin.colorHex } as CSSProperties}
                                 />
                                 <span>
-                                  <strong>{component.componentEn}</strong>
+                                  <strong>
+                                    {component.componentEn}
+                                    <span className="vi-note">{component.componentVi}</span>
+                                  </strong>
                                   <small>
                                     {result.componentActions.length > 1 ? 'Separate into' : 'Place in'}{' '}
                                     {component.destinationBin.nameEn}
+                                    <span className="vi-note">
+                                      {result.componentActions.length > 1 ? 'Tách riêng vào' : 'Cho vào'}{' '}
+                                      {component.destinationBin.nameEn}
+                                    </span>
                                   </small>
                                 </span>
                               </li>
@@ -201,14 +218,22 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
                 })}
               </ol>
             </section>
+            {featuredTip ? (
+              <section className="result-eco-tip" aria-labelledby="result-eco-tip-heading">
+                <div className="result-section-heading">
+                  <h3 id="result-eco-tip-heading">Ways to recycle</h3>
+                </div>
+                <EcoTipCard tip={featuredTip} compact />
+              </section>
+            ) : null}
           </div>
         ) : (
           <div className="instruction-card">
             <strong>Preparation steps:</strong>
             <ol>
-              <li>Identify one item.</li>
-              <li>Answer only relevant questions.</li>
-              <li>Follow the recommended bin guidance.</li>
+              <li>Identify one item.<span className="vi-note">Nhận diện một vật thể.</span></li>
+              <li>Answer only relevant questions.<span className="vi-note">Chỉ trả lời câu hỏi liên quan.</span></li>
+              <li>Follow the recommended bin guidance.<span className="vi-note">Làm theo hướng dẫn phân loại được đề xuất.</span></li>
             </ol>
           </div>
         )}
@@ -216,4 +241,9 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
       </div>
     </aside>
   )
+}
+
+function compactSteps(steps: RuleEngineResult['preparationActions']) {
+  if (steps.length <= 3) return steps
+  return [...steps.slice(0, 2), ...steps.slice(-1)]
 }

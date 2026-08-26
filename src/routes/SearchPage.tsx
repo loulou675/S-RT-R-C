@@ -33,7 +33,7 @@ export function SearchPage() {
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search for an item, e.g. plastic cup, battery, pizza box"
+          placeholder="Search an item / Tìm vật thể, ví dụ: cốc nhựa, pin, hộp pizza"
           autoFocus
         />
       </label>
@@ -50,17 +50,17 @@ export function SearchPage() {
 
       {query && !results.length ? (
         <div className="empty-search">
-          <h2>We could not find this item in the current database.</h2>
+          <h2>We could not find this item in the current database.<span className="vi-note">Không tìm thấy vật này trong cơ sở dữ liệu hiện tại.</span></h2>
           <div className="button-row full">
             <button type="button" className="secondary-action" onClick={() => setQuery('')}>
-              Try another name
+              <span>Try another name</span>
             </button>
             <button type="button" className="primary-action" onClick={() => navigate('/scan')}>
               <Camera size={17} aria-hidden="true" />
-              Scan with camera
+              <span>Scan with camera</span>
             </button>
             <button type="button" className="ghost-action" onClick={() => setQuery('plastic')}>
-              Browse by material
+              <span>Browse by material</span>
             </button>
           </div>
         </div>

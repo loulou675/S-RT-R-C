@@ -27,9 +27,36 @@ test('manual search to disposal result', async ({ page }) => {
   await expect(page.getByText(/Paper & Cardboard/).first()).toBeVisible()
 })
 
+test('result links to an illustrated Eco Tip guide', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel(/Search waste item/i).fill('cardboard box')
+  await page.getByRole('button', { name: /Cardboard box/i }).click()
+
+  await expect(page.getByRole('heading', { name: /Before you recycle it/i })).toBeVisible()
+  await page.getByRole('link', { name: /Make a cardboard cable dock/i }).click()
+
+  await expect(page).toHaveURL(/\/eco-tips\/cardboard_storage$/)
+  await expect(page.getByRole('heading', { name: /Make a cardboard cable dock/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Step by step/i })).toBeVisible()
+})
+
+test('Eco Tips library supports search and category filters', async ({ page }) => {
+  await page.goto('/#/eco-tips')
+  await expect(page.getByRole('heading', { name: /Small waste/i })).toBeVisible()
+
+  const ecoTipSearch = page.getByRole('textbox', { name: /Search Eco Tips/i })
+  await ecoTipSearch.fill('gift')
+  await expect(page.getByRole('link', { name: /Wrap a gift with used paper/i })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Make a self-watering bottle planter/i })).not.toBeVisible()
+
+  await ecoTipSearch.fill('')
+  await page.getByRole('tab', { name: /^Compost/i }).click()
+  await expect(page.getByRole('link', { name: /Start a small compost mix/i })).toBeVisible()
+})
+
 test('plastic cup condition flow', async ({ page }) => {
   await page.goto('/#/search')
-  await page.getByPlaceholder(/Search for an item/i).fill('plastic cup')
+  await page.getByPlaceholder(/Search an item/i).fill('plastic cup')
   await page.getByRole('button', { name: /Plastic takeaway cup/i }).click()
   await page.getByRole('button', { name: /Cannot be cleaned/i }).click()
 
@@ -38,7 +65,7 @@ test('plastic cup condition flow', async ({ page }) => {
 
 test('special-handling item flow', async ({ page }) => {
   await page.goto('/#/search')
-  await page.getByPlaceholder(/Search for an item/i).fill('battery')
+  await page.getByPlaceholder(/Search an item/i).fill('battery')
   await page.getByRole('button', { name: /^Battery/i }).click()
 
   await expect(page.getByText(/Battery/i).first()).toBeVisible()
@@ -150,11 +177,12 @@ test('mobile survey controls stay above the bottom navigation', async ({ page })
   await page.setViewportSize({ width: 390, height: 844 })
   await page.addInitScript(() => sessionStorage.setItem('sot-rac-mock-item', 'plastic_takeaway_cup'))
   await uploadMockImage(page)
-  await page.getByRole('button', { name: /Close result panel/i }).click()
+  await expect(page.getByText(/Plastic takeaway cup/i).first()).toBeVisible()
 
   const dialog = page.getByRole('dialog', { name: /How was your first scan/i })
   await expect(dialog).toBeVisible()
   await dialog.evaluate((element) => element.scrollTo({ top: element.scrollHeight }))
+  await expect(page.getByLabel(/Additional feedback/i)).toBeVisible()
 
   const submitBox = await page.getByRole('button', { name: /Send feedback/i }).boundingBox()
   const navigationBox = await page.getByLabel('Primary').boundingBox()

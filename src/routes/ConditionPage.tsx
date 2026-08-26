@@ -15,8 +15,8 @@ export function ConditionPage() {
 
   if (!item) {
     return (
-      <EmptyState title="Item is missing">
-        Search for the item again to continue.
+      <EmptyState title="Item is missing / Thiếu thông tin vật thể">
+        Search for the item again to continue. / Hãy tìm lại vật thể để tiếp tục.
       </EmptyState>
     )
   }
@@ -36,8 +36,8 @@ export function ConditionPage() {
   return (
     <section className="flow-layout narrow">
       <div className="page-heading">
-        <p className="eyebrow">{item.nameEn}</p>
-        <h1>{question.questionEn}</h1>
+        <p className="eyebrow">{item.nameEn}<span className="vi-note">{item.nameVi}</span></p>
+        <h1>{question.questionEn}<span className="vi-note">{question.questionVi}</span></h1>
       </div>
       <div className="choice-list">
         {question.options.map((option) => (

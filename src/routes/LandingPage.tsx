@@ -1,6 +1,5 @@
 import { ImageUp, ScanLine, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BinPanel } from '../components/BinPanel'
 import { StatusBlock } from '../components/StatusBlock'
@@ -10,7 +9,7 @@ import { CameraCapture } from '../features/camera/CameraCapture'
 import { isEmbeddedSocialBrowser } from '../features/camera/browserSupport'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
-import { AppError, messageForError, toAppError } from '../lib/errors'
+import { AppError, messageForError, messageForErrorVi, toAppError } from '../lib/errors'
 import { createVisionProvider } from '../providers/vision'
 import {
   focusPrimaryObject,
@@ -31,7 +30,7 @@ interface SurveyContext {
 }
 
 interface PendingSurvey {
-  after: 'result-close' | 'feedback-submit'
+  after: 'result-delay' | 'feedback-submit'
   context: SurveyContext
 }
 
@@ -40,17 +39,9 @@ interface DetectorDebugState {
   detection?: ObjectDetection
 }
 
-const demoItems = [
-  { itemCode: 'plastic_water_bottle', label: 'Bottle & Can', color: '#f08c21', ink: '#171411' },
-  { itemCode: 'fruit_peel', label: 'Organic', color: '#b4b534', ink: '#171411' },
-  { itemCode: 'plastic_takeaway_cup', label: 'Clean Plastic', color: '#bd5961', ink: '#fffaf4' },
-  { itemCode: 'cardboard_box', label: 'Paper', color: '#6698cc', ink: '#171411' },
-  { itemCode: 'paper_cup', label: 'Landfill', color: '#673c33', ink: '#fffaf4' },
-  { itemCode: 'battery', label: 'Hazardous', color: '#f4d68c', ink: '#171411' },
-]
-
 // Bump this when the survey UI changes so an existing browser session can see the new version once.
-const surveySessionKey = 'sot-rac-post-scan-survey-v2-shown'
+const surveySessionKey = 'sot-rac-post-scan-survey-v3-shown'
+const surveyResultDelayMs = Number(import.meta.env.VITE_SURVEY_DELAY_MS ?? 12_000)
 let surveySessionFallbackShown = false
 
 function markSurveyShownForSession() {
@@ -83,10 +74,12 @@ export function LandingPage() {
   const [detectorDebug, setDetectorDebug] = useState<DetectorDebugState>()
   const recognitionIdRef = useRef(0)
   const pendingSurveyRef = useRef<PendingSurvey | undefined>(undefined)
+  const surveyTimerRef = useRef<number | undefined>(undefined)
   const feedbackSectionRef = useRef<HTMLDivElement | null>(null)
   const searchedItemCode = searchParams.get('item')
   const searchedMaterialCode = searchParams.get('material') as BroadMaterialCode | null
   const searchedSource = searchParams.get('source')
+  const previewMode = searchParams.get('preview')
 
   useEffect(() => {
     const prepareModel = () => {
@@ -95,6 +88,10 @@ export function LandingPage() {
     }
     const idleId = window.setTimeout(prepareModel, 150)
     return () => window.clearTimeout(idleId)
+  }, [])
+
+  useEffect(() => () => {
+    if (surveyTimerRef.current !== undefined) window.clearTimeout(surveyTimerRef.current)
   }, [])
 
   useEffect(() => {
@@ -119,6 +116,16 @@ export function LandingPage() {
   }, [searchedItemCode, searchedMaterialCode, searchedSource])
 
   useEffect(() => {
+    if (!import.meta.env.DEV || previewMode !== 'survey') return
+    setSurveyContext({
+      inputMethod: 'camera',
+      predictedItemCode: 'plastic_water_bottle',
+      destinationBinCode: 'bottle_can',
+    })
+    setSurveyOpen(true)
+  }, [previewMode])
+
+  useEffect(() => {
     if (stage !== 'idle' || !errorCode || !imagePreview) return
 
     const frame = window.requestAnimationFrame(() => {
@@ -137,13 +144,31 @@ export function LandingPage() {
     setSurveyOpen(true)
   }
 
+  function clearPendingResultSurvey() {
+    if (surveyTimerRef.current !== undefined) {
+      window.clearTimeout(surveyTimerRef.current)
+      surveyTimerRef.current = undefined
+    }
+    if (pendingSurveyRef.current?.after === 'result-delay') {
+      pendingSurveyRef.current = undefined
+    }
+  }
+
+  function scheduleResultSurvey(context: SurveyContext) {
+    clearPendingResultSurvey()
+    pendingSurveyRef.current = { after: 'result-delay', context }
+    surveyTimerRef.current = window.setTimeout(() => {
+      surveyTimerRef.current = undefined
+      openPendingSurvey('result-delay')
+    }, surveyResultDelayMs)
+  }
+
   function closeResult() {
-    const shouldOpenSurvey = Boolean(result && pendingSurveyRef.current?.after === 'result-close')
+    clearPendingResultSurvey()
     recognitionIdRef.current += 1
     setResult(undefined)
     setResultCollapsed(false)
     setErrorCode(undefined)
-    if (shouldOpenSurvey) openPendingSurvey('result-close')
   }
 
   function startCamera() {
@@ -175,6 +200,10 @@ export function LandingPage() {
   const recogniseImage = useCallback(async (dataUrl: string, method: InputMethod, keepCameraOpen = false) => {
     const recognitionId = recognitionIdRef.current + 1
     recognitionIdRef.current = recognitionId
+    if (surveyTimerRef.current !== undefined) {
+      window.clearTimeout(surveyTimerRef.current)
+      surveyTimerRef.current = undefined
+    }
     pendingSurveyRef.current = undefined
     setFeedbackDelivery(undefined)
     setImagePreview(dataUrl)
@@ -253,14 +282,11 @@ export function LandingPage() {
         visionResult.kind === 'material' ? 'material_scan_success' : 'scan_success',
         'scan_success',
       )
-      pendingSurveyRef.current = {
-        after: 'result-close',
-        context: {
-          inputMethod: method,
-          predictedItemCode: visionResult.kind === 'item' ? visionResult.itemCode : undefined,
-          destinationBinCode: disposal.destinationBin.code,
-        },
-      }
+      scheduleResultSurvey({
+        inputMethod: method,
+        predictedItemCode: visionResult.kind === 'item' ? visionResult.itemCode : undefined,
+        destinationBinCode: disposal.destinationBin.code,
+      })
 
       if (visionResult.kind === 'item' && provider.identifyComponents) {
         void provider.identifyComponents(inferenceImage, visionResult.itemCode).then((components) => {
@@ -294,6 +320,10 @@ export function LandingPage() {
 
   const resetRecognition = useCallback(() => {
     recognitionIdRef.current += 1
+    if (surveyTimerRef.current !== undefined) {
+      window.clearTimeout(surveyTimerRef.current)
+      surveyTimerRef.current = undefined
+    }
     setResult(undefined)
     setImagePreview(undefined)
     setErrorCode(undefined)
@@ -316,22 +346,6 @@ export function LandingPage() {
     setErrorCode(code)
     setStage('idle')
   }, [])
-
-  function showDemoResult(itemCode: string) {
-    void trackFeature('demo_result')
-    try {
-      setFeedbackDelivery(undefined)
-      const disposal = getDisposalForItem(itemCode)
-      setResult(disposal)
-      setResultCollapsed(false)
-      setErrorCode(undefined)
-      setStage('idle')
-      setStatus(undefined)
-    } catch (error) {
-      const appError = error instanceof AppError ? error : toAppError(error, 'RULE_NOT_FOUND')
-      setErrorCode(appError.code)
-    }
-  }
 
   function handleFeedbackSubmitted(uploaded: boolean) {
     setFeedbackDelivery(uploaded ? 'uploaded' : 'queued')
@@ -394,31 +408,20 @@ export function LandingPage() {
             </p>
             <div className="button-row">
               <button type="button" className="primary-action" onClick={startCamera}>
-                <ScanLine size={17} aria-hidden="true" />
-                Start Scanning
+                <ScanLine size={23} aria-hidden="true" />
+                <span>Start Scanning</span>
               </button>
               <button type="button" className="secondary-action" onClick={openUpload}>
-                <ImageUp size={17} aria-hidden="true" />
-                Upload an Image
+                <ImageUp size={23} aria-hidden="true" />
+                <span>Upload an Image</span>
               </button>
             </div>
-            {errorCode ? <p className="inline-error" aria-live="polite">{messageForError(errorCode)}</p> : null}
-            <div className="demo-palette" aria-label="Demo bin colors">
-              <span>Demo bin tones</span>
-              <div>
-                {demoItems.map((item) => (
-                  <button
-                    type="button"
-                    key={item.itemCode}
-                    style={{ '--demo-color': item.color, '--demo-ink': item.ink } as CSSProperties}
-                    onClick={() => showDemoResult(item.itemCode)}
-                  >
-                    <i aria-hidden="true" />
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {errorCode ? (
+              <p className="inline-error" aria-live="polite">
+                {messageForError(errorCode)}
+                <span className="vi-note">{messageForErrorVi(errorCode)}</span>
+              </p>
+            ) : null}
             {!result ? (
               <div ref={feedbackSectionRef} className="recognition-feedback">
                 <TrainingFeedbackPanel
@@ -571,10 +574,10 @@ function UploadDialog({
         >
           <span className="upload-cta">
             <ImageUp size={22} aria-hidden="true" />
-            Upload
+            <span>Upload</span>
           </span>
-          <span>Choose images or drag & drop it here.</span>
-          <small>JPG, JPEG, PNG and WEBP. Max 20 MB.</small>
+          <span>Choose an image or drag and drop it here.<span className="vi-note">Chọn một ảnh hoặc kéo và thả ảnh vào đây.</span></span>
+          <small>JPG, JPEG, PNG and WEBP. Max 20 MB.<span className="vi-note">Tối đa 20 MB.</span></small>
         </button>
         <input
           ref={inputRef}

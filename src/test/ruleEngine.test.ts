@@ -184,6 +184,12 @@ describe('rule engine', () => {
     expect(greasy.reuseSuggestions).toHaveLength(0)
   })
 
+  it('offers a relevant Eco Tip for a clean recyclable item', () => {
+    const result = evaluate('plastic_water_bottle', 'empty')
+
+    expect(result.reuseSuggestions.map((suggestion) => suggestion.code)).toContain('plastic_bottle_planter')
+  })
+
   it('throws when no verified rule exists', () => {
     expect(() => evaluate('unknown')).toThrow(AppError)
   })

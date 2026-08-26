@@ -19,6 +19,7 @@ export default defineConfig({
       VITE_USE_MOCK_VISION: 'true',
       VITE_OBJECT_DETECTOR_ENABLED: 'false',
       VITE_AI_TIMEOUT_MS: '10000',
+      VITE_SURVEY_DELAY_MS: '500',
     },
   },
   projects: [

@@ -13,18 +13,18 @@ interface UserSurveyModalProps {
 
 const scaleOptions = ['1', '2', '3', '4', '5']
 const navigationOptions = [
-  'Finding the scan feature (Tìm chức năng quét)',
-  'Reading the result (Đọc kết quả)',
-  'Scanning another item (Quét thêm vật khác)',
-  'Using the navigation bar (Dùng thanh điều hướng)',
-  'Nothing was difficult (Không có phần nào khó)',
+  { value: 'Finding the scan feature', en: 'Finding the scan feature', vi: 'Tìm chức năng quét' },
+  { value: 'Reading the result', en: 'Reading the result', vi: 'Đọc kết quả' },
+  { value: 'Scanning another item', en: 'Scanning another item', vi: 'Quét thêm vật khác' },
+  { value: 'Using the navigation bar', en: 'Using the navigation bar', vi: 'Dùng thanh điều hướng' },
+  { value: 'Nothing was difficult', en: 'Nothing was difficult', vi: 'Không có phần nào khó' },
 ]
 const improvementOptions = [
-  'Recognition accuracy (Độ chính xác nhận diện)',
-  'Scanning speed (Tốc độ quét)',
-  'Result explanation (Giải thích kết quả)',
-  'Visual design (Thiết kế giao diện)',
-  'Other (Khác)',
+  { value: 'Recognition accuracy', en: 'Recognition accuracy', vi: 'Độ chính xác nhận diện' },
+  { value: 'Scanning speed', en: 'Scanning speed', vi: 'Tốc độ quét' },
+  { value: 'Result explanation', en: 'Result explanation', vi: 'Giải thích kết quả' },
+  { value: 'Visual design', en: 'Visual design', vi: 'Thiết kế giao diện' },
+  { value: 'Other', en: 'Other', vi: 'Khác' },
 ]
 
 export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBinCode, onClose }: UserSurveyModalProps) {
@@ -69,72 +69,97 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
         {submitted ? (
           <div className="survey-success">
             <span className="survey-success-icon"><Check size={24} aria-hidden="true" /></span>
-            <h2>Thanks for helping us improve.</h2>
-            <p>Your feedback has been saved.</p>
-            <button type="button" className="primary-action" onClick={onClose}>Done</button>
+            <h2>Thanks for helping us improve.<span className="vi-note">Cảm ơn bạn đã giúp chúng mình cải thiện.</span></h2>
+            <p>Your feedback has been saved.<span className="vi-note">Phản hồi của bạn đã được lưu.</span></p>
+            <button type="button" className="primary-action" onClick={onClose}>Done<span className="vi-note">Hoàn tất</span></button>
           </div>
         ) : (
           <>
             <header className="survey-header">
-              <p className="eyebrow">Quick feedbacks</p>
-              <h2 id="survey-title">How was your first scan?</h2>
-              <p>Your answers help us improve SỌRT RÁC.</p>
+              <p className="eyebrow">Quick feedback</p>
+              <h2 id="survey-title">How was your first scan?<span className="vi-note">Lần quét đầu tiên của bạn thế nào?</span></h2>
+              <p>Your answers help us improve SỌRT RÁC.<span className="vi-note">Câu trả lời của bạn giúp SỌRT RÁC tốt hơn.</span></p>
             </header>
 
             <div className="survey-question-list">
               <SurveyScaleQuestion
                 number="1"
-                label="How easy was it to complete the waste identification process? (Bạn thấy quá trình nhận diện rác dễ đến mức nào?)"
+                label="How easy was it to complete the waste identification process?"
+                labelVi="Bạn thấy quá trình nhận diện rác dễ đến mức nào?"
                 value={scanningEase}
-                leftLabel="Very difficult (Rất khó)"
-                rightLabel="Very easy (Rất dễ)"
+                leftLabel="Very difficult"
+                leftLabelVi="Rất khó"
+                rightLabel="Very easy"
+                rightLabelVi="Rất dễ"
                 onChange={setScanningEase}
               />
               <SurveyScaleQuestion
                 number="2"
-                label="How clear was the disposal guidance? (Hướng dẫn phân loại rõ ràng đến mức nào?)"
+                label="How clear was the disposal guidance?"
+                labelVi="Hướng dẫn phân loại rõ ràng đến mức nào?"
                 value={guidanceClarity}
-                leftLabel="Very unclear (Rất khó hiểu)"
-                rightLabel="Very clear (Rất rõ ràng)"
+                leftLabel="Very unclear"
+                leftLabelVi="Rất khó hiểu"
+                rightLabel="Very clear"
+                rightLabelVi="Rất rõ ràng"
                 onChange={setGuidanceClarity}
               />
               <SurveyScaleQuestion
                 number="3"
-                label="How much do you trust this result? (Bạn tin kết quả này đến mức nào?)"
+                label="How much do you trust this result?"
+                labelVi="Bạn tin kết quả này đến mức nào?"
                 value={resultTrust}
-                leftLabel="Do not trust (Không tin)"
-                rightLabel="Fully trust (Hoàn toàn tin)"
+                leftLabel="Do not trust"
+                leftLabelVi="Không tin"
+                rightLabel="Fully trust"
+                rightLabelVi="Hoàn toàn tin"
                 onChange={setResultTrust}
               />
               <SurveyQuestion
                 number="4"
-                label="Which part of the interface was hardest to use? (Phần nào của giao diện khó sử dụng nhất?)"
+                label="Which part of the interface was hardest to use?"
+                labelVi="Phần nào của giao diện khó sử dụng nhất?"
                 value={confusionPoint}
                 options={navigationOptions}
                 onChange={setConfusionPoint}
               />
               {confusionPoint ? (
                 <label className="survey-why">
-                  <span>Could you tell us why? (Bạn có thể nói rõ hơn không?) <small>Optional / Không bắt buộc</small></span>
-                  <textarea value={confusionDetails} onChange={(event) => setConfusionDetails(event.target.value)} placeholder="Tell us what felt difficult or unclear" rows={2} maxLength={200} />
+                  <span>Could you tell us why?<span className="vi-note">Bạn có thể nói rõ hơn không?</span> <small>Optional / Không bắt buộc</small></span>
+                  <textarea value={confusionDetails} onChange={(event) => setConfusionDetails(event.target.value)} placeholder="Tell us what felt difficult or unclear / Hãy chia sẻ điều khiến bạn thấy khó hoặc chưa rõ" rows={2} maxLength={200} />
                 </label>
               ) : null}
               <SurveyQuestion
                 number="5"
-                label="What should we improve first? (Nên ưu tiên cải thiện điều gì?)"
+                label="What should we improve first?"
+                labelVi="Nên ưu tiên cải thiện điều gì?"
                 value={improvementPriority}
                 options={improvementOptions}
                 onChange={setImprovementPriority}
               />
-              <label className="survey-why survey-general-feedback">
-                <span>What is one change that would make SỌRT RÁC better for you? (Một thay đổi nào sẽ khiến SỌRT RÁC tốt hơn với bạn?) <small>Optional / Không bắt buộc</small></span>
-                <textarea value={additionalFeedback} onChange={(event) => setAdditionalFeedback(event.target.value)} placeholder="Share any idea, concern, or suggestion" rows={3} maxLength={200} />
-              </label>
+              <section className="survey-question survey-open-question" aria-labelledby="survey-open-question-title">
+                <div className="survey-open-heading">
+                  <span className="survey-question-number">6</span>
+                  <span className="survey-open-label" id="survey-open-question-title">
+                    What else would you like to tell us about your experience?
+                    <span className="vi-note">Bạn còn muốn chia sẻ điều gì về trải nghiệm này?</span>
+                    <small>Optional</small>
+                  </span>
+                </div>
+                <textarea
+                  aria-label="Additional feedback"
+                  value={additionalFeedback}
+                  onChange={(event) => setAdditionalFeedback(event.target.value)}
+                  placeholder="Share any idea, concern, or suggestion / Chia sẻ ý tưởng, băn khoăn hoặc đề xuất"
+                  rows={3}
+                  maxLength={200}
+                />
+              </section>
             </div>
 
             <button type="button" className="primary-action survey-submit" onClick={submit} disabled={!canSubmit || saving}>
               <Send size={16} aria-hidden="true" />
-              {saving ? 'Saving…' : 'Send feedback'}
+              <span>{saving ? 'Saving…' : 'Send feedback'}<span className="vi-note">{saving ? 'Đang lưu…' : 'Gửi phản hồi'}</span></span>
             </button>
           </>
         )}
@@ -155,21 +180,27 @@ function formatOpenFeedback(navigationDetails: string, additionalFeedback: strin
 function SurveyScaleQuestion({
   number,
   label,
+  labelVi,
   value,
   leftLabel,
+  leftLabelVi,
   rightLabel,
+  rightLabelVi,
   onChange,
 }: {
   number: string
   label: string
+  labelVi: string
   value: string
   leftLabel: string
+  leftLabelVi: string
   rightLabel: string
+  rightLabelVi: string
   onChange: (value: string) => void
 }) {
   return (
     <fieldset className="survey-question">
-      <legend><span>{number}</span>{label}<b aria-label="Required">*</b></legend>
+      <legend><span>{number}</span><span>{label}<span className="vi-note">{labelVi}</span></span><b aria-label="Required">*</b></legend>
       <div className="survey-scale">
         <div className="survey-scale-numbers" aria-hidden="true">
           {scaleOptions.map((option) => <span key={option}>{option}</span>)}
@@ -184,8 +215,8 @@ function SurveyScaleQuestion({
             ))}
           </div>
           <div className="survey-scale-endpoints">
-            <span className="survey-scale-anchor survey-scale-anchor-left">{leftLabel}</span>
-            <span className="survey-scale-anchor survey-scale-anchor-right">{rightLabel}</span>
+            <span className="survey-scale-anchor survey-scale-anchor-left">{leftLabel}<span className="vi-note">{leftLabelVi}</span></span>
+            <span className="survey-scale-anchor survey-scale-anchor-right">{rightLabel}<span className="vi-note">{rightLabelVi}</span></span>
           </div>
         </div>
       </div>
@@ -193,15 +224,22 @@ function SurveyScaleQuestion({
   )
 }
 
-function SurveyQuestion({ number, label, value, options, onChange }: { number: string; label: string; value: string; options: string[]; onChange: (value: string) => void }) {
+function SurveyQuestion({ number, label, labelVi, value, options, onChange }: {
+  number: string
+  label: string
+  labelVi: string
+  value: string
+  options: Array<{ value: string; en: string; vi: string }>
+  onChange: (value: string) => void
+}) {
   return (
     <fieldset className="survey-question">
-      <legend><span>{number}</span>{label}<b aria-label="Required">*</b></legend>
+      <legend><span>{number}</span><span>{label}<span className="vi-note">{labelVi}</span></span><b aria-label="Required">*</b></legend>
       <div className="survey-options">
         {options.map((option) => (
-          <label className={value === option ? 'survey-option selected' : 'survey-option'} key={option}>
-            <input type="radio" name={`survey-${number}`} value={option} checked={value === option} onChange={() => onChange(option)} required />
-            <span>{option}</span>
+          <label className={value === option.value ? 'survey-option selected' : 'survey-option'} key={option.value}>
+            <input type="radio" name={`survey-${number}`} value={option.value} checked={value === option.value} onChange={() => onChange(option.value)} required />
+            <span>{option.en}<span className="vi-note">{option.vi}</span></span>
           </label>
         ))}
       </div>

@@ -49,7 +49,7 @@ export function ScanPage() {
       <div className="page-heading">
         <p className="eyebrow">Scan one item</p>
         <h1>Place one item clearly inside the frame.</h1>
-        <p>Camera access starts only after you choose the camera option.</p>
+        <p>Camera access starts only after you choose the camera option.<span className="vi-note">Camera chỉ bật sau khi bạn chọn chức năng quét.</span></p>
       </div>
 
       {mockEnabled ? (
@@ -72,15 +72,15 @@ export function ScanPage() {
       <div className="action-stack">
         <button type="button" className="primary-action large" onClick={() => setCameraOpen(true)}>
           <Camera size={19} aria-hidden="true" />
-          Scan an item
+          <span>Scan an item</span>
         </button>
         <button type="button" className="secondary-action large" onClick={() => inputRef.current?.click()}>
           <ImageUp size={19} aria-hidden="true" />
-          Upload image
+          <span>Upload image</span>
         </button>
         <button type="button" className="ghost-action large" onClick={() => navigate('/search')}>
           <Search size={19} aria-hidden="true" />
-          Search manually
+          <span>Search manually</span>
         </button>
       </div>
 

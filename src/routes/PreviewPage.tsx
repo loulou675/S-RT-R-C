@@ -14,8 +14,8 @@ export function PreviewPage() {
 
   if (!state.imagePreview) {
     return (
-      <EmptyState title="No image selected">
-        Return to scanning and capture or upload one item.
+      <EmptyState title="No image selected / Chưa chọn ảnh">
+        Return to scanning and capture or upload one item. / Hãy quay lại để chụp hoặc tải lên ảnh của một vật thể.
       </EmptyState>
     )
   }
@@ -55,11 +55,11 @@ export function PreviewPage() {
       <div className="button-row full">
         <button type="button" className="primary-action" onClick={processImage} disabled={Boolean(status)}>
           <Check size={17} aria-hidden="true" />
-          Use photo
+          <span>Use photo</span>
         </button>
         <button type="button" className="secondary-action" onClick={() => navigate('/scan')} disabled={Boolean(status)}>
           <RotateCcw size={17} aria-hidden="true" />
-          Retake
+          <span>Retake</span>
         </button>
         <button
           type="button"
@@ -71,7 +71,7 @@ export function PreviewPage() {
           disabled={Boolean(status)}
         >
           <X size={17} aria-hidden="true" />
-          Cancel
+          <span>Cancel</span>
         </button>
       </div>
     </section>

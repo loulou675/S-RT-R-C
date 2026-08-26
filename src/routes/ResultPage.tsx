@@ -5,7 +5,7 @@ import { BinPanel } from '../components/BinPanel'
 import { EmptyState } from '../components/EmptyState'
 import { TrainingFeedbackPanel } from '../components/TrainingFeedbackPanel'
 import { evaluateDisposal, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
-import { AppError, messageForError } from '../lib/errors'
+import { AppError, messageForError, messageForErrorVi } from '../lib/errors'
 import type { ConditionKey } from '../types/domain'
 
 export function ResultPage() {
@@ -17,8 +17,8 @@ export function ResultPage() {
 
   if (!itemCode) {
     return (
-      <EmptyState title="No result yet">
-        Scan or search for an item to see disposal guidance.
+      <EmptyState title="No result yet / Chưa có kết quả">
+        Scan or search for an item to see disposal guidance. / Hãy quét hoặc tìm vật thể để xem hướng dẫn phân loại.
       </EmptyState>
     )
   }
@@ -38,11 +38,11 @@ export function ResultPage() {
       <section className="flow-layout narrow">
         <div className="error-panel">
           <p className="eyebrow">Guidance unavailable</p>
-          <h1>{messageForError(code)}</h1>
+          <h1>{messageForError(code)}<span className="vi-note">{messageForErrorVi(code)}</span></h1>
         </div>
         <button type="button" className="primary-action large" onClick={() => navigate('/search')}>
           <Search size={19} aria-hidden="true" />
-          Search manually
+          <span>Search manually</span>
         </button>
       </section>
     )
@@ -55,17 +55,20 @@ export function ResultPage() {
           <span className="headline-line">Scan your waste.</span>
           <span className="headline-line italic">Know where it goes</span>
         </h1>
-        <p>{result.specialHandling ? 'This item should not be placed in the five general waste bins. Please use an approved collection point or follow instructions from responsible staff.' : result.mainInstruction}</p>
-        <p className="local-note">This guidance applies to the selected waste station.</p>
+        <p>
+          {result.specialHandling ? 'This item should not be placed in the five general waste bins. Please use an approved collection point or follow instructions from responsible staff.' : result.mainInstruction}
+          <span className="vi-note">{result.specialHandling ? 'Không cho vật này vào năm thùng rác thông thường. Hãy dùng điểm thu gom phù hợp hoặc làm theo hướng dẫn của nhân viên phụ trách.' : result.mainInstructionVi}</span>
+        </p>
+        <p className="local-note">This guidance applies to the selected waste station.<span className="vi-note">Hướng dẫn này áp dụng cho điểm thu gom đã chọn.</span></p>
 
         <div className="button-row">
           <button type="button" className="primary-action" onClick={() => navigate('/scan')}>
             <RotateCcw size={17} aria-hidden="true" />
-            Scan another item
+            <span>Scan another item</span>
           </button>
           <button type="button" className="secondary-action" onClick={() => navigate('/search')}>
             <Search size={17} aria-hidden="true" />
-            Search another item
+            <span>Search another item</span>
           </button>
           <button
             type="button"
@@ -76,7 +79,7 @@ export function ResultPage() {
             }}
           >
             <Home size={17} aria-hidden="true" />
-            Return home
+            <span>Return home</span>
           </button>
         </div>
         <TrainingFeedbackPanel
