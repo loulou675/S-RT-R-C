@@ -5,16 +5,6 @@ const MIN_SHARPNESS = 3.5
 const MIN_FOREGROUND_RATIO = 0.08
 const MAX_FOREGROUND_RATIO = 0.9
 
-export function averagePixelDifference(previous: Uint8ClampedArray, current: Uint8ClampedArray) {
-  let difference = 0
-  for (let index = 0; index < current.length; index += 4) {
-    difference += Math.abs(current[index] - previous[index])
-    difference += Math.abs(current[index + 1] - previous[index + 1])
-    difference += Math.abs(current[index + 2] - previous[index + 2])
-  }
-  return difference / ((current.length / 4) * 3)
-}
-
 export function measureFrameQuality(sample: Uint8ClampedArray, width: number) {
   const luminance = averageLuminance(sample)
   if (luminance < DARK_LUMINANCE) return { good: false, message: 'Too dark. Move to brighter, even light.' }

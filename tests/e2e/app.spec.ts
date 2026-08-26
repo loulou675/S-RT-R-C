@@ -60,6 +60,77 @@ test('camera permission denied flow', async ({ page }) => {
   await expect(page.getByText(/Camera access was blocked/i)).toBeVisible()
 })
 
+test('camera waits for a manual photo before recognition', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addInitScript(() => {
+    sessionStorage.setItem('sot-rac-mock-item', 'plastic_takeaway_cup')
+
+    const track = {
+      applyConstraints: () => Promise.resolve(),
+      getCapabilities: () => ({ focusMode: ['continuous'] }),
+      stop: () => undefined,
+    }
+    const stream = new MediaStream()
+    Object.defineProperties(stream, {
+      getTracks: { value: () => [track] },
+      getVideoTracks: { value: () => [track] },
+    })
+    Object.defineProperty(navigator, 'mediaDevices', {
+      value: {
+        getUserMedia: () => Promise.resolve(stream),
+      },
+      configurable: true,
+    })
+    Object.defineProperties(HTMLVideoElement.prototype, {
+      readyState: { get: () => HTMLMediaElement.HAVE_ENOUGH_DATA, configurable: true },
+      videoWidth: { get: () => 1280, configurable: true },
+      videoHeight: { get: () => 720, configurable: true },
+    })
+    HTMLMediaElement.prototype.play = () => Promise.resolve()
+    HTMLMediaElement.prototype.pause = () => undefined
+
+    Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+      configurable: true,
+      value: function getContext() {
+        return {
+          drawImage: () => undefined,
+          getImageData: () => {
+            const size = 64
+            const data = new Uint8ClampedArray(size * size * 4)
+            for (let y = 0; y < size; y += 1) {
+              for (let x = 0; x < size; x += 1) {
+                const index = (y * size + x) * 4
+                const centered = x >= 17 && x < 47 && y >= 17 && y < 47
+                const value = centered ? ((x + y) % 6 < 3 ? 55 : 95) : 205
+                data[index] = value
+                data[index + 1] = value
+                data[index + 2] = value
+                data[index + 3] = 255
+              }
+            }
+            return { data }
+          },
+          scale: () => undefined,
+          translate: () => undefined,
+        }
+      },
+    })
+  })
+
+  await page.goto('/')
+  await page.getByRole('button', { name: /^Start Scanning/i }).click()
+  await expect(page.getByRole('button', { name: /Take photo/i })).toBeVisible()
+  await expect(page.getByText(/Plastic takeaway cup/i)).not.toBeVisible()
+
+  const shutterBox = await page.getByRole('button', { name: /Take photo/i }).boundingBox()
+  expect(shutterBox).not.toBeNull()
+  expect(Math.abs(shutterBox!.x + shutterBox!.width / 2 - 195)).toBeLessThan(2)
+
+  await page.getByRole('button', { name: /Take photo/i }).click()
+  await expect(page.getByText(/Plastic takeaway cup/i).first()).toBeVisible()
+  await expect(page.getByText(/Clean Plastic/).first()).toBeVisible()
+})
+
 test('Instagram in-app browser is directed to a supported camera browser', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'userAgent', {

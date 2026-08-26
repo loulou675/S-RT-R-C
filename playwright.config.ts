@@ -17,6 +17,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       VITE_USE_MOCK_VISION: 'true',
+      VITE_OBJECT_DETECTOR_ENABLED: 'false',
       VITE_AI_TIMEOUT_MS: '10000',
     },
   },

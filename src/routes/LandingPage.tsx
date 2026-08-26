@@ -186,25 +186,6 @@ export function LandingPage() {
     if (!keepCameraOpen) setStage('processing')
 
     try {
-      let focusedImage: string | undefined
-      let focusedDetection: ObjectDetection | undefined
-      setStatus('Finding the main object...')
-      try {
-        const focused = await focusPrimaryObject(dataUrl)
-        if (recognitionId !== recognitionIdRef.current) return false
-        focusedImage = focused.image
-        focusedDetection = focused.detection
-        if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
-          setDetectorDebug({ image: dataUrl, detection: focused.detection })
-        }
-      } catch (error) {
-        // Detection is an assistive first stage. If it cannot find an object,
-        // preserve the original indicator-square crop for the classifier and
-        // material fallback instead of blocking the scan.
-        if (import.meta.env.DEV) console.warn('Object-focused crop was skipped.', error)
-      }
-
-      setStatus('Preparing image...')
       setStatus('Identifying item... The first scan may take a little longer.')
       const provider = await createVisionProvider()
       let inferenceImage = dataUrl
@@ -217,22 +198,36 @@ export function LandingPage() {
         const appError = originalError instanceof AppError
           ? originalError
           : toAppError(originalError, 'INFERENCE_FAILED')
-        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
-        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
-        const detectedArea = focusedDetection ? focusedDetection.width * focusedDetection.height : 0
         const eligibleError = ['ITEM_NOT_RECOGNISED', 'ITEM_AMBIGUOUS', 'MATERIAL_NOT_RECOGNISED']
           .includes(appError.code)
-        const canRescue = eligibleError
-          && Boolean(focusedDetection)
-          && focusedDetection!.confidence >= rescueConfidence
+        if (!eligibleError) throw originalError
+
+        setStatus('Checking the object framing...')
+        let focused
+        try {
+          focused = await focusPrimaryObject(dataUrl)
+          if (recognitionId !== recognitionIdRef.current) return false
+          if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
+            setDetectorDebug({ image: dataUrl, detection: focused.detection })
+          }
+        } catch (error) {
+          if (import.meta.env.DEV) console.warn('Object-focused retry was skipped.', error)
+          throw originalError
+        }
+
+        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
+        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
+        const detectedArea = focused.detection ? focused.detection.width * focused.detection.height : 0
+        const canRescue = Boolean(focused.detection)
+          && focused.detection!.confidence >= rescueConfidence
           && detectedArea >= rescueArea
-          && Boolean(focusedImage)
-          && focusedImage !== dataUrl
+          && focused.image !== dataUrl
 
         if (!canRescue) throw originalError
 
         try {
-          inferenceImage = focusedImage!
+          inferenceImage = focused.image
+          setStatus('Retrying with the detected object...')
           visionResult = await provider.identify(inferenceImage)
           setImagePreview(inferenceImage)
         } catch {
@@ -313,7 +308,7 @@ export function LandingPage() {
   }, [])
 
   const handleCameraCapture = useCallback(
-    (dataUrl: string) => recogniseImage(dataUrl, 'camera'),
+    (dataUrl: string) => recogniseImage(dataUrl, 'camera', true),
     [recogniseImage],
   )
 

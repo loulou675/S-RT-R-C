@@ -1,4 +1,4 @@
-import { averagePixelDifference, measureFrameQuality } from '../features/camera/frameQuality'
+import { measureFrameQuality } from '../features/camera/frameQuality'
 
 const SIZE = 64
 
@@ -20,7 +20,7 @@ function setPixel(pixels: Uint8ClampedArray, x: number, y: number, value: number
   pixels[index + 2] = value
 }
 
-describe('automatic camera frame checks', () => {
+describe('manual camera photo quality checks', () => {
   it('keeps a blank frame in the adjusting state', () => {
     const result = measureFrameQuality(solidFrame(150), SIZE)
 
@@ -50,14 +50,10 @@ describe('automatic camera frame checks', () => {
     expect(result.message).toContain('farther away')
   })
 
-  it('measures movement independently from overall brightness', () => {
-    const previous = solidFrame(120)
-    const current = solidFrame(120)
-    for (let y = 20; y < 44; y += 1) {
-      for (let x = 20; x < 44; x += 1) setPixel(current, x, y, 180)
-    }
+  it('rejects a photo that is too dark before inference', () => {
+    const result = measureFrameQuality(solidFrame(30), SIZE)
 
-    expect(averagePixelDifference(previous, previous)).toBe(0)
-    expect(averagePixelDifference(previous, current)).toBeGreaterThan(5)
+    expect(result.good).toBe(false)
+    expect(result.message).toContain('Too dark')
   })
 })
