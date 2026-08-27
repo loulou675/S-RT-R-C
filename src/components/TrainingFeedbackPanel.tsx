@@ -124,7 +124,6 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
           <h2>Is this result correct?</h2>
           <p>
             Selecting Yes privately saves this cropped image and result for review and future AI training.
-            <span className="vi-note">Chọn Có sẽ lưu riêng ảnh đã cắt và kết quả để duyệt trước khi dùng cho việc huấn luyện AI.</span>
           </p>
         </div>
         <div className="feedback-verdict-actions">

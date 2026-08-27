@@ -1,0 +1,930 @@
+{
+  "baseline": {
+    "validation_correct": 209,
+    "validation_images": 292,
+    "feedback_correct": 10,
+    "feedback_images": 16
+  },
+  "candidate": {
+    "validation_correct": 209,
+    "validation_images": 292,
+    "feedback_correct": 11,
+    "feedback_images": 16
+  },
+  "search": [
+    {
+      "class": "aerosol_can",
+      "accepted": false
+    },
+    {
+      "class": "aluminium_drink_can",
+      "accepted": true,
+      "alpha": 0.75,
+      "validation_correct": 210,
+      "feedback_correct": 11,
+      "target_feedback_correct": 1
+    },
+    {
+      "class": "dirty_plastic_bag",
+      "accepted": false
+    },
+    {
+      "class": "drink_carton",
+      "accepted": false
+    },
+    {
+      "class": "hair_clip",
+      "accepted": false
+    },
+    {
+      "class": "paper_bag",
+      "accepted": false
+    },
+    {
+      "class": "paperboard_packaging",
+      "accepted": false
+    },
+    {
+      "class": "plastic_bag",
+      "accepted": true,
+      "alpha": 1.0,
+      "validation_correct": 210,
+      "feedback_correct": 12,
+      "target_feedback_correct": 1
+    },
+    {
+      "class": "plastic_cosmetic_container",
+      "accepted": false
+    },
+    {
+      "class": "plastic_takeaway_cup",
+      "accepted": false
+    },
+    {
+      "class": "styrofoam_container",
+      "accepted": true,
+      "alpha": 0.75,
+      "validation_correct": 210,
+      "feedback_correct": 13,
+      "target_feedback_correct": 1
+    },
+    {
+      "class": "tissue",
+      "accepted": false
+    }
+  ],
+  "held_out_safety_gate": [
+    {
+      "class": "aluminium_drink_can",
+      "alpha": 0.75,
+      "accepted": false,
+      "top1_correct": 203,
+      "macro_recall": 0.6662715444780662,
+      "known_item_bin_accuracy": 0.8241379310344827,
+      "grouped_known_item_bin_accuracy": 0.8344827586206897
+    },
+    {
+      "class": "plastic_bag",
+      "alpha": 1.0,
+      "accepted": true,
+      "top1_correct": 202,
+      "macro_recall": 0.6621048778113996,
+      "known_item_bin_accuracy": 0.8344827586206897,
+      "grouped_known_item_bin_accuracy": 0.8482758620689655
+    },
+    {
+      "class": "styrofoam_container",
+      "alpha": 0.75,
+      "accepted": false,
+      "top1_correct": 200,
+      "macro_recall": 0.6454382111447329,
+      "known_item_bin_accuracy": 0.8310344827586207,
+      "grouped_known_item_bin_accuracy": 0.8482758620689655
+    }
+  ],
+  "bias_only": {
+    "search": [
+      {
+        "class": "aerosol_can",
+        "accepted": false
+      },
+      {
+        "class": "aluminium_drink_can",
+        "accepted": false
+      },
+      {
+        "class": "dirty_plastic_bag",
+        "accepted": false
+      },
+      {
+        "class": "drink_carton",
+        "accepted": false
+      },
+      {
+        "class": "hair_clip",
+        "accepted": false
+      },
+      {
+        "class": "paper_bag",
+        "accepted": false
+      },
+      {
+        "class": "paperboard_packaging",
+        "accepted": false
+      },
+      {
+        "class": "plastic_bag",
+        "accepted": true,
+        "delta": 1.5,
+        "validation_correct": 209,
+        "feedback_correct": 11,
+        "target_feedback_correct": 1
+      },
+      {
+        "class": "plastic_cosmetic_container",
+        "accepted": false
+      },
+      {
+        "class": "plastic_takeaway_cup",
+        "accepted": false
+      },
+      {
+        "class": "styrofoam_container",
+        "accepted": false
+      },
+      {
+        "class": "tissue",
+        "accepted": false
+      }
+    ],
+    "held_out_safety_gate": [
+      {
+        "class": "plastic_bag",
+        "delta": 1.5,
+        "accepted": false,
+        "top1_correct": 202,
+        "macro_recall": 0.6565493222558441,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    ],
+    "selectedBiasDeltas": {},
+    "validation_correct": 209,
+    "feedback_correct": 10,
+    "held_out_test": {
+      "images": 290,
+      "top1_correct": 202,
+      "top1_accuracy": 0.6965517401695251,
+      "macro_recall": 0.6621048778113996,
+      "hazardous_macro_recall": 0.75,
+      "known_item_bin_accuracy": 0.8275862068965517,
+      "grouped_known_item_bin_accuracy": 0.8413793103448276,
+      "per_class": [
+        {
+          "class": "aerosol_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "aluminium_drink_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "battery",
+          "correct": 7,
+          "total": 7,
+          "recall": 1.0
+        },
+        {
+          "class": "cardboard_box",
+          "correct": 11,
+          "total": 12,
+          "recall": 0.9166666666666666
+        },
+        {
+          "class": "chemical_container",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "dirty_plastic_bag",
+          "correct": 4,
+          "total": 4,
+          "recall": 1.0
+        },
+        {
+          "class": "disposable_cutlery",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "disposable_diaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "drink_carton",
+          "correct": 1,
+          "total": 7,
+          "recall": 0.14285714285714285
+        },
+        {
+          "class": "electronic_cable",
+          "correct": 4,
+          "total": 6,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "food_waste",
+          "correct": 23,
+          "total": 27,
+          "recall": 0.8518518518518519
+        },
+        {
+          "class": "fruit_peel",
+          "correct": 21,
+          "total": 26,
+          "recall": 0.8076923076923077
+        },
+        {
+          "class": "glass_drink_bottle",
+          "correct": 8,
+          "total": 8,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_clip",
+          "correct": 10,
+          "total": 10,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_tie",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "light_bulb",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "medical_mask",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "medicine_blister_pack",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "mobile_phone",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "newspaper",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "paper_bag",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "paper_cup",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "paper_plate",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "paperboard_packaging",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "pen_marker",
+          "correct": 2,
+          "total": 7,
+          "recall": 0.2857142857142857
+        },
+        {
+          "class": "phone_case",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_bag",
+          "correct": 5,
+          "total": 9,
+          "recall": 0.5555555555555556
+        },
+        {
+          "class": "plastic_cosmetic_container",
+          "correct": 12,
+          "total": 13,
+          "recall": 0.9230769230769231
+        },
+        {
+          "class": "plastic_cup_lid",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "plastic_food_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_takeaway_cup",
+          "correct": 7,
+          "total": 13,
+          "recall": 0.5384615384615384
+        },
+        {
+          "class": "plastic_water_bottle",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "power_bank",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "printing_paper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "sanitary_pad",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "snack_wrapper",
+          "correct": 3,
+          "total": 9,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "steel_food_can",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "styrofoam_container",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "tissue",
+          "correct": 6,
+          "total": 9,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "vegetable_scraps",
+          "correct": 16,
+          "total": 23,
+          "recall": 0.6956521739130435
+        }
+      ]
+    }
+  },
+  "held_out_test": {
+    "baseline": {
+      "images": 290,
+      "top1_correct": 202,
+      "top1_accuracy": 0.6965517401695251,
+      "macro_recall": 0.6621048778113996,
+      "hazardous_macro_recall": 0.75,
+      "known_item_bin_accuracy": 0.8275862068965517,
+      "grouped_known_item_bin_accuracy": 0.8413793103448276,
+      "per_class": [
+        {
+          "class": "aerosol_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "aluminium_drink_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "battery",
+          "correct": 7,
+          "total": 7,
+          "recall": 1.0
+        },
+        {
+          "class": "cardboard_box",
+          "correct": 11,
+          "total": 12,
+          "recall": 0.9166666666666666
+        },
+        {
+          "class": "chemical_container",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "dirty_plastic_bag",
+          "correct": 4,
+          "total": 4,
+          "recall": 1.0
+        },
+        {
+          "class": "disposable_cutlery",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "disposable_diaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "drink_carton",
+          "correct": 1,
+          "total": 7,
+          "recall": 0.14285714285714285
+        },
+        {
+          "class": "electronic_cable",
+          "correct": 4,
+          "total": 6,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "food_waste",
+          "correct": 23,
+          "total": 27,
+          "recall": 0.8518518518518519
+        },
+        {
+          "class": "fruit_peel",
+          "correct": 21,
+          "total": 26,
+          "recall": 0.8076923076923077
+        },
+        {
+          "class": "glass_drink_bottle",
+          "correct": 8,
+          "total": 8,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_clip",
+          "correct": 10,
+          "total": 10,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_tie",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "light_bulb",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "medical_mask",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "medicine_blister_pack",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "mobile_phone",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "newspaper",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "paper_bag",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "paper_cup",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "paper_plate",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "paperboard_packaging",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "pen_marker",
+          "correct": 2,
+          "total": 7,
+          "recall": 0.2857142857142857
+        },
+        {
+          "class": "phone_case",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_bag",
+          "correct": 5,
+          "total": 9,
+          "recall": 0.5555555555555556
+        },
+        {
+          "class": "plastic_cosmetic_container",
+          "correct": 12,
+          "total": 13,
+          "recall": 0.9230769230769231
+        },
+        {
+          "class": "plastic_cup_lid",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "plastic_food_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_takeaway_cup",
+          "correct": 7,
+          "total": 13,
+          "recall": 0.5384615384615384
+        },
+        {
+          "class": "plastic_water_bottle",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "power_bank",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "printing_paper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "sanitary_pad",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "snack_wrapper",
+          "correct": 3,
+          "total": 9,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "steel_food_can",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "styrofoam_container",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "tissue",
+          "correct": 6,
+          "total": 9,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "vegetable_scraps",
+          "correct": 16,
+          "total": 23,
+          "recall": 0.6956521739130435
+        }
+      ]
+    },
+    "candidate": {
+      "images": 290,
+      "top1_correct": 202,
+      "top1_accuracy": 0.6965517401695251,
+      "macro_recall": 0.6621048778113996,
+      "hazardous_macro_recall": 0.75,
+      "known_item_bin_accuracy": 0.8344827586206897,
+      "grouped_known_item_bin_accuracy": 0.8482758620689655,
+      "per_class": [
+        {
+          "class": "aerosol_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "aluminium_drink_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "battery",
+          "correct": 7,
+          "total": 7,
+          "recall": 1.0
+        },
+        {
+          "class": "cardboard_box",
+          "correct": 11,
+          "total": 12,
+          "recall": 0.9166666666666666
+        },
+        {
+          "class": "chemical_container",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "dirty_plastic_bag",
+          "correct": 4,
+          "total": 4,
+          "recall": 1.0
+        },
+        {
+          "class": "disposable_cutlery",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "disposable_diaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "drink_carton",
+          "correct": 1,
+          "total": 7,
+          "recall": 0.14285714285714285
+        },
+        {
+          "class": "electronic_cable",
+          "correct": 4,
+          "total": 6,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "food_waste",
+          "correct": 23,
+          "total": 27,
+          "recall": 0.8518518518518519
+        },
+        {
+          "class": "fruit_peel",
+          "correct": 21,
+          "total": 26,
+          "recall": 0.8076923076923077
+        },
+        {
+          "class": "glass_drink_bottle",
+          "correct": 8,
+          "total": 8,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_clip",
+          "correct": 10,
+          "total": 10,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_tie",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "light_bulb",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "medical_mask",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "medicine_blister_pack",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "mobile_phone",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "newspaper",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "paper_bag",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "paper_cup",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "paper_plate",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "paperboard_packaging",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "pen_marker",
+          "correct": 2,
+          "total": 7,
+          "recall": 0.2857142857142857
+        },
+        {
+          "class": "phone_case",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_bag",
+          "correct": 5,
+          "total": 9,
+          "recall": 0.5555555555555556
+        },
+        {
+          "class": "plastic_cosmetic_container",
+          "correct": 12,
+          "total": 13,
+          "recall": 0.9230769230769231
+        },
+        {
+          "class": "plastic_cup_lid",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "plastic_food_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_takeaway_cup",
+          "correct": 7,
+          "total": 13,
+          "recall": 0.5384615384615384
+        },
+        {
+          "class": "plastic_water_bottle",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "power_bank",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "printing_paper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "sanitary_pad",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "snack_wrapper",
+          "correct": 3,
+          "total": 9,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "steel_food_can",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "styrofoam_container",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "tissue",
+          "correct": 6,
+          "total": 9,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "vegetable_scraps",
+          "correct": 16,
+          "total": 23,
+          "recall": 0.6956521739130435
+        }
+      ]
+    }
+  }
+}

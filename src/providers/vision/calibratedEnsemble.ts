@@ -27,11 +27,11 @@ function temperatureScaledLogProbabilities(probabilities: number[], temperature:
   return normalized.map((probability) => Math.log(Math.max(probability, EPSILON)))
 }
 
-export function combineCalibratedProbabilities(
+function calibratedLogits(
   modelProbabilities: number[][],
   config: CalibratedEnsembleConfig,
   labels: string[],
-): ScoredClass[] {
+) {
   const classCount = labels.length
   const modelCount = config.modelPaths.length
 
@@ -49,18 +49,56 @@ export function combineCalibratedProbabilities(
   const logProbabilities = modelProbabilities.map((probabilities, modelIndex) =>
     temperatureScaledLogProbabilities(probabilities, config.temperatures[modelIndex]!),
   )
-  const calibratedLogits = labels.map((_, classIndex) => {
+  const activeBlend = labels.map((_, classIndex) => {
     const classWeights = softmax(config.theta.map((row) => row[classIndex]!))
-    return (
-      config.bias[classIndex]! +
-      classWeights.reduce(
-        (sum, weight, modelIndex) => sum + weight * logProbabilities[modelIndex]![classIndex]!,
-        0,
-      )
+    return classWeights.reduce(
+      (sum, weight, modelIndex) => sum + weight * logProbabilities[modelIndex]![classIndex]!,
+      0,
     )
   })
-  const probabilities = softmax(calibratedLogits)
+  return {
+    activeBlend,
+    logits: activeBlend.map((value, classIndex) => value + config.bias[classIndex]!),
+  }
+}
 
+export function combineCalibratedProbabilities(
+  modelProbabilities: number[][],
+  config: CalibratedEnsembleConfig,
+  labels: string[],
+): ScoredClass[] {
+  const probabilities = softmax(calibratedLogits(modelProbabilities, config, labels).logits)
+
+  return probabilities.map((score, index) => ({ score, code: labels[index]! }))
+}
+
+export function combineCalibratedProbabilitiesWithClassSpecialist(
+  modelProbabilities: number[][],
+  config: CalibratedEnsembleConfig,
+  labels: string[],
+  specialistProbabilities: number[],
+  targetCode: string,
+  alpha = 1,
+  specialistTemperature = 1,
+): ScoredClass[] {
+  const targetIndex = labels.indexOf(targetCode)
+  if (targetIndex < 0 || specialistProbabilities.length !== labels.length) {
+    throw new Error('Specialist output does not match its target class and labels')
+  }
+  if (!Number.isFinite(alpha) || alpha < 0 || alpha > 1) {
+    throw new Error('Specialist alpha must be between zero and one')
+  }
+
+  const { activeBlend, logits } = calibratedLogits(modelProbabilities, config, labels)
+  const specialistLogProbabilities = temperatureScaledLogProbabilities(
+    specialistProbabilities,
+    specialistTemperature,
+  )
+  logits[targetIndex] =
+    (1 - alpha) * activeBlend[targetIndex]!
+    + alpha * specialistLogProbabilities[targetIndex]!
+    + config.bias[targetIndex]!
+  const probabilities = softmax(logits)
   return probabilities.map((score, index) => ({ score, code: labels[index]! }))
 }
 

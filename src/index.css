@@ -1587,6 +1587,7 @@ button .vi-note {
 
 .recognition-feedback .training-feedback {
   width: 100%;
+  margin-top: clamp(1.35rem, 2.4vw, 2rem);
   margin-inline: auto;
 }
 
@@ -2096,6 +2097,7 @@ button:disabled {
 
 .bin-panel.result-panel .training-feedback {
   align-self: stretch;
+  flex: 0 0 auto;
   width: 100%;
   max-width: none;
   max-height: none;
@@ -2781,8 +2783,42 @@ button:disabled {
 }
 
 .material-result-warning {
-  border-color: color-mix(in srgb, #f4d68c 62%, transparent);
-  background: color-mix(in srgb, #f4d68c 22%, transparent);
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.72rem;
+  padding: 0.92rem;
+  border-color: color-mix(in srgb, #d14c18 62%, transparent);
+  border-left-width: 0.32rem;
+  background: color-mix(in srgb, #fffaf4 72%, transparent);
+  box-shadow: 0 0.45rem 1rem rgba(93, 45, 17, 0.08);
+}
+
+.material-result-warning > div {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.material-result-warning .material-warning-icon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  color: #fffaf4;
+  background: #d14c18;
+  box-shadow: 0 0.18rem 0.5rem rgba(104, 42, 15, 0.2);
+}
+
+.material-result-warning strong {
+  font-size: 0.84rem;
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+.material-result-warning p {
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  line-height: 1.4;
 }
 
 .camera-controls {

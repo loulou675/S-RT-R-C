@@ -1,0 +1,907 @@
+{
+  "focus": [
+    "dirty_plastic_bag",
+    "plastic_bag"
+  ],
+  "baseline": {
+    "validation": {
+      "images": 292,
+      "top1_correct": 209,
+      "top1_accuracy": 0.715753436088562,
+      "macro_recall": 0.6611649981518907,
+      "hazardous_macro_recall": 0.8095238095238095,
+      "known_item_bin_accuracy": 0.8356164383561644,
+      "grouped_known_item_bin_accuracy": 0.839041095890411,
+      "per_class": [
+        {
+          "class": "aerosol_can",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "aluminium_drink_can",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "battery",
+          "correct": 7,
+          "total": 7,
+          "recall": 1.0
+        },
+        {
+          "class": "cardboard_box",
+          "correct": 15,
+          "total": 15,
+          "recall": 1.0
+        },
+        {
+          "class": "chemical_container",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "dirty_plastic_bag",
+          "correct": 15,
+          "total": 17,
+          "recall": 0.8823529411764706
+        },
+        {
+          "class": "disposable_cutlery",
+          "correct": 1,
+          "total": 6,
+          "recall": 0.16666666666666666
+        },
+        {
+          "class": "disposable_diaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "drink_carton",
+          "correct": 5,
+          "total": 8,
+          "recall": 0.625
+        },
+        {
+          "class": "electronic_cable",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "food_waste",
+          "correct": 18,
+          "total": 27,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "fruit_peel",
+          "correct": 21,
+          "total": 26,
+          "recall": 0.8076923076923077
+        },
+        {
+          "class": "glass_drink_bottle",
+          "correct": 6,
+          "total": 8,
+          "recall": 0.75
+        },
+        {
+          "class": "hair_clip",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "hair_tie",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "light_bulb",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "medical_mask",
+          "correct": 10,
+          "total": 11,
+          "recall": 0.9090909090909091
+        },
+        {
+          "class": "medicine_blister_pack",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "mobile_phone",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "newspaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "paper_bag",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "paper_cup",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "paper_plate",
+          "correct": 2,
+          "total": 5,
+          "recall": 0.4
+        },
+        {
+          "class": "paperboard_packaging",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "pen_marker",
+          "correct": 4,
+          "total": 9,
+          "recall": 0.4444444444444444
+        },
+        {
+          "class": "phone_case",
+          "correct": 0,
+          "total": 2,
+          "recall": 0.0
+        },
+        {
+          "class": "plastic_bag",
+          "correct": 8,
+          "total": 9,
+          "recall": 0.8888888888888888
+        },
+        {
+          "class": "plastic_cosmetic_container",
+          "correct": 0,
+          "total": 3,
+          "recall": 0.0
+        },
+        {
+          "class": "plastic_cup_lid",
+          "correct": 1,
+          "total": 1,
+          "recall": 1.0
+        },
+        {
+          "class": "plastic_food_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_takeaway_cup",
+          "correct": 6,
+          "total": 9,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "plastic_water_bottle",
+          "correct": 5,
+          "total": 5,
+          "recall": 1.0
+        },
+        {
+          "class": "power_bank",
+          "correct": 4,
+          "total": 4,
+          "recall": 1.0
+        },
+        {
+          "class": "printing_paper",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "sanitary_pad",
+          "correct": 4,
+          "total": 8,
+          "recall": 0.5
+        },
+        {
+          "class": "snack_wrapper",
+          "correct": 6,
+          "total": 10,
+          "recall": 0.6
+        },
+        {
+          "class": "steel_food_can",
+          "correct": 4,
+          "total": 6,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "styrofoam_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "tissue",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "vegetable_scraps",
+          "correct": 17,
+          "total": 23,
+          "recall": 0.7391304347826086
+        }
+      ]
+    },
+    "feedback_correct": 10,
+    "feedback_images": 16,
+    "test": {
+      "images": 290,
+      "top1_correct": 202,
+      "top1_accuracy": 0.6965517401695251,
+      "macro_recall": 0.6621048778113996,
+      "hazardous_macro_recall": 0.75,
+      "known_item_bin_accuracy": 0.8275862068965517,
+      "grouped_known_item_bin_accuracy": 0.8413793103448276,
+      "per_class": [
+        {
+          "class": "aerosol_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "aluminium_drink_can",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "battery",
+          "correct": 7,
+          "total": 7,
+          "recall": 1.0
+        },
+        {
+          "class": "cardboard_box",
+          "correct": 11,
+          "total": 12,
+          "recall": 0.9166666666666666
+        },
+        {
+          "class": "chemical_container",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "dirty_plastic_bag",
+          "correct": 4,
+          "total": 4,
+          "recall": 1.0
+        },
+        {
+          "class": "disposable_cutlery",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "disposable_diaper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "drink_carton",
+          "correct": 1,
+          "total": 7,
+          "recall": 0.14285714285714285
+        },
+        {
+          "class": "electronic_cable",
+          "correct": 4,
+          "total": 6,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "food_waste",
+          "correct": 23,
+          "total": 27,
+          "recall": 0.8518518518518519
+        },
+        {
+          "class": "fruit_peel",
+          "correct": 21,
+          "total": 26,
+          "recall": 0.8076923076923077
+        },
+        {
+          "class": "glass_drink_bottle",
+          "correct": 8,
+          "total": 8,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_clip",
+          "correct": 10,
+          "total": 10,
+          "recall": 1.0
+        },
+        {
+          "class": "hair_tie",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "light_bulb",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "medical_mask",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "medicine_blister_pack",
+          "correct": 6,
+          "total": 6,
+          "recall": 1.0
+        },
+        {
+          "class": "mobile_phone",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "newspaper",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "paper_bag",
+          "correct": 3,
+          "total": 4,
+          "recall": 0.75
+        },
+        {
+          "class": "paper_cup",
+          "correct": 5,
+          "total": 6,
+          "recall": 0.8333333333333334
+        },
+        {
+          "class": "paper_plate",
+          "correct": 3,
+          "total": 5,
+          "recall": 0.6
+        },
+        {
+          "class": "paperboard_packaging",
+          "correct": 3,
+          "total": 6,
+          "recall": 0.5
+        },
+        {
+          "class": "pen_marker",
+          "correct": 2,
+          "total": 7,
+          "recall": 0.2857142857142857
+        },
+        {
+          "class": "phone_case",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_bag",
+          "correct": 5,
+          "total": 9,
+          "recall": 0.5555555555555556
+        },
+        {
+          "class": "plastic_cosmetic_container",
+          "correct": 12,
+          "total": 13,
+          "recall": 0.9230769230769231
+        },
+        {
+          "class": "plastic_cup_lid",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "plastic_food_container",
+          "correct": 1,
+          "total": 3,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "plastic_takeaway_cup",
+          "correct": 7,
+          "total": 13,
+          "recall": 0.5384615384615384
+        },
+        {
+          "class": "plastic_water_bottle",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "power_bank",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "printing_paper",
+          "correct": 2,
+          "total": 3,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "sanitary_pad",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "snack_wrapper",
+          "correct": 3,
+          "total": 9,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "steel_food_can",
+          "correct": 2,
+          "total": 6,
+          "recall": 0.3333333333333333
+        },
+        {
+          "class": "styrofoam_container",
+          "correct": 3,
+          "total": 3,
+          "recall": 1.0
+        },
+        {
+          "class": "tissue",
+          "correct": 6,
+          "total": 9,
+          "recall": 0.6666666666666666
+        },
+        {
+          "class": "vegetable_scraps",
+          "correct": 16,
+          "total": 23,
+          "recall": 0.6956521739130435
+        }
+      ]
+    }
+  },
+  "selected": {
+    "rule": "mass",
+    "threshold": 0.4,
+    "validation_gate_count": 26,
+    "feedback_gate_count": 3,
+    "test_gate_count": 16,
+    "validation_top1_correct": 209,
+    "feedback_correct": 11,
+    "test_top1_correct": 202,
+    "test_metrics": {
+      "top1_accuracy": 0.6965517401695251,
+      "macro_recall": 0.6621048778113996,
+      "hazardous_macro_recall": 0.75,
+      "known_item_bin_accuracy": 0.8310344827586207,
+      "grouped_known_item_bin_accuracy": 0.8413793103448276
+    }
+  },
+  "safe_candidates": [
+    {
+      "rule": "mass",
+      "threshold": 0.4,
+      "validation_gate_count": 26,
+      "feedback_gate_count": 3,
+      "test_gate_count": 16,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8413793103448276
+      }
+    },
+    {
+      "rule": "top1",
+      "threshold": 0.0,
+      "validation_gate_count": 27,
+      "feedback_gate_count": 3,
+      "test_gate_count": 17,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8413793103448276
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.25,
+      "validation_gate_count": 28,
+      "feedback_gate_count": 4,
+      "test_gate_count": 20,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.3,
+      "validation_gate_count": 27,
+      "feedback_gate_count": 3,
+      "test_gate_count": 20,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.2,
+      "validation_gate_count": 29,
+      "feedback_gate_count": 4,
+      "test_gate_count": 21,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.15,
+      "validation_gate_count": 29,
+      "feedback_gate_count": 5,
+      "test_gate_count": 25,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.08,
+      "validation_gate_count": 35,
+      "feedback_gate_count": 6,
+      "test_gate_count": 26,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.1,
+      "validation_gate_count": 32,
+      "feedback_gate_count": 6,
+      "test_gate_count": 26,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.05,
+      "validation_gate_count": 42,
+      "feedback_gate_count": 6,
+      "test_gate_count": 28,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "top2",
+      "threshold": 0.0,
+      "validation_gate_count": 31,
+      "feedback_gate_count": 7,
+      "test_gate_count": 30,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.02,
+      "validation_gate_count": 50,
+      "feedback_gate_count": 6,
+      "test_gate_count": 36,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    }
+  ],
+  "search": [
+    {
+      "rule": "top1",
+      "threshold": 0.0,
+      "validation_gate_count": 27,
+      "feedback_gate_count": 3,
+      "test_gate_count": 17,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8413793103448276
+      }
+    },
+    {
+      "rule": "top2",
+      "threshold": 0.0,
+      "validation_gate_count": 31,
+      "feedback_gate_count": 7,
+      "test_gate_count": 30,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.02,
+      "validation_gate_count": 50,
+      "feedback_gate_count": 6,
+      "test_gate_count": 36,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.05,
+      "validation_gate_count": 42,
+      "feedback_gate_count": 6,
+      "test_gate_count": 28,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.08,
+      "validation_gate_count": 35,
+      "feedback_gate_count": 6,
+      "test_gate_count": 26,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.1,
+      "validation_gate_count": 32,
+      "feedback_gate_count": 6,
+      "test_gate_count": 26,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.15,
+      "validation_gate_count": 29,
+      "feedback_gate_count": 5,
+      "test_gate_count": 25,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8344827586206897,
+        "grouped_known_item_bin_accuracy": 0.8482758620689655
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.2,
+      "validation_gate_count": 29,
+      "feedback_gate_count": 4,
+      "test_gate_count": 21,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.25,
+      "validation_gate_count": 28,
+      "feedback_gate_count": 4,
+      "test_gate_count": 20,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.3,
+      "validation_gate_count": 27,
+      "feedback_gate_count": 3,
+      "test_gate_count": 20,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8448275862068966
+      }
+    },
+    {
+      "rule": "mass",
+      "threshold": 0.4,
+      "validation_gate_count": 26,
+      "feedback_gate_count": 3,
+      "test_gate_count": 16,
+      "validation_top1_correct": 209,
+      "feedback_correct": 11,
+      "test_top1_correct": 202,
+      "test_metrics": {
+        "top1_accuracy": 0.6965517401695251,
+        "macro_recall": 0.6621048778113996,
+        "hazardous_macro_recall": 0.75,
+        "known_item_bin_accuracy": 0.8310344827586207,
+        "grouped_known_item_bin_accuracy": 0.8413793103448276
+      }
+    }
+  ]
+}

@@ -1,9 +1,11 @@
-import { build } from 'vite'
+import { build, loadEnv } from 'vite'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 
-const resultFeedbackEnabled = process.env.VITE_RESULT_FEEDBACK !== 'false'
+const mode = process.env.NODE_ENV ?? 'production'
+const env = loadEnv(mode, process.cwd(), '')
+const resultFeedbackEnabled = env.VITE_RESULT_FEEDBACK !== 'false'
 const feedbackUploadConfigured = Boolean(
-  process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY,
+  env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
 )
 
 if (resultFeedbackEnabled && !feedbackUploadConfigured) {
@@ -13,6 +15,7 @@ if (resultFeedbackEnabled && !feedbackUploadConfigured) {
 }
 
 await build({
+  mode,
   build: {
     outDir: 'docs',
     emptyOutDir: true,

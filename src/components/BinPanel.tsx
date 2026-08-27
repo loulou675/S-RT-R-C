@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { TriangleAlert, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
@@ -169,8 +169,13 @@ export function BinPanel({ bin, result, compact = false, resultPanel = false, co
             </section>
             {result.matchLevel === 'material' && result.warning ? (
               <section className="material-result-warning" aria-label="Important material guidance">
-                <strong>Important</strong>
-                <p>{result.warning}<span className="vi-note">{result.warningVi}</span></p>
+                <span className="material-warning-icon" aria-hidden="true">
+                  <TriangleAlert size={21} strokeWidth={2.25} />
+                </span>
+                <div>
+                  <strong>Important</strong>
+                  <p>{result.warning}<span className="vi-note">{result.warningVi}</span></p>
+                </div>
               </section>
             ) : null}
             <section className="steps-section">

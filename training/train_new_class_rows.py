@@ -42,6 +42,7 @@ class Configuration:
     learning_rate: float
     class_weight_exponent: float
     new_class_multiplier: float
+    feedback_weight: float
     weight_decay: float
 
 
@@ -108,6 +109,23 @@ def main() -> None:
     parser.add_argument("--learning-rates", type=float, nargs="+", default=[1e-4, 3e-4, 1e-3])
     parser.add_argument("--class-weight-exponents", type=float, nargs="+", default=[0.0, 0.25, 0.5])
     parser.add_argument("--new-class-multipliers", type=float, nargs="+", default=[1.0, 2.0, 4.0])
+    parser.add_argument(
+        "--feedback-weights",
+        type=float,
+        nargs="+",
+        default=[1.0],
+        help="Per-sample weight for reviewed feedback images.",
+    )
+    parser.add_argument(
+        "--max-validation-drop",
+        type=int,
+        default=0,
+        help=(
+            "Allow an exploratory row candidate to lose this many validation "
+            "predictions. Keep zero for a directly deployable candidate; a non-zero "
+            "candidate must be safety-interpolated before deployment."
+        ),
+    )
     parser.add_argument("--weight-decays", type=float, nargs="+", default=[0.0, 1e-4])
     args = parser.parse_args()
 
@@ -139,7 +157,7 @@ def main() -> None:
         [
             index
             for index, (path, _label) in enumerate(train_samples)
-            if path.name.startswith("feedback-")
+            if path.name.startswith(("feedback-", "feedback_"))
         ],
         dtype=torch.long,
         device=args.device,
@@ -201,6 +219,7 @@ def main() -> None:
             args.learning_rates,
             args.class_weight_exponents,
             args.new_class_multipliers,
+            args.feedback_weights,
             args.weight_decays,
         )
     ]
@@ -244,9 +263,19 @@ def main() -> None:
                     new_weight,
                     new_bias,
                 )
-                loss = F.cross_entropy(
-                    logits, train_y[indices], weight=class_weights
+                sample_loss = F.cross_entropy(
+                    logits,
+                    train_y[indices],
+                    weight=class_weights,
+                    reduction="none",
                 )
+                feedback_mask = torch.isin(indices, feedback_indices)
+                sample_weights = torch.where(
+                    feedback_mask,
+                    torch.tensor(configuration.feedback_weight, device=args.device),
+                    torch.tensor(1.0, device=args.device),
+                )
+                loss = (sample_loss * sample_weights).sum() / sample_weights.sum()
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -280,7 +309,10 @@ def main() -> None:
                     )
             current_key = (feedback_correct, correct, -nll)
             best_key = (best_feedback_correct, best_correct, -best_nll)
-            if correct >= baseline_correct and current_key > best_key:
+            if (
+                correct >= baseline_correct - args.max_validation_drop
+                and current_key > best_key
+            ):
                 best_correct = correct
                 best_nll = nll
                 best_feedback_correct = feedback_correct
@@ -295,6 +327,7 @@ def main() -> None:
             f"config={configuration_index}/{len(configurations)} "
             f"lr={configuration.learning_rate:g} class_exp={configuration.class_weight_exponent:g} "
             f"new_multiplier={configuration.new_class_multiplier:g} wd={configuration.weight_decay:g} "
+            f"feedback_weight={configuration.feedback_weight:g} "
             f"best_top1={best_correct / len(val_y):.4%} ({best_correct}/{len(val_y)}) "
             f"nll={best_nll:.6f} feedback={best_feedback_correct}/{len(feedback_indices)} "
             f"epoch={best_epoch}",
@@ -318,7 +351,10 @@ def main() -> None:
             global_best_correct,
             -global_best_nll,
         )
-        if best_correct >= baseline_correct and candidate_key > global_key:
+        if (
+            best_correct >= baseline_correct - args.max_validation_drop
+            and candidate_key > global_key
+        ):
             global_best_correct = best_correct
             global_best_nll = best_nll
             global_best_feedback_correct = best_feedback_correct
@@ -343,6 +379,7 @@ def main() -> None:
         "baseline_validation_top1": baseline_correct / len(val_y),
         "baseline_validation_nll": baseline_nll,
         "baseline_feedback_correct": baseline_feedback_correct,
+        "max_validation_drop": args.max_validation_drop,
         "best_validation_top1": global_best_correct / len(val_y),
         "best_validation_nll": global_best_nll,
         "best_feedback_correct": global_best_feedback_correct,

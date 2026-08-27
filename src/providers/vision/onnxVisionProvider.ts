@@ -6,6 +6,7 @@ import { preprocessImageToTensor } from '../../lib/image-processing/preprocess'
 import { visionLabelSchema } from '../../lib/validation/schemas'
 import {
   combineCalibratedProbabilities,
+  combineCalibratedProbabilitiesWithClassSpecialist,
   validateCalibratedEnsembleConfig,
   type CalibratedEnsembleConfig,
 } from './calibratedEnsemble'
@@ -215,6 +216,7 @@ export class OnnxVisionProvider implements VisionProvider {
     labels: Array<{ index: number; code: BinCode }>
   }>
   private componentProviderPromise?: Promise<import('./onnxComponentProvider').OnnxComponentProvider>
+  private bagSpecialistSessionPromise?: Promise<ort.InferenceSession>
   private warmupPromise?: Promise<void>
 
   async identify(image: Blob | string | HTMLCanvasElement): Promise<VisionResult> {
@@ -279,13 +281,22 @@ export class OnnxVisionProvider implements VisionProvider {
     for (const session of itemAssets.sessions) {
       modelProbabilities.push(await this.runRawClassifier(session, labels.length, tensor))
     }
-    const itemClasses = itemAssets.config
+    let itemClasses = itemAssets.config
       ? combineCalibratedProbabilities(
           modelProbabilities,
           itemAssets.config,
           labels.map(({ code }) => code),
         )
       : modelProbabilities[0]!.map((score, index) => ({ score, code: labels[index]!.code }))
+    if (itemAssets.config) {
+      itemClasses = await this.refineBagClasses(
+        modelProbabilities,
+        itemClasses,
+        itemAssets.config,
+        labels,
+        tensor,
+      )
+    }
     const binClasses = binAssets
       ? await this.runRawClassifier(binAssets.session, binAssets.labels.length, tensor)
           .then((scores) => scores.map((score, index) => ({ score, code: binAssets.labels[index]!.code })))
@@ -811,6 +822,52 @@ export class OnnxVisionProvider implements VisionProvider {
     return scores
   }
 
+  private async refineBagClasses(
+    modelProbabilities: number[][],
+    itemClasses: ScoredClass[],
+    config: CalibratedEnsembleConfig,
+    labels: LabelRecord[],
+    tensor: ort.Tensor,
+  ) {
+    if (import.meta.env.VITE_BAG_SPECIALIST_ENABLED === 'false') return itemClasses
+
+    const focusCodes = new Set(['plastic_bag', 'dirty_plastic_bag'])
+    const triggerMass = itemClasses.reduce(
+      (sum, entry) => sum + (focusCodes.has(entry.code) ? entry.score : 0),
+      0,
+    )
+    const threshold = Number(import.meta.env.VITE_BAG_SPECIALIST_TRIGGER_MASS ?? 0.4)
+    if (triggerMass < threshold) return itemClasses
+
+    try {
+      const session = await this.loadBagSpecialistSession()
+      const specialistProbabilities = await this.runRawClassifier(session, labels.length, tensor)
+      return combineCalibratedProbabilitiesWithClassSpecialist(
+        modelProbabilities,
+        config,
+        labels.map(({ code }) => code),
+        specialistProbabilities,
+        'plastic_bag',
+      )
+    } catch (error) {
+      console.warn('Bag specialist was skipped; using the deployed ensemble result.', error)
+      return itemClasses
+    }
+  }
+
+  private loadBagSpecialistSession() {
+    if (!this.bagSpecialistSessionPromise) {
+      const configuredPath =
+        import.meta.env.VITE_BAG_SPECIALIST_MODEL_PATH
+        ?? 'known_only__candidate_v86i_bag_specialist.onnx'
+      const modelPath = resolveModelPath(configuredPath)
+      this.bagSpecialistSessionPromise = ort.InferenceSession.create(modelPath, {
+        executionProviders: ['wasm'],
+      })
+    }
+    return this.bagSpecialistSessionPromise
+  }
+
   private loadComponentProvider() {
     if (!this.componentProviderPromise) {
       this.componentProviderPromise = import('./onnxComponentProvider').then(
@@ -823,8 +880,7 @@ export class OnnxVisionProvider implements VisionProvider {
   private loadItemAssets() {
     if (!this.itemAssetsPromise) {
       if (import.meta.env.VITE_AI_ENSEMBLE_ENABLED === 'false') {
-        const modelPath =
-          import.meta.env.VITE_AI_MODEL_PATH ?? `${import.meta.env.BASE_URL}models/waste_classifier.onnx`
+        const modelPath = resolveModelPath(import.meta.env.VITE_AI_MODEL_PATH ?? 'waste_classifier.onnx')
         this.itemAssetsPromise = ort.InferenceSession.create(modelPath, { executionProviders: ['wasm'] })
           .then((session) => ({ sessions: [session] }))
           .catch((error) => {
@@ -841,17 +897,25 @@ export class OnnxVisionProvider implements VisionProvider {
           })
           .then(validateCalibratedEnsembleConfig)
           .then(async (config) => {
-            const modelBase = `${import.meta.env.BASE_URL}models/`
-            const sessions = [] as ort.InferenceSession[]
-            for (const path of config.modelPaths) {
-              const resolvedPath = /^(?:https?:)?\//.test(path) ? path : `${modelBase}${path}`
-              sessions.push(
-                await ort.InferenceSession.create(resolvedPath, {
-                  executionProviders: ['wasm'],
-                }),
-              )
+            if (shouldUseLightweightItemModel()) {
+              return this.loadLightweightItemAssets(config)
             }
-            return { sessions, config }
+
+            const sessions = [] as ort.InferenceSession[]
+            try {
+              for (const path of config.modelPaths) {
+                sessions.push(
+                  await ort.InferenceSession.create(resolveModelPath(path), {
+                    executionProviders: ['wasm'],
+                  }),
+                )
+              }
+              return { sessions, config }
+            } catch (error) {
+              await Promise.allSettled(sessions.map((session) => session.release()))
+              console.warn('Full ensemble could not load; switching to the lightweight item model.', error)
+              return this.loadLightweightItemAssets(config)
+            }
           })
           .catch((error) => {
             if (error instanceof AppError) throw error
@@ -861,6 +925,21 @@ export class OnnxVisionProvider implements VisionProvider {
     }
 
     return this.itemAssetsPromise
+  }
+
+  private async loadLightweightItemAssets(config?: CalibratedEnsembleConfig) {
+    const configuredPath =
+      import.meta.env.VITE_AI_LIGHTWEIGHT_MODEL_PATH
+      ?? config?.modelPaths[0]
+      ?? 'waste_classifier.onnx'
+    try {
+      const session = await ort.InferenceSession.create(resolveModelPath(configuredPath), {
+        executionProviders: ['wasm'],
+      })
+      return { sessions: [session] }
+    } catch (error) {
+      throw new AppError('MODEL_LOAD_FAILED', 'Lightweight item model failed to load', error)
+    }
   }
 
   private loadLabels() {
@@ -1024,6 +1103,26 @@ function normalizeScores(scores: number[]) {
   const exponentials = scores.map((score) => Math.exp(score - maximum))
   const exponentialTotal = exponentials.reduce((sum, score) => sum + score, 0)
   return exponentials.map((score) => score / exponentialTotal)
+}
+
+function resolveModelPath(path: string) {
+  if (/^(?:https?:)?\/\//.test(path) || path.startsWith('blob:')) return path
+
+  const modelFile = path
+    .replace(/^\.\//, '')
+    .replace(/^\/models\//, '')
+    .replace(/^models\//, '')
+  return `${import.meta.env.BASE_URL}models/${modelFile}`
+}
+
+function shouldUseLightweightItemModel() {
+  if (import.meta.env.VITE_AI_LIGHTWEIGHT_MODE === 'true') return true
+  if (import.meta.env.VITE_AI_LIGHTWEIGHT_MODE === 'false' || typeof navigator === 'undefined') return false
+
+  const userAgent = navigator.userAgent
+  const isMobileUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent)
+  const isIPadDesktopMode = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
+  return isMobileUserAgent || isIPadDesktopMode
 }
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
