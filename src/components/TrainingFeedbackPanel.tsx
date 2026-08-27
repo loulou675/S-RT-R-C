@@ -205,7 +205,7 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
         <label className="training-feedback-field">
           <span>
             {selectedItem.code === 'unknown' ? 'What is it called?' : 'Optional note'}
-            <span className="vi-note">{selectedItem.code === 'unknown' ? 'Vật này được gọi là gì?' : 'Ghi chú không bắt buộc'}</span>
+            {selectedItem.code === 'unknown' ? <span className="vi-note">Vật này được gọi là gì?</span> : null}
           </span>
           <input
             value={note}
@@ -233,12 +233,12 @@ export function TrainingFeedbackPanel({ imagePreview, predictedItemCode, errorCo
       <div className="feedback-actions">
         {predictedItemCode ? (
           <button type="button" className="ghost-action" onClick={() => setView('prompt')}>
-            <span>Cancel<span className="vi-note">Hủy</span></span>
+            <span>Cancel</span>
           </button>
         ) : null}
         <button type="button" className="secondary-action" onClick={submitCorrection} disabled={!correctedItemCode || !consented || saving}>
           <Send size={16} aria-hidden="true" />
-          <span>{saving ? 'Saving…' : 'Send correction'}<span className="vi-note">{saving ? 'Đang lưu…' : 'Gửi chỉnh sửa'}</span></span>
+          <span>{saving ? 'Saving…' : 'Send correction'}</span>
         </button>
       </div>
       {saveError ? <p className="inline-error">{saveError}</p> : null}

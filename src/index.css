@@ -2937,9 +2937,10 @@ button:disabled {
   margin-top: 1rem;
 }
 
-.status-block span {
+.status-block .status-spinner {
   width: 0.85rem;
   height: 0.85rem;
+  flex: 0 0 auto;
   border: 2px solid #c5dfff;
   border-top-color: #1056a0;
   border-radius: 999px;

@@ -71,7 +71,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
             <span className="survey-success-icon"><Check size={24} aria-hidden="true" /></span>
             <h2>Thanks for helping us improve.<span className="vi-note">Cảm ơn bạn đã giúp chúng mình cải thiện.</span></h2>
             <p>Your feedback has been saved.<span className="vi-note">Phản hồi của bạn đã được lưu.</span></p>
-            <button type="button" className="primary-action" onClick={onClose}>Done<span className="vi-note">Hoàn tất</span></button>
+            <button type="button" className="primary-action" onClick={onClose}>Done</button>
           </div>
         ) : (
           <>
@@ -159,7 +159,7 @@ export function UserSurveyModal({ inputMethod, predictedItemCode, destinationBin
 
             <button type="button" className="primary-action survey-submit" onClick={submit} disabled={!canSubmit || saving}>
               <Send size={16} aria-hidden="true" />
-              <span>{saving ? 'Saving…' : 'Send feedback'}<span className="vi-note">{saving ? 'Đang lưu…' : 'Gửi phản hồi'}</span></span>
+              <span>{saving ? 'Saving…' : 'Send feedback'}</span>
             </button>
           </>
         )}
