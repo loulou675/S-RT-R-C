@@ -25,7 +25,7 @@ export interface TrainingFeedbackSaveResult {
 }
 
 const storageKey = 'sot-rac-training-feedback-v1'
-const maxRecords = 40
+const maxRecords = 20
 
 /**
  * Save locally first, then send to the private review queue when available.
@@ -95,7 +95,17 @@ export function automaticFeedbackUploadConfigured() {
 }
 
 function writeTrainingFeedback(records: TrainingFeedbackRecord[]) {
-  localStorage.setItem(storageKey, JSON.stringify(records))
+  // Mobile browsers commonly cap localStorage around 5 MB. Keep trimming the
+  // oldest queued images rather than failing the current feedback submission.
+  for (let count = records.length; count >= 1; count -= 1) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(records.slice(0, count)))
+      return true
+    } catch {
+      // Try a smaller queue. Network upload below still runs if storage is off.
+    }
+  }
+  return false
 }
 
 function markTrainingFeedbackUploaded(id: string) {

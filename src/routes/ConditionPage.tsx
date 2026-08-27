@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { EmptyState } from '../components/EmptyState'
@@ -13,6 +14,12 @@ export function ConditionPage() {
   const item = itemCode ? getItem(itemCode) : undefined
   const question = item ? getQuestionForItem(item.code) : undefined
 
+  useEffect(() => {
+    if (item && !question) {
+      navigate(`/result?item=${item.code}&condition=default`, { replace: true })
+    }
+  }, [item, navigate, question])
+
   if (!item) {
     return (
       <EmptyState title="Item is missing / Thiếu thông tin vật thể">
@@ -21,10 +28,7 @@ export function ConditionPage() {
     )
   }
 
-  if (!question) {
-    navigate(`/result?item=${item.code}&condition=default`, { replace: true })
-    return null
-  }
+  if (!question) return null
 
   function answer(condition: ConditionKey) {
     if (!item) return

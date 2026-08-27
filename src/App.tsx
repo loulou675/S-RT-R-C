@@ -1,4 +1,4 @@
-import { createHashRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { FlowProvider } from './app/FlowContext'
 import { AppShell } from './components/AppShell'
 import { AboutPage } from './routes/AboutPage'
@@ -33,6 +33,7 @@ const router = createHashRouter([
       { path: 'eco-tips/:id', element: <ReusePage /> },
       { path: 'reuse/:id', element: <ReusePage /> },
       { path: 'about', element: <AboutPage /> },
+      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
 ])

@@ -235,7 +235,10 @@ export class OnnxVisionProvider implements VisionProvider {
         const sessions = [...itemAssets.sessions, binAssets?.session].filter(
           (entry): entry is ort.InferenceSession => Boolean(entry),
         )
-        if (import.meta.env.VITE_REVIEWED_ROUTER_ENABLED !== 'false') {
+        // Auxiliary routing models improve ambiguous desktop results, but loading
+        // all of them up front can exceed mobile Safari's practical memory limit.
+        // They are still loaded on demand if a scan needs the reviewed router.
+        if (import.meta.env.VITE_REVIEWED_ROUTER_ENABLED !== 'false' && !shouldUseLightweightItemModel()) {
           const [destinationAssets, materialAssets, mixedAssets] = await Promise.all([
             this.loadDestinationAssets(),
             this.loadMaterialAssets(),
@@ -319,8 +322,21 @@ export class OnnxVisionProvider implements VisionProvider {
       exactError = error
     }
 
-    if (import.meta.env.VITE_REVIEWED_ROUTER_ENABLED !== 'false') {
-      return this.resolveReviewedRouter(image, tensor, itemClasses, exactResult, exactError)
+    // A phone starts with the compact exact-item model. Keep its first result
+    // independent from the three optional routing models, which is markedly
+    // more reliable in Safari and still preserves the richer desktop route.
+    if (import.meta.env.VITE_REVIEWED_ROUTER_ENABLED !== 'false' && !shouldUseLightweightItemModel()) {
+      try {
+        return await this.resolveReviewedRouter(image, tensor, itemClasses, exactResult, exactError)
+      } catch (error) {
+        // An optional router asset must not discard a valid exact-item result.
+        // Confidence disagreements still propagate normally for user review.
+        if (error instanceof AppError && error.code === 'MODEL_LOAD_FAILED' && exactResult) {
+          console.warn('Reviewed router could not load; using the exact-item result.', error)
+          return exactResult
+        }
+        throw error
+      }
     }
     if (exactResult) return exactResult
     return this.resolveMaterialFallback(tensor, exactError!)
@@ -1135,7 +1151,7 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
   try {
     return await Promise.race([promise, timeout])
   } finally {
-    if (timeoutId) {
+    if (timeoutId !== undefined) {
       window.clearTimeout(timeoutId)
     }
   }

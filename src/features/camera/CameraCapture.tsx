@@ -11,6 +11,7 @@ interface CameraCaptureProps {
 
 const QUALITY_SAMPLE_SIZE = 64
 const CAPTURE_SIZE = 640
+const CAMERA_START_TIMEOUT_MS = Number(import.meta.env.VITE_CAMERA_START_TIMEOUT_MS ?? 12_000)
 
 type CaptureState = 'preview' | 'needs-retake' | 'processing'
 
@@ -53,7 +54,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
       try {
         stopCamera()
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const stream = await getUserMediaWithTimeout({
           video: {
             facingMode: { ideal: facingMode },
             width: { ideal: 1280 },
@@ -236,6 +237,30 @@ function drawCenterCrop(
   }
 
   context.drawImage(video, sourceX, sourceY, sourceSize, sourceSize, 0, 0, outputSize, outputSize)
+}
+
+async function getUserMediaWithTimeout(constraints: MediaStreamConstraints) {
+  let timedOut = false
+  let timeoutId: number | undefined
+  const mediaRequest = navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    if (timedOut) {
+      stream.getTracks().forEach((track) => track.stop())
+      throw new DOMException('Camera startup timed out.', 'NotReadableError')
+    }
+    return stream
+  })
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => {
+      timedOut = true
+      reject(new DOMException('Camera startup timed out.', 'NotReadableError'))
+    }, CAMERA_START_TIMEOUT_MS)
+  })
+
+  try {
+    return await Promise.race([mediaRequest, timeout])
+  } finally {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+  }
 }
 
 function stopStream(streamRef: { current: MediaStream | null }) {

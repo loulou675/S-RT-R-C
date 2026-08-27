@@ -5,7 +5,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<FlowState>(() => loadState())
 
   useEffect(() => {
-    sessionStorage.setItem(storageKey, JSON.stringify(state))
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify(state))
+    } catch {
+      // The active flow remains usable when private browsing rejects storage.
+    }
   }, [state])
 
   const value = useMemo<FlowContextValue>(

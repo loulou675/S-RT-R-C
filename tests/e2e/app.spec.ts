@@ -32,7 +32,7 @@ test('result links to an illustrated Eco Tip guide', async ({ page }) => {
   await page.getByLabel(/Search waste item/i).fill('cardboard box')
   await page.getByRole('button', { name: /Cardboard box/i }).click()
 
-  await expect(page.getByRole('heading', { name: /Before you recycle it/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Ways to recycle/i })).toBeVisible()
   await page.getByRole('link', { name: /Make a cardboard cable dock/i }).click()
 
   await expect(page).toHaveURL(/\/eco-tips\/cardboard_storage$/)
@@ -85,6 +85,21 @@ test('camera permission denied flow', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: /^Start Scanning/i }).dispatchEvent('click')
   await expect(page.getByText(/Camera access was blocked/i)).toBeVisible()
+})
+
+test('camera startup does not remain stuck when the browser never answers', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      value: {
+        getUserMedia: () => new Promise(() => undefined),
+      },
+      configurable: true,
+    })
+  })
+
+  await page.goto('/')
+  await page.getByRole('button', { name: /^Start Scanning/i }).click()
+  await expect(page.getByText(/No camera was found/i)).toBeVisible()
 })
 
 test('camera waits for a manual photo before recognition', async ({ page }) => {

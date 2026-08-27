@@ -32,7 +32,11 @@ export function saveScanHistory(result: RuleEngineResult, inputMethod: InputMeth
 
   const current = readScanHistory()
   const deduped = current.filter((item) => item.itemCode !== entry.itemCode || item.destinationName !== entry.destinationName)
-  localStorage.setItem(historyKey, JSON.stringify([entry, ...deduped].slice(0, maxEntries)))
+  try {
+    localStorage.setItem(historyKey, JSON.stringify([entry, ...deduped].slice(0, maxEntries)))
+  } catch {
+    // Recognition should still complete when storage is disabled or full.
+  }
 }
 
 export function readScanHistory(): ScanHistoryEntry[] {
@@ -47,5 +51,9 @@ export function readScanHistory(): ScanHistoryEntry[] {
 }
 
 export function clearScanHistory() {
-  localStorage.removeItem(historyKey)
+  try {
+    localStorage.removeItem(historyKey)
+  } catch {
+    // Private browsing may expose Storage while rejecting writes.
+  }
 }

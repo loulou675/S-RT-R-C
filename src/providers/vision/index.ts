@@ -14,4 +14,13 @@ export async function createVisionProvider(mockItemCode?: string): Promise<Visio
   return onnxProviderPromise
 }
 
+/**
+ * Allows one clean retry when a browser fails to initialise an ONNX session.
+ * This is particularly useful on mobile Safari after a transient cache or
+ * memory-pressure failure.
+ */
+export function resetVisionProvider() {
+  onnxProviderPromise = undefined
+}
+
 export type { VisionProvider, VisionResult } from './types'

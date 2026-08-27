@@ -10,10 +10,9 @@ import { isEmbeddedSocialBrowser } from '../features/camera/browserSupport'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, messageForErrorVi, toAppError } from '../lib/errors'
-import { createVisionProvider } from '../providers/vision'
+import { createVisionProvider, resetVisionProvider } from '../providers/vision'
 import {
   focusPrimaryObject,
-  prepareObjectDetector,
   type ObjectDetection,
 } from '../providers/vision/objectDetector'
 import { saveScanHistory } from '../services/history'
@@ -84,7 +83,6 @@ export function LandingPage() {
   useEffect(() => {
     const prepareModel = () => {
       void createVisionProvider().then((provider) => provider.prepare?.()).catch(() => undefined)
-      void prepareObjectDetector().catch(() => undefined)
     }
     const idleId = window.setTimeout(prepareModel, 150)
     return () => window.clearTimeout(idleId)
@@ -216,7 +214,7 @@ export function LandingPage() {
 
     try {
       setStatus('Identifying item... The first scan may take a little longer.')
-      const provider = await createVisionProvider()
+      let provider = await createVisionProvider()
       let inferenceImage = dataUrl
       let visionResult
       try {
@@ -227,42 +225,49 @@ export function LandingPage() {
         const appError = originalError instanceof AppError
           ? originalError
           : toAppError(originalError, 'INFERENCE_FAILED')
-        const eligibleError = ['ITEM_NOT_RECOGNISED', 'ITEM_AMBIGUOUS', 'MATERIAL_NOT_RECOGNISED']
-          .includes(appError.code)
-        if (!eligibleError) throw originalError
+        if (appError.code === 'MODEL_LOAD_FAILED') {
+          setStatus('Retrying the AI model...')
+          resetVisionProvider()
+          provider = await createVisionProvider()
+          visionResult = await provider.identify(dataUrl)
+        } else {
+          const eligibleError = ['ITEM_NOT_RECOGNISED', 'ITEM_AMBIGUOUS', 'MATERIAL_NOT_RECOGNISED']
+            .includes(appError.code)
+          if (!eligibleError) throw originalError
 
-        setStatus('Checking the object framing...')
-        let focused
-        try {
-          focused = await focusPrimaryObject(dataUrl)
-          if (recognitionId !== recognitionIdRef.current) return false
-          if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
-            setDetectorDebug({ image: dataUrl, detection: focused.detection })
+          setStatus('Checking the object framing...')
+          let focused
+          try {
+            focused = await focusPrimaryObject(dataUrl)
+            if (recognitionId !== recognitionIdRef.current) return false
+            if (import.meta.env.VITE_OBJECT_DETECTOR_DEBUG === 'true') {
+              setDetectorDebug({ image: dataUrl, detection: focused.detection })
+            }
+          } catch (error) {
+            if (import.meta.env.DEV) console.warn('Object-focused retry was skipped.', error)
+            throw originalError
           }
-        } catch (error) {
-          if (import.meta.env.DEV) console.warn('Object-focused retry was skipped.', error)
-          throw originalError
-        }
 
-        const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
-        const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
-        const detectedArea = focused.detection ? focused.detection.width * focused.detection.height : 0
-        const canRescue = Boolean(focused.detection)
-          && focused.detection!.confidence >= rescueConfidence
-          && detectedArea >= rescueArea
-          && focused.image !== dataUrl
+          const rescueConfidence = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_CONFIDENCE ?? 0.70)
+          const rescueArea = Number(import.meta.env.VITE_OBJECT_DETECTOR_RESCUE_MIN_AREA ?? 0.10)
+          const detectedArea = focused.detection ? focused.detection.width * focused.detection.height : 0
+          const canRescue = Boolean(focused.detection)
+            && focused.detection!.confidence >= rescueConfidence
+            && detectedArea >= rescueArea
+            && focused.image !== dataUrl
 
-        if (!canRescue) throw originalError
+          if (!canRescue) throw originalError
 
-        try {
-          inferenceImage = focused.image
-          setStatus('Retrying with the detected object...')
-          visionResult = await provider.identify(inferenceImage)
-          setImagePreview(inferenceImage)
-        } catch {
-          // Preserve the original failure as the user-facing reason. The crop
-          // is only allowed to rescue a scan, never replace it with a new error.
-          throw originalError
+          try {
+            inferenceImage = focused.image
+            setStatus('Retrying with the detected object...')
+            visionResult = await provider.identify(inferenceImage)
+            setImagePreview(inferenceImage)
+          } catch {
+            // Preserve the original failure as the user-facing reason. The crop
+            // is only allowed to rescue a scan, never replace it with a new error.
+            throw originalError
+          }
         }
       }
       if (recognitionId !== recognitionIdRef.current) return false
@@ -577,7 +582,7 @@ function UploadDialog({
             <span>Upload</span>
           </span>
           <span>Choose an image or drag and drop it here.<span className="vi-note">Chọn một ảnh hoặc kéo và thả ảnh vào đây.</span></span>
-          <small>JPG, JPEG, PNG and WEBP. Max 20 MB.<span className="vi-note">Tối đa 20 MB.</span></small>
+          <small>JPG, JPEG, PNG and WEBP. Max 8 MB.<span className="vi-note">Tối đa 8 MB.</span></small>
         </button>
         <input
           ref={inputRef}

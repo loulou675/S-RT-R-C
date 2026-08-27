@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { EmptyState } from '../components/EmptyState'
 import { StatusBlock } from '../components/StatusBlock'
-import { createVisionProvider } from '../providers/vision'
-import { toAppError } from '../lib/errors'
+import { createVisionProvider, resetVisionProvider } from '../providers/vision'
+import { AppError, toAppError } from '../lib/errors'
 
 export function PreviewPage() {
   const navigate = useNavigate()
@@ -27,8 +27,19 @@ export function PreviewPage() {
       setStatus('Preparing image...')
       await wait(180)
       setStatus('Identifying item...')
-      const provider = await createVisionProvider(state.mockItemCode)
-      const result = await provider.identify(state.imagePreview)
+      let provider = await createVisionProvider(state.mockItemCode)
+      let result
+      try {
+        result = await provider.identify(state.imagePreview)
+      } catch (error) {
+        const appError = error instanceof AppError ? error : toAppError(error, 'INFERENCE_FAILED')
+        if (appError.code !== 'MODEL_LOAD_FAILED') throw error
+
+        setStatus('Retrying the AI model...')
+        resetVisionProvider()
+        provider = await createVisionProvider(state.mockItemCode)
+        result = await provider.identify(state.imagePreview)
+      }
       setStatus('Checking disposal guidance...')
       await wait(180)
       if (result.kind === 'material') {

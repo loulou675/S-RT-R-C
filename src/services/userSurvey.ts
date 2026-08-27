@@ -65,7 +65,11 @@ function readRecords(): UserSurveyRecord[] {
 }
 
 function writeRecords(records: UserSurveyRecord[]) {
-  localStorage.setItem(storageKey, JSON.stringify(records))
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(records))
+  } catch {
+    // The survey can still be uploaded when local storage is unavailable.
+  }
 }
 
 function markUploaded(id: string) {
