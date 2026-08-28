@@ -72,6 +72,14 @@ describe('rule engine', () => {
     expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'clean_plastic'])
   })
 
+  it('routes cosmetic containers to Landfill regardless of the selected condition', () => {
+    const result = evaluate('plastic_cosmetic_container', 'clean_empty')
+
+    expect(result.destinationBin.code).toBe('landfill')
+    expect(result.preparationSteps).toContain('Place the cosmetic container in Landfill.')
+    expect(result.whyCategory).toContain('Cosmetic containers often retain product residue')
+  })
+
   it('uses detected food to override the default clean-container condition', () => {
     const result = evaluateDisposal({
       siteCode: 'default_station',

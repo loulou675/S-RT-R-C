@@ -179,11 +179,12 @@ export const wasteItems: WasteItem[] = [
     'hộp cơm nhựa',
     'hộp thức ăn',
   ], ['plastic food container', 'food container', 'takeaway container']),
-  item('plastic_cosmetic_container', 'Vỏ mỹ phẩm nhựa', 'Plastic cosmetic container', 'rigid_plastic', 'container', 'Clean Plastic', false, false, [
-    'vỏ mỹ phẩm',
-    'hộp mỹ phẩm nhựa',
+  item('plastic_cosmetic_container', 'Hộp đựng mỹ phẩm', 'Cosmetic container', 'mixed_material', 'container', 'Landfill', false, false, [
+    'hộp đựng mỹ phẩm',
+    'bao bì mỹ phẩm',
+    'lọ mỹ phẩm',
     'tuýp mỹ phẩm',
-  ], ['plastic cosmetic container', 'cosmetic jar', 'cosmetic tube']),
+  ], ['cosmetic container', 'cosmetic packaging', 'cosmetic jar', 'cosmetic tube', 'makeup container']),
   item('plastic_takeaway_box', 'Hộp nhựa mang đi', 'Plastic takeaway box', 'rigid_plastic', 'container', 'Clean Plastic', false, false, [
     'hộp mang đi',
     'hộp nhựa takeaway',
@@ -488,7 +489,7 @@ export const conditionQuestions: ConditionQuestion[] = [
     sortOrder: 1,
     isActive: true,
   })),
-  ...['plastic_food_container', 'plastic_cosmetic_container', 'plastic_takeaway_box'].map((itemCode) => ({
+  ...['plastic_food_container', 'plastic_takeaway_box'].map((itemCode) => ({
     itemCode,
     questionKey: 'container_condition',
     questionVi: 'Hộp đang ở tình trạng nào?',
@@ -635,8 +636,23 @@ export const disposalRules: DisposalRule[] = [
   ...plasticCupRules('plastic_takeaway_cup', 'ly nhựa', 'plastic cup'),
   ...plasticCupRules('milk_tea_cup', 'ly trà sữa', 'milk tea cup'),
   ...plasticContainerRules('plastic_food_container', 'hộp nhựa', 'plastic food container'),
-  ...plasticContainerRules('plastic_cosmetic_container', 'vỏ mỹ phẩm nhựa', 'plastic cosmetic container'),
   ...plasticContainerRules('plastic_takeaway_box', 'hộp nhựa mang đi', 'plastic takeaway box'),
+  rule('plastic_cosmetic_container', 'default', 'landfill', {
+    vi: 'Đặt hộp đựng mỹ phẩm vào Chất Thải Chôn Lấp.',
+    en: 'Place the cosmetic container in Landfill.',
+    stepsVi: [
+      'Đậy kín hộp, lọ hoặc tuýp và không đổ phần mỹ phẩm còn lại xuống bồn rửa.',
+      'Đặt hộp đựng mỹ phẩm vào Chất Thải Chôn Lấp.',
+    ],
+    stepsEn: [
+      'Close the container and do not pour leftover product down the drain.',
+      'Place the cosmetic container in Landfill.',
+    ],
+    whyVi: 'Hộp đựng mỹ phẩm thường còn cặn và có thể gồm nhiều phần như thân, nắp hoặc vòi bơm nên không nên mặc định đưa vào luồng Nhựa Sạch.',
+    whyEn: 'Cosmetic containers often retain product residue and may combine parts such as a body, cap, or pump, so they should not automatically enter the Clean Plastic stream.',
+    warningVi: 'Nếu đây là bao bì thuốc, hóa chất hoặc bình xịt, hãy dùng điểm thu gom xử lý riêng thay vì thùng rác thường.',
+    warningEn: 'If this is medicine, chemical, or aerosol packaging, use a special collection point instead of a general waste bin.',
+  }),
   ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw']),
   ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container']),
   rule('clean_plastic_bag', 'default', 'clean_plastic', {

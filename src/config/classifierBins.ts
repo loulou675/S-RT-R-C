@@ -37,7 +37,7 @@ const itemClassifierBins: Record<string, ClassifierBinCode> = {
   pen_marker: 'landfill',
   phone_case: 'landfill',
   plastic_bag: 'clean_plastic',
-  plastic_cosmetic_container: 'clean_plastic',
+  plastic_cosmetic_container: 'landfill',
   plastic_cup_lid: 'clean_plastic',
   plastic_food_container: 'clean_plastic',
   plastic_takeaway_cup: 'clean_plastic',

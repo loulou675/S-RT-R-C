@@ -1,5 +1,5 @@
 {
-  "version": "v73r37b-supabase-feedback-safe",
+  "version": "v89-supabase-feedback-bias-safe",
   "modelPaths": [
     "known_only__waste_classifier_v71e_bottle_refined.onnx",
     "known_only__waste_classifier_v66_s_late.onnx",
@@ -218,7 +218,7 @@
     -0.19982875883579254,
     -0.15105228126049042,
     0.934255063533783,
-    0.057379789650440216,
+    0.3573797896504402,
     -0.19191142916679382,
     -0.0982530266046524,
     -0.40291303396224976,
