@@ -19,6 +19,13 @@ export interface FocusedObject {
   detection?: ObjectDetection
 }
 
+const diningUtensilClassIndices = new Set([42, 43, 44])
+
+export function isSafeRescueDetection(detection: ObjectDetection) {
+  const area = detection.width * detection.height
+  return !diningUtensilClassIndices.has(detection.classIndex) || area >= 0.22
+}
+
 interface PreparedDetectorImage {
   image: HTMLImageElement
   tensor: ort.Tensor

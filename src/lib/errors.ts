@@ -46,7 +46,7 @@ export function messageForError(code?: AppErrorCode) {
   }
 
   if (code === 'IMAGE_TOO_LARGE') {
-    return 'This image is too large. Please choose a smaller JPG, PNG or WEBP image.'
+    return 'This image is larger than 20 MB. Please choose a smaller JPG, PNG or WEBP image.'
   }
 
   if (code === 'IMAGE_INVALID' || code === 'IMAGE_DECODE_FAILED') {
@@ -100,7 +100,7 @@ export function messageForErrorVi(code?: AppErrorCode) {
   if (code === 'CAMERA_EMBEDDED_BROWSER') return 'Camera có thể không hoạt động ổn định trong Instagram hoặc Facebook. Hãy mở trang bằng Safari hoặc Chrome, hoặc tải ảnh lên.'
   if (code === 'CAMERA_PERMISSION_DENIED') return 'Quyền truy cập camera đã bị chặn. Bạn có thể tải ảnh lên hoặc tìm kiếm thủ công.'
   if (code === 'CAMERA_NOT_AVAILABLE') return 'Không tìm thấy camera trên thiết bị. Bạn có thể tải ảnh lên hoặc tìm kiếm thủ công.'
-  if (code === 'IMAGE_TOO_LARGE') return 'Ảnh quá lớn. Hãy chọn ảnh JPG, PNG hoặc WEBP nhỏ hơn.'
+  if (code === 'IMAGE_TOO_LARGE') return 'Ảnh lớn hơn 20 MB. Hãy chọn ảnh JPG, PNG hoặc WEBP nhỏ hơn.'
   if (code === 'IMAGE_INVALID' || code === 'IMAGE_DECODE_FAILED') return 'Không thể đọc ảnh này. Hãy chọn ảnh JPG, PNG hoặc WEBP.'
   if (code === 'DATABASE_UNAVAILABLE') return 'Hướng dẫn phân loại đang tạm thời gián đoạn. Hãy thử tìm kiếm thủ công.'
   if (code === 'MODEL_NOT_CONFIGURED') return 'Thiếu tệp mô hình AI. Hãy thêm mô hình ONNX và nhãn rồi build lại ứng dụng.'

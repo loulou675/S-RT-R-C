@@ -15,6 +15,10 @@ import { runOnnxExclusive } from './onnxRuntimeQueue'
 import { detectPrimaryObject } from './objectDetector'
 import type { VisionProvider, VisionResult } from './types'
 import type { BinCode, BroadMaterialCode } from '../../types/domain'
+import {
+  disposableCutlerySafetyPolicy,
+  resolveCutlerySafetyDecision,
+} from './visionSafety'
 
 // Static hosts such as GitHub Pages do not provide the isolation headers that
 // SharedArrayBuffer-based WASM workers require. Keep inference single-threaded
@@ -165,7 +169,10 @@ const exactPairMinimums: Record<string, { confidence: number; margin: number }> 
   'clean_plastic:plastic_bag': { confidence: 0.7544924450874329, margin: 0 },
   'landfill:paper_plate': { confidence: 0.7924265099525452, margin: 0 },
   'special_handling:electronic_cable': { confidence: 0.5298750234603882, margin: 0 },
-  'landfill:disposable_cutlery': { confidence: 0.8982371521949768, margin: 0 },
+  'landfill:disposable_cutlery': {
+    confidence: disposableCutlerySafetyPolicy.minimumConfidence,
+    margin: disposableCutlerySafetyPolicy.minimumMargin,
+  },
   'special_handling:mobile_phone': { confidence: 0.5926962924957275, margin: 0 },
   'special_handling:power_bank': { confidence: 0.5802114439964294, margin: 0 },
   'landfill:hair_clip': { confidence: 0.22427272627353667, margin: 0 },
@@ -338,8 +345,72 @@ export class OnnxVisionProvider implements VisionProvider {
         throw error
       }
     }
+    if (
+      import.meta.env.VITE_REVIEWED_ROUTER_ENABLED !== 'false'
+      && shouldUseLightweightItemModel()
+      && exactResult?.kind === 'item'
+      && exactResult.itemCode === 'disposable_cutlery'
+    ) {
+      return this.resolveMobileCutleryResult(tensor, itemClasses, exactResult)
+    }
     if (exactResult) return exactResult
     return this.resolveMaterialFallback(tensor, exactError!)
+  }
+
+  private async resolveMobileCutleryResult(
+    tensor: ort.Tensor,
+    itemClasses: ScoredClass[],
+    exactResult: VisionResult,
+  ): Promise<VisionResult> {
+    const ranked = [...itemClasses].sort((left, right) => right.score - left.score)
+    const candidate = ranked.find(({ code }) => code === 'disposable_cutlery')
+    const strongestAlternative = ranked.find(({ code }) => code !== 'disposable_cutlery')
+    if (!candidate) {
+      throw new AppError('ITEM_AMBIGUOUS', 'Disposable-cutlery evidence is incomplete.')
+    }
+
+    let destination: { code: BinCode; confidence: number } | undefined
+    let material: { code: BroadMaterialCode; confidence: number } | undefined
+    try {
+      const [destinationAssets, materialAssets] = await Promise.all([
+        this.loadDestinationAssets(),
+        this.loadMaterialAssets(),
+      ])
+      const [destinationScores, materialScores] = await Promise.all([
+        this.runRawClassifier(destinationAssets.session, destinationAssets.labels.length, tensor),
+        this.runRawClassifier(materialAssets.session, materialAssets.labels.length, tensor),
+      ])
+      const destinationTop = normalizeScores(destinationScores)
+        .map((score, index) => ({ score, code: destinationAssets.labels[index]!.code }))
+        .sort((left, right) => right.score - left.score)[0]
+      const materialTop = normalizeScores(materialScores)
+        .map((score, index) => ({ score, code: materialAssets.labels[index]!.code }))
+        .sort((left, right) => right.score - left.score)[0]
+      if (destinationTop) destination = { code: destinationTop.code, confidence: destinationTop.score }
+      if (materialTop) material = { code: materialTop.code, confidence: materialTop.score }
+    } catch (error) {
+      console.warn('Cutlery safety review could not load its auxiliary models.', error)
+    }
+
+    const decision = resolveCutlerySafetyDecision({
+      candidateConfidence: candidate.score,
+      candidateMargin: candidate.score - (strongestAlternative?.score ?? 0),
+      destination,
+      material,
+    })
+    if (decision === 'organic') {
+      return this.destinationResult(
+        'organic',
+        Math.min(destination!.confidence, material!.confidence),
+        'organic',
+      )
+    }
+    if (decision === 'cutlery') return exactResult
+
+    throw new AppError(
+      'MATERIAL_NOT_RECOGNISED',
+      'Food and disposable-cutlery evidence conflict; user confirmation is required.',
+    )
   }
 
   private async resolveReviewedRouter(

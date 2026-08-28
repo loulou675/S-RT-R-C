@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { selectPrimaryDetection } from '../providers/vision/objectDetector'
+import {
+  isSafeRescueDetection,
+  selectPrimaryDetection,
+} from '../providers/vision/objectDetector'
 
 const squareGeometry = {
   sourceWidth: 320,
@@ -42,5 +45,29 @@ describe('primary object detection selection', () => {
     expect(
       selectPrimaryDetection([80, 80, 240, 240, 0.18, 39], squareGeometry, 0.3),
     ).toBeUndefined()
+  })
+
+  it('does not rescue a food scan by cropping to a small fork, knife, or spoon', () => {
+    for (const classIndex of [42, 43, 44]) {
+      expect(isSafeRescueDetection({
+        x: 0.4,
+        y: 0.4,
+        width: 0.18,
+        height: 0.3,
+        confidence: 0.9,
+        classIndex,
+      })).toBe(false)
+    }
+  })
+
+  it('still allows a standalone utensil that fills the scan area', () => {
+    expect(isSafeRescueDetection({
+      x: 0.15,
+      y: 0.1,
+      width: 0.5,
+      height: 0.6,
+      confidence: 0.9,
+      classIndex: 44,
+    })).toBe(true)
   })
 })

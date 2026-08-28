@@ -4,20 +4,10 @@ const MAX_UPLOAD_DIMENSION = 1600
 
 export async function fileToDataUrl(file: File) {
   const dimensions = await validateImageFile(file)
-
-  if (Math.max(dimensions.width, dimensions.height) > MAX_UPLOAD_DIMENSION) {
-    return resizeImageFile(file, dimensions)
-  }
-
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = () => reject(reader.error ?? new Error('Image could not be read'))
-    reader.readAsDataURL(file)
-  })
+  return normalizeImageFile(file, dimensions)
 }
 
-async function resizeImageFile(file: File, dimensions: { width: number; height: number }) {
+async function normalizeImageFile(file: File, dimensions: { width: number; height: number }) {
   const objectUrl = URL.createObjectURL(file)
 
   try {
@@ -33,8 +23,8 @@ async function resizeImageFile(file: File, dimensions: { width: number; height: 
     const context = canvas.getContext('2d')
     if (!context) throw new Error('Canvas is unavailable')
 
-    // A white background avoids turning transparent PNG pixels black when the
-    // normalized upload is encoded as JPEG.
+    // Re-encoding through canvas removes EXIF/GPS and other source metadata.
+    // A white background avoids turning transparent PNG pixels black.
     context.fillStyle = '#ffffff'
     context.fillRect(0, 0, canvas.width, canvas.height)
     context.drawImage(image, 0, 0, canvas.width, canvas.height)

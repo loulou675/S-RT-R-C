@@ -10,9 +10,11 @@ import { isEmbeddedSocialBrowser } from '../features/camera/browserSupport'
 import { fileToDataUrl } from '../features/camera/fileInput'
 import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
 import { AppError, messageForError, messageForErrorVi, toAppError } from '../lib/errors'
+import { maxImageMegabytes } from '../lib/validation/imageValidation'
 import { createVisionProvider, resetVisionProvider } from '../providers/vision'
 import {
   focusPrimaryObject,
+  isSafeRescueDetection,
   type ObjectDetection,
 } from '../providers/vision/objectDetector'
 import { saveScanHistory } from '../services/history'
@@ -254,6 +256,7 @@ export function LandingPage() {
           const canRescue = Boolean(focused.detection)
             && focused.detection!.confidence >= rescueConfidence
             && detectedArea >= rescueArea
+            && isSafeRescueDetection(focused.detection!)
             && focused.image !== dataUrl
 
           if (!canRescue) throw originalError
@@ -582,7 +585,7 @@ function UploadDialog({
             <span>Upload</span>
           </span>
           <span>Choose an image or drag and drop it here.<span className="vi-note">Chọn một ảnh hoặc kéo và thả ảnh vào đây.</span></span>
-          <small>JPG, JPEG, PNG and WEBP. Max 8 MB.<span className="vi-note">Tối đa 8 MB.</span></small>
+          <small>JPG, JPEG, PNG and WEBP. Max {maxImageMegabytes} MB.</small>
         </button>
         <input
           ref={inputRef}
