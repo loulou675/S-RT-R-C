@@ -48,7 +48,7 @@ export function AppShell() {
                 onChange={(event) => setQuery(event.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => window.setTimeout(() => setFocused(false), 120)}
-                placeholder="Search waste item / Tìm vật phẩm"
+                placeholder="Search waste item"
                 aria-label="Search waste item"
               />
             </div>
@@ -62,7 +62,7 @@ export function AppShell() {
                     </button>
                   ))
                 ) : (
-                  <p>No item found<span className="vi-note">Không tìm thấy vật phẩm</span></p>
+                  <p>No item found</p>
                 )}
               </div>
             ) : null}

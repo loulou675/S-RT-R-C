@@ -1,44 +1,61 @@
+import { Activity, ArrowUpRight, Cpu, Database, Link as LinkIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export function AboutPage() {
   return (
     <section className="flow-layout about-layout">
       <div className="page-heading about-heading">
+        <div className="about-kicker">About SỌRT RÁC</div>
         <h1>
-          <span>AI identifies the item.<span className="vi-note">AI nhận diện vật thể.</span></span>
-          <span>Sorting guidance decides the bin.<span className="vi-note">Hướng dẫn phân loại xác định đúng thùng.</span></span>
+          <span>AI identifies the item.</span>
+          <span className="about-heading-accent">Sorting guidance decides the bin.</span>
         </h1>
         <p>
-          The app processes one still image in the browser, maps it to a known waste item, then checks curated disposal guidance. Images are retained only when a user chooses to submit post-scan feedback for review.
-          <span className="vi-note">Ứng dụng xử lý một ảnh tĩnh trong trình duyệt, đối chiếu với vật thể đã biết rồi kiểm tra hướng dẫn phân loại. Ảnh chỉ được lưu khi người dùng chủ động gửi phản hồi sau khi quét.</span>
+          SỌRT RÁC turns one quick scan into a clear next step: identify the item, understand its material, and place it where it belongs.
         </p>
       </div>
       <div className="about-card-grid">
-        <section className="about-card">
-          <h2>Local data disclaimer</h2>
+        <section className="about-card about-card-data">
+          <div className="about-card-topline">
+            <span className="about-card-index">01</span>
+            <span className="about-card-icon"><Database size={17} aria-hidden="true" /></span>
+          </div>
+          <h2>Guidance changes</h2>
           <p>
-            This guidance applies to the selected waste station and should be updated when signage or local sorting policy changes.
-            <span className="vi-note">Hướng dẫn áp dụng cho điểm thu gom đã chọn và cần được cập nhật khi biển chỉ dẫn hoặc quy định phân loại thay đổi.</span>
+            Disposal guidance depends on the selected station. Check local signage whenever collection rules change.
           </p>
         </section>
-        <section className="about-card">
-          <h2>Anonymous usage analytics</h2>
+        <section className="about-card about-card-analytics">
+          <div className="about-card-topline">
+            <span className="about-card-index">02</span>
+            <span className="about-card-icon"><Activity size={17} aria-hidden="true" /></span>
+          </div>
+          <h2>Private by design</h2>
           <p>
-            We count visits, visible time, pages, feature actions, and broad device type using random browser and session identifiers. We do not include names, scanned images, or full referral URLs, and browser Do Not Track is respected.
-            <span className="vi-note">Chúng mình ghi nhận lượt truy cập, thời gian hiển thị, trang, thao tác tính năng và loại thiết bị chung bằng mã trình duyệt và phiên ngẫu nhiên. Dữ liệu không gồm tên, ảnh quét hay toàn bộ đường dẫn giới thiệu và tôn trọng cài đặt Do Not Track.</span>
+            We measure broad usage patterns with random browser and session identifiers. Names and scanned images are not included.
           </p>
         </section>
-        <section className="about-card">
-          <h2>Model requirement</h2>
+        <section className="about-card about-card-model">
+          <div className="about-card-topline">
+            <span className="about-card-index">03</span>
+            <span className="about-card-icon"><Cpu size={17} aria-hidden="true" /></span>
+          </div>
+          <h2>Recognition in progress</h2>
           <p>
-            The repository includes the application and AI integration layer. Accurate custom recognition requires a trained ONNX model and labels that match the intended sorting environment.
-            <span className="vi-note">Kho mã nguồn gồm ứng dụng và lớp tích hợp AI. Nhận diện chính xác cần mô hình ONNX đã được huấn luyện cùng bộ nhãn phù hợp với môi trường phân loại.</span>
+            The app combines a trained vision model with structured disposal guidance. More real-world examples help it improve.
           </p>
         </section>
       </div>
-      <Link className="primary-action large about-cta" to="/">
-        <span>Start scanning</span>
-      </Link>
+      <div className="about-footer">
+        <div className="about-footer-note">
+          <LinkIcon size={15} aria-hidden="true" />
+          <span>One scan. One clearer choice.</span>
+        </div>
+        <Link className="primary-action large about-cta" to="/">
+          <span>Start scanning</span>
+          <ArrowUpRight size={18} aria-hidden="true" />
+        </Link>
+      </div>
     </section>
   )
 }
