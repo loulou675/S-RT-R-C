@@ -5417,3 +5417,101 @@ button:disabled {
     margin-bottom: 0.2rem;
   }
 }
+
+/* Responsive result sheet: keep the result inside the viewport on browsers
+   that report a wider CSS viewport than the physical screen. */
+html,
+body,
+#root,
+.app-shell,
+.main-surface,
+.hero-layout,
+.recognition-layout,
+.recognition-pane,
+.result-layout,
+.bin-panel.result-panel,
+.result-panel-body,
+.result-heading,
+.panel-card-stack,
+.training-feedback {
+  min-width: 0;
+  max-width: 100%;
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: clip;
+}
+
+.recognition-layout.has-result {
+  width: min(55vw, 100%);
+  max-width: 100%;
+}
+
+.recognition-layout.has-result .bin-panel.result-panel {
+  width: min(45vw, 100%);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.bin-panel.result-panel .result-heading,
+.bin-panel.result-panel .panel-card-stack,
+.bin-panel.result-panel .training-feedback,
+.bin-panel.result-panel .feedback-prompt,
+.bin-panel.result-panel .feedback-editor {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.bin-panel.result-panel p,
+.bin-panel.result-panel h2,
+.bin-panel.result-panel h3,
+.bin-panel.result-panel strong,
+.bin-panel.result-panel small,
+.bin-panel.result-panel span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  .recognition-layout.has-result {
+    width: 100%;
+    max-width: 100%;
+    padding-right: clamp(1rem, 4vw, 1.75rem);
+    padding-left: clamp(1rem, 4vw, 1.75rem);
+  }
+
+  .recognition-layout.has-result .bin-panel.result-panel {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    height: calc(94svh + env(safe-area-inset-bottom));
+    padding-right: clamp(1rem, 4vw, 1.25rem);
+    padding-left: clamp(1rem, 4vw, 1.25rem);
+    border-radius: 1.8rem 1.8rem 0 0;
+  }
+
+  .bin-panel.result-panel .result-heading > h2 {
+    font-size: clamp(2.25rem, 10vw, 3.9rem);
+  }
+}
+
+@media (max-width: 860px) {
+  .recognition-layout.has-result .bin-panel.result-panel {
+    width: 100%;
+    max-width: 100%;
+    height: calc(94dvh + env(safe-area-inset-bottom));
+    min-height: 0;
+    padding-right: clamp(1rem, 4vw, 1.25rem);
+    padding-left: clamp(1rem, 4vw, 1.25rem);
+  }
+
+  .bin-panel.result-panel .result-heading > h2 {
+    font-size: clamp(2.15rem, 10.5vw, 3.9rem);
+  }
+}
