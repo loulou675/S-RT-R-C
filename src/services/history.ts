@@ -1,4 +1,4 @@
-import type { InputMethod, RuleEngineResult } from '../types/domain'
+import type { BroadMaterialCode, InputMethod, RuleEngineResult } from '../types/domain'
 
 export interface ScanHistoryEntry {
   id: string
@@ -10,6 +10,7 @@ export interface ScanHistoryEntry {
   destinationHex: string
   inputMethod: InputMethod
   createdAt: string
+  materialCode?: BroadMaterialCode
 }
 
 const historyKey = 'sot-rac-history-v1'
@@ -26,11 +27,16 @@ export function saveScanHistory(result: RuleEngineResult, inputMethod: InputMeth
     destinationHex: result.destinationBin.colorHex,
     inputMethod,
     createdAt: new Date().toISOString(),
+    materialCode: result.materialCode,
   }
 
   const current = readScanHistory()
   const deduped = current.filter((item) => item.itemCode !== entry.itemCode || item.destinationName !== entry.destinationName)
-  localStorage.setItem(historyKey, JSON.stringify([entry, ...deduped].slice(0, maxEntries)))
+  try {
+    localStorage.setItem(historyKey, JSON.stringify([entry, ...deduped].slice(0, maxEntries)))
+  } catch {
+    // Recognition should still complete when storage is disabled or full.
+  }
 }
 
 export function readScanHistory(): ScanHistoryEntry[] {
@@ -45,5 +51,9 @@ export function readScanHistory(): ScanHistoryEntry[] {
 }
 
 export function clearScanHistory() {
-  localStorage.removeItem(historyKey)
+  try {
+    localStorage.removeItem(historyKey)
+  } catch {
+    // Private browsing may expose Storage while rejecting writes.
+  }
 }

@@ -1,0 +1,33 @@
+{
+  "root": "training/classifier_dataset",
+  "checked_at": "2026-08-20T16:10:56.979183+00:00",
+  "valid_images": 6382,
+  "converted_images": 0,
+  "quarantined": [
+    {
+      "original": "training/classifier_dataset/.DS_Store",
+      "quarantined": "training/quarantine/incompatible-images/.DS_Store",
+      "reason": "non-image file"
+    },
+    {
+      "original": "training/classifier_dataset/test.cache",
+      "quarantined": "training/quarantine/incompatible-images/test.cache",
+      "reason": "non-image file"
+    },
+    {
+      "original": "training/classifier_dataset/train/.DS_Store",
+      "quarantined": "training/quarantine/incompatible-images/train/.DS_Store",
+      "reason": "non-image file"
+    },
+    {
+      "original": "training/classifier_dataset/train.cache",
+      "quarantined": "training/quarantine/incompatible-images/train.cache",
+      "reason": "non-image file"
+    },
+    {
+      "original": "training/classifier_dataset/val.cache",
+      "quarantined": "training/quarantine/incompatible-images/val.cache",
+      "reason": "non-image file"
+    }
+  ]
+}

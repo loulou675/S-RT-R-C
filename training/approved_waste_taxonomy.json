@@ -1,0 +1,164 @@
+{
+  "project": "SỌRT RÁC",
+  "version": "2026-08-18",
+  "purpose": "Approved phase-one taxonomy for classifier labels, disposal guidance, and dataset collection.",
+  "groups": [
+    {
+      "code": "bottle_can",
+      "label": "Bottle & Can",
+      "binColor": "orange",
+      "examples": [
+        "Plastic bottle",
+        "Glass bottle",
+        "Aluminium can",
+        "Beer can",
+        "Soft drink can",
+        "Food can"
+      ],
+      "classes": [
+        "aluminium_drink_can",
+        "glass_drink_bottle",
+        "plastic_water_bottle",
+        "steel_food_can"
+      ],
+      "conditionTags": ["empty", "rinsed", "crushed", "labelled"],
+      "parts": ["body", "cap", "lid", "pull_tab", "label"]
+    },
+    {
+      "code": "organic",
+      "label": "Organic",
+      "binColor": "green",
+      "examples": [
+        "Leftover food",
+        "Fruit",
+        "Vegetables",
+        "Eggshell",
+        "Bones",
+        "Coffee grounds",
+        "Tea leaves",
+        "Liquid food or drink"
+      ],
+      "classes": ["food_waste", "fruit_peel", "vegetable_scraps"],
+      "conditionTags": ["fresh", "cooked", "wet", "liquid", "spoiled"],
+      "parts": ["food", "remaining_liquid", "organic_container_residue"]
+    },
+    {
+      "code": "clean_plastic",
+      "label": "Clean Plastic",
+      "binColor": "red",
+      "examples": [
+        "Plastic cup",
+        "Plastic bag",
+        "Snack packaging",
+        "Styrofoam",
+        "Plastic container",
+        "Plastic tray"
+      ],
+      "classes": [
+        "plastic_bag",
+        "plastic_cosmetic_container",
+        "plastic_cup_lid",
+        "plastic_food_container",
+        "plastic_takeaway_cup",
+        "snack_wrapper",
+        "styrofoam_container"
+      ],
+      "conditionTags": ["clean", "dry", "empty", "rinsed", "lightly_soiled"],
+      "parts": ["cup", "lid", "cap", "straw", "sleeve", "wrapper", "tray"]
+    },
+    {
+      "code": "paper_cardboard",
+      "label": "Paper & Cardboard",
+      "binColor": "blue",
+      "examples": [
+        "Paper",
+        "Newspaper",
+        "Book",
+        "Notebook",
+        "Cardboard",
+        "Carton",
+        "Paper bag",
+        "Clean pizza box"
+      ],
+      "classes": [
+        "cardboard_box",
+        "drink_carton",
+        "newspaper",
+        "paper_bag",
+        "paperboard_packaging",
+        "printing_paper"
+      ],
+      "conditionTags": ["clean", "dry", "flat", "uncoated", "greasy", "wet"],
+      "parts": ["paper_body", "cardboard_body", "paper_sleeve", "paper_label"]
+    },
+    {
+      "code": "landfill",
+      "label": "Landfill",
+      "binColor": "brown",
+      "examples": [
+        "Dirty plastic",
+        "Paper cup",
+        "Tissue",
+        "Napkin",
+        "Dirty food packaging",
+        "Greasy paper",
+        "Wet wipes",
+        "Medicine blister pack",
+        "Cosmetic sponge",
+        "Clothing and foam items"
+      ],
+      "classes": [
+        "disposable_cutlery",
+        "disposable_diaper",
+        "dirty_plastic_bag",
+        "medical_mask",
+        "medicine_blister_pack",
+        "paper_cup",
+        "paper_plate",
+        "sanitary_pad",
+        "tissue"
+      ],
+      "conditionTags": ["dirty", "wet", "greasy", "contaminated", "mixed_material", "non_recyclable"],
+      "parts": ["paper_cup_body", "plastic_lid", "foam", "fabric", "contaminated_surface"]
+    },
+    {
+      "code": "special_handling",
+      "label": "Hazardous",
+      "binColor": "yellow",
+      "examples": [
+        "Battery",
+        "Bulb",
+        "Paint",
+        "Chemical",
+        "Pesticide",
+        "Medicine",
+        "Syringe",
+        "E-waste",
+        "Power bank"
+      ],
+      "classes": [
+        "aerosol_can",
+        "battery",
+        "chemical_container",
+        "electronic_cable",
+        "light_bulb",
+        "mobile_phone",
+        "power_bank"
+      ],
+      "conditionTags": ["sealed", "leaking", "used", "broken", "sharp", "electronic"],
+      "parts": ["battery_cell", "metal_contact", "glass", "chemical_residue", "electronic_board"]
+    }
+  ],
+  "fallback": {
+    "code": "unknown",
+    "label": "Unknown",
+    "rule": "Use when the image is not one of the target classes, is too ambiguous, or contains no clearly visible item.",
+    "examples": ["people", "hands", "faces", "clothing", "furniture", "animals", "plants", "multiple unrelated objects", "blurred or empty frames"]
+  },
+  "annotationPolicy": {
+    "keepConditionSeparateFromClass": true,
+    "mainCategoryRule": "For mixed objects, return the category of the largest or most disposal-relevant component and show component guidance separately.",
+    "cleanDirtyRule": "Record clean, dirty, wet, greasy, or contaminated as metadata/tags unless the disposal outcome changes enough to justify a dedicated class.",
+    "unknownRule": "Do not force a low-confidence image into a known class; keep it in unknown for later review."
+  }
+}

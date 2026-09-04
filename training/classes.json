@@ -1,17 +1,106 @@
 {
   "classes": [
+    "aerosol_can",
     "aluminium_drink_can",
     "battery",
     "cardboard_box",
+    "chemical_container",
+    "dirty_plastic_bag",
+    "disposable_cutlery",
+    "disposable_diaper",
+    "drink_carton",
+    "electronic_cable",
+    "food_waste",
     "fruit_peel",
+    "glass_drink_bottle",
+    "hair_clip",
+    "hair_tie",
+    "light_bulb",
+    "medical_mask",
+    "medicine_blister_pack",
+    "mobile_phone",
+    "newspaper",
+    "paper_bag",
     "paper_cup",
+    "paper_plate",
+    "paperboard_packaging",
+    "pen_marker",
+    "phone_case",
+    "plastic_bag",
+    "plastic_cosmetic_container",
+    "plastic_cup_lid",
+    "plastic_food_container",
     "plastic_takeaway_cup",
     "plastic_water_bottle",
-    "unknown"
+    "power_bank",
+    "printing_paper",
+    "sanitary_pad",
+    "snack_wrapper",
+    "steel_food_can",
+    "styrofoam_container",
+    "tissue",
+    "unknown",
+    "vegetable_scraps"
   ],
+  "groups": {
+    "bottle_can": [
+      "aluminium_drink_can",
+      "glass_drink_bottle",
+      "plastic_water_bottle",
+      "steel_food_can"
+    ],
+    "organic": [
+      "food_waste",
+      "fruit_peel",
+      "vegetable_scraps"
+    ],
+    "clean_plastic": [
+      "plastic_bag",
+      "plastic_cosmetic_container",
+      "plastic_cup_lid",
+      "plastic_food_container",
+      "plastic_takeaway_cup",
+      "snack_wrapper",
+      "styrofoam_container"
+    ],
+    "paper_cardboard": [
+      "cardboard_box",
+      "drink_carton",
+      "newspaper",
+      "paper_bag",
+      "paperboard_packaging",
+      "printing_paper"
+    ],
+    "landfill": [
+      "disposable_diaper",
+      "disposable_cutlery",
+      "dirty_plastic_bag",
+      "medical_mask",
+      "hair_clip",
+      "hair_tie",
+      "medicine_blister_pack",
+      "paper_cup",
+      "paper_plate",
+      "pen_marker",
+      "phone_case",
+      "sanitary_pad",
+      "tissue"
+    ],
+    "special_handling": [
+      "aerosol_can",
+      "battery",
+      "chemical_container",
+      "electronic_cable",
+      "light_bulb",
+      "mobile_phone",
+      "power_bank"
+    ],
+    "fallback": ["unknown"]
+  },
   "notes": [
+    "These are visually distinguishable phase-one classes, not every searchable item in the app.",
     "Use each code as the name of a class folder.",
-    "Keep unknown as a real class containing non-target waste and non-waste examples.",
-    "Do not encode clean/dirty or wet/dry in the class name; the app's condition flow handles those questions."
+    "Keep unknown as a large, varied class containing non-target waste, non-waste objects, empty frames, hands, faces and clutter.",
+    "Only split a condition into a visual class when the condition is consistently visible and has a dedicated disposal rule."
   ]
 }

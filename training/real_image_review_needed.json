@@ -1,0 +1,11 @@
+{
+  "purpose": "Root-level real images intentionally excluded from the 40-class classifier until a dedicated class or a reliable label is available.",
+  "reviewItems": [
+    {
+      "files": [
+        "532766521_17851510263518856_8213543813749927027_n.jpg"
+      ],
+      "reason": "The waste item is too partial and obscured to assign a reliable label."
+    }
+  ]
+}

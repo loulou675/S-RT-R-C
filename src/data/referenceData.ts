@@ -35,7 +35,7 @@ export const bins: Bin[] = [
     nameVi: 'Chai & Lon',
     nameEn: 'Bottle & Can',
     colorName: 'Orange',
-    colorHex: '#cb795f',
+    colorHex: '#f08c21',
     iconKey: 'bottle',
     descriptionVi: 'Chai nhựa rỗng, lon nhôm và chai được chấp nhận.',
     descriptionEn: 'Empty plastic drink bottles, aluminium cans and accepted bottles.',
@@ -47,7 +47,7 @@ export const bins: Bin[] = [
     nameVi: 'Chất Thải Hữu Cơ',
     nameEn: 'Organic Waste',
     colorName: 'Green',
-    colorHex: '#3e8860',
+    colorHex: '#b4b534',
     iconKey: 'leaf',
     descriptionVi: 'Thức ăn thừa, vỏ trái cây và chất lỏng được chấp nhận.',
     descriptionEn: 'Leftover food, fruit peels and accepted liquids.',
@@ -58,8 +58,8 @@ export const bins: Bin[] = [
     code: 'clean_plastic',
     nameVi: 'Nhựa Sạch',
     nameEn: 'Clean Plastic',
-    colorName: 'Red/Pink',
-    colorHex: '#b43b44',
+    colorName: 'Red',
+    colorHex: '#bd5961',
     iconKey: 'cup',
     descriptionVi: 'Ly nhựa sạch, hộp nhựa sạch, túi nhựa sạch và bao bì sạch.',
     descriptionEn: 'Clean plastic cups, containers, bags, snack packaging and clean foam.',
@@ -71,7 +71,7 @@ export const bins: Bin[] = [
     nameVi: 'Giấy & Bìa Carton',
     nameEn: 'Paper & Cardboard',
     colorName: 'Blue',
-    colorHex: '#235398',
+    colorHex: '#6698cc',
     iconKey: 'paper',
     descriptionVi: 'Giấy, túi giấy và bìa carton sạch, khô.',
     descriptionEn: 'Clean and dry paper, cardboard and paper bags.',
@@ -83,7 +83,7 @@ export const bins: Bin[] = [
     nameVi: 'Chất Thải Chôn Lấp',
     nameEn: 'Landfill',
     colorName: 'Brown',
-    colorHex: '#793c36',
+    colorHex: '#673c33',
     iconKey: 'landfill',
     descriptionVi: 'Nhựa bẩn, ly giấy, khăn giấy và bao bì nhiễm bẩn.',
     descriptionEn: 'Dirty plastic, paper cups, tissues, napkins and contaminated packaging.',
@@ -94,12 +94,24 @@ export const bins: Bin[] = [
     code: 'special_handling',
     nameVi: 'Xử Lý Riêng',
     nameEn: 'Hazardous',
-    colorName: 'Orange',
-    colorHex: '#f4ca59',
+    colorName: 'Yellow',
+    colorHex: '#f4d68c',
     iconKey: 'alert',
     descriptionVi: 'Vật phẩm cần điểm thu gom được phê duyệt hoặc hướng dẫn từ nhân viên phụ trách.',
     descriptionEn: 'Items that need an approved collection point or guidance from responsible staff.',
     sortOrder: 6,
+    isActive: true,
+  },
+  {
+    code: 'mixed_uncertain',
+    nameVi: 'Hỗn Hợp / Chưa Chắc Chắn',
+    nameEn: 'Mixed or Uncertain',
+    colorName: 'Neutral',
+    colorHex: '#77716a',
+    iconKey: 'help',
+    descriptionVi: 'Không chọn thùng cho đến khi xác định được vật phẩm hoặc vật liệu chính xác hơn.',
+    descriptionEn: 'No bin is selected until the item or its material can be identified more precisely.',
+    sortOrder: 7,
     isActive: true,
   },
 ]
@@ -167,10 +179,20 @@ export const wasteItems: WasteItem[] = [
     'hộp cơm nhựa',
     'hộp thức ăn',
   ], ['plastic food container', 'food container', 'takeaway container']),
+  item('plastic_cosmetic_container', 'Hộp đựng mỹ phẩm', 'Cosmetic container', 'mixed_material', 'container', 'Landfill', false, false, [
+    'hộp đựng mỹ phẩm',
+    'bao bì mỹ phẩm',
+    'lọ mỹ phẩm',
+    'tuýp mỹ phẩm',
+  ], ['cosmetic container', 'cosmetic packaging', 'cosmetic jar', 'cosmetic tube', 'makeup container']),
   item('plastic_takeaway_box', 'Hộp nhựa mang đi', 'Plastic takeaway box', 'rigid_plastic', 'container', 'Clean Plastic', false, false, [
     'hộp mang đi',
     'hộp nhựa takeaway',
   ], ['plastic takeaway box', 'takeout box', 'takeaway box']),
+  item('plastic_bag', 'Túi nhựa', 'Plastic bag', 'soft_plastic', 'bag', 'Clean Plastic', false, false, [
+    'túi nhựa',
+    'bao ni lông',
+  ], ['plastic bag', 'carrier bag', 'shopping bag']),
   item('clean_plastic_bag', 'Túi nhựa sạch', 'Clean plastic bag', 'soft_plastic', 'bag', 'Clean Plastic', false, false, [
     'túi nhựa sạch',
     'bao ni lông sạch',
@@ -193,6 +215,10 @@ export const wasteItems: WasteItem[] = [
     'hộp xốp sạch',
     'xốp sạch',
   ], ['clean styrofoam', 'clean foam container']),
+  item('styrofoam_container', 'Hộp xốp', 'Styrofoam container', 'mixed_plastic', 'foam', 'Clean Plastic', false, false, [
+    'hộp xốp',
+    'hộp foam',
+  ], ['styrofoam container', 'foam food box', 'foam container']),
   item('dirty_styrofoam_container', 'Hộp xốp bẩn', 'Dirty styrofoam container', 'mixed_plastic', 'foam', 'Landfill', false, false, [
     'hộp xốp bẩn',
     'xốp bẩn',
@@ -217,6 +243,17 @@ export const wasteItems: WasteItem[] = [
     'túi giấy',
     'bao giấy',
   ], ['paper bag', 'kraft bag']),
+  item('envelope', 'Phong bì giấy', 'Paper envelope', 'paper', 'paper', 'Paper & Cardboard', false, false, [
+    'phong bì',
+    'bao thư',
+  ], ['envelope', 'paper envelope', 'mail envelope']),
+  item('paperboard_packaging', 'Hộp giấy mỏng', 'Paperboard packaging', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
+    'hộp giấy',
+    'bìa giấy mỏng',
+    'bao thuốc lá',
+    'vỏ bao thuốc lá',
+    'hộp thuốc lá',
+  ], ['paperboard packaging', 'cereal box', 'paperboard box', 'cigarette pack', 'cigarette box', 'tobacco pack']),
   item('cardboard_box', 'Thùng carton', 'Cardboard box', 'cardboard', 'box', 'Paper & Cardboard', false, false, [
     'thùng carton',
     'bìa carton',
@@ -231,10 +268,44 @@ export const wasteItems: WasteItem[] = [
     'cốc giấy',
     'ly cà phê giấy',
   ], ['paper cup', 'takeaway coffee cup', 'coffee cup']),
+  item('drink_carton', 'Hộp đồ uống nhiều lớp', 'Drink carton', 'mixed_material', 'box', 'Paper & Cardboard', false, false, [
+    'hộp sữa',
+    'hộp nước trái cây',
+    'hộp giấy nhiều lớp',
+  ], ['drink carton', 'milk carton', 'juice carton']),
+  item('paper_plate', 'Đĩa giấy', 'Paper plate', 'mixed_material', 'paper', 'Landfill', false, false, [
+    'đĩa giấy',
+    'dĩa giấy',
+  ], ['paper plate', 'disposable paper plate']),
+  item('receipt', 'Hóa đơn giấy', 'Receipt', 'mixed_material', 'paper', 'Landfill', false, false, [
+    'hóa đơn',
+    'giấy in nhiệt',
+  ], ['receipt', 'thermal receipt', 'till receipt']),
   item('tissue', 'Khăn giấy', 'Tissue', 'paper', 'paper', 'Landfill', false, false, [
     'khăn giấy',
     'giấy lau',
   ], ['tissue', 'facial tissue']),
+  item('hair_clip', 'Kẹp tóc', 'Hair clip', 'mixed_plastic', 'accessory', 'Landfill', false, false, [
+    'kẹp tóc',
+    'càng cua tóc',
+    'ghim tóc',
+  ], ['hair clip', 'hair claw', 'barrette']),
+  item('hair_tie', 'Dây buộc tóc', 'Hair tie', 'mixed_material', 'accessory', 'Landfill', false, false, [
+    'dây buộc tóc',
+    'thun buộc tóc',
+    'scrunchie',
+  ], ['hair tie', 'hair elastic', 'scrunchie']),
+  item('pen_marker', 'Bút và bút đánh dấu', 'Pen and marker', 'mixed_material', 'stationery', 'Landfill', false, false, [
+    'bút',
+    'bút bi',
+    'bút dạ',
+    'bút highlight',
+  ], ['pen', 'ballpoint pen', 'marker', 'highlighter']),
+  item('phone_case', 'Ốp điện thoại', 'Phone case', 'mixed_plastic', 'accessory', 'Landfill', false, false, [
+    'ốp điện thoại',
+    'ốp lưng',
+    'vỏ điện thoại',
+  ], ['phone case', 'mobile phone cover', 'smartphone case']),
   item('paper_napkin', 'Khăn ăn giấy', 'Paper napkin', 'paper', 'paper', 'Landfill', false, false, [
     'khăn ăn',
     'khăn giấy ăn',
@@ -257,6 +328,15 @@ export const wasteItems: WasteItem[] = [
     'vỏ chuối',
     'vỏ cam',
   ], ['fruit peel', 'banana peel', 'orange peel']),
+  item('vegetable_scraps', 'Rau củ thừa', 'Vegetable scraps', 'organic', 'food', 'Organic Waste', false, false, [
+    'rau thừa',
+    'vỏ rau củ',
+    'cuống rau',
+  ], ['vegetable scraps', 'vegetable peel', 'food scraps']),
+  item('egg_shell', 'Vỏ trứng', 'Egg shell', 'organic', 'food', 'Organic Waste', false, false, [
+    'vỏ trứng',
+    'trứng vỡ',
+  ], ['egg shell', 'eggshell']),
   item('coffee_grounds', 'Bã cà phê', 'Coffee grounds', 'organic', 'food', 'Organic Waste', false, false, [
     'bã cà phê',
     'cặn cà phê',
@@ -273,14 +353,20 @@ export const wasteItems: WasteItem[] = [
     'trà sữa',
     'ly trà sữa',
   ], ['milk tea cup', 'bubble tea cup', 'boba cup']),
-  item('plastic_spoon', 'Muỗng nhựa', 'Plastic spoon', 'mixed_plastic', 'utensil', 'Clean Plastic', false, false, [
+  item('plastic_spoon', 'Muỗng nhựa', 'Plastic spoon', 'mixed_plastic', 'utensil', 'Landfill', false, false, [
     'muỗng nhựa',
     'thìa nhựa',
   ], ['plastic spoon', 'disposable spoon']),
-  item('plastic_fork', 'Nĩa nhựa', 'Plastic fork', 'mixed_plastic', 'utensil', 'Clean Plastic', false, false, [
+  item('plastic_fork', 'Nĩa nhựa', 'Plastic fork', 'mixed_plastic', 'utensil', 'Landfill', false, false, [
     'nĩa nhựa',
     'dĩa nhựa',
   ], ['plastic fork', 'disposable fork']),
+  item('disposable_cutlery', 'Dụng cụ dùng một lần', 'Disposable cutlery', 'mixed_material', 'utensil', 'Landfill', false, false, [
+    'dụng cụ dùng một lần',
+    'dao nĩa muỗng nhựa',
+    'muỗng nĩa nhựa dùng một lần',
+    'đũa dùng một lần',
+  ], ['disposable cutlery', 'plastic cutlery', 'plastic spoon', 'plastic fork', 'plastic knife', 'disposable chopsticks', 'bamboo chopsticks']),
   item('wooden_utensil', 'Dụng cụ gỗ dùng một lần', 'Wooden utensil', 'wood', 'utensil', 'Landfill', false, false, [
     'muỗng gỗ',
     'đũa gỗ',
@@ -314,10 +400,60 @@ export const wasteItems: WasteItem[] = [
     'hộp hóa chất',
     'bao bì hóa chất',
   ], ['chemical container', 'chemical bottle', 'hazard container']),
+  item('paint_container', 'Thùng sơn', 'Paint container', 'hazardous', 'container', 'Special Handling', true, true, [
+    'thùng sơn',
+    'lon sơn',
+    'hộp sơn',
+  ], ['paint container', 'paint can', 'paint tin']),
+  item('pesticide_container', 'Bao bì thuốc trừ sâu', 'Pesticide container', 'hazardous', 'container', 'Special Handling', true, true, [
+    'chai thuốc trừ sâu',
+    'bao bì thuốc bảo vệ thực vật',
+    'hộp thuốc trừ sâu',
+  ], ['pesticide container', 'pesticide bottle', 'insecticide container']),
+  item('aerosol_can', 'Bình xịt', 'Aerosol can', 'hazardous', 'can', 'Special Handling', true, true, [
+    'bình xịt',
+    'lon xịt',
+  ], ['aerosol can', 'spray can', 'pressurised can']),
+  item('medicine_blister_pack', 'Vỏ thuốc rỗng', 'Empty medicine packaging', 'mixed_material', 'packaging', 'Landfill', false, false, [
+    'vỉ thuốc',
+    'bao bì thuốc',
+    'gói thuốc rỗng',
+    'vỏ thuốc rỗng',
+  ], ['medicine blister pack', 'pill blister', 'tablet pack', 'empty medicine sachet', 'empty medicine packaging']),
+  item('loose_medicine', 'Thuốc không sử dụng', 'Unused medicine', 'hazardous', 'small_waste', 'Special Handling', true, true, [
+    'thuốc thừa',
+    'thuốc hết hạn',
+    'viên thuốc',
+  ], ['unused medicine', 'expired medicine', 'loose pills']),
+  item('used_syringe', 'Kim tiêm đã sử dụng', 'Used syringe', 'hazardous', 'small_waste', 'Special Handling', true, true, [
+    'kim tiêm',
+    'ống tiêm',
+    'bơm kim tiêm',
+  ], ['used syringe', 'syringe', 'medical needle']),
+  item('power_bank', 'Pin sạc dự phòng', 'Power bank', 'electronic', 'device', 'Special Handling', true, true, [
+    'sạc dự phòng',
+    'pin dự phòng',
+  ], ['power bank', 'portable charger', 'battery pack']),
+  item('small_e_waste', 'Rác điện tử nhỏ', 'Small e-waste', 'electronic', 'device', 'Special Handling', true, true, [
+    'rác điện tử',
+    'thiết bị điện tử cũ',
+    'đồ điện tử hỏng',
+  ], ['e-waste', 'electronic waste', 'small electronics']),
   item('medical_mask', 'Khẩu trang y tế', 'Medical mask', 'mixed_material', 'mask', 'Landfill', false, false, [
     'khẩu trang',
     'khẩu trang y tế',
   ], ['medical mask', 'face mask', 'disposable mask']),
+  item('disposable_diaper', 'Tã dùng một lần', 'Disposable diaper', 'mixed_material', 'hygiene', 'Landfill', false, false, [
+    'tã',
+    'bỉm',
+  ], ['diaper', 'nappy', 'disposable diaper']),
+  item('sanitary_pad', 'Băng vệ sinh', 'Sanitary pad', 'mixed_material', 'hygiene', 'Landfill', false, false, [
+    'băng vệ sinh',
+  ], ['sanitary pad', 'period pad']),
+  item('cigarette_butt', 'Đầu lọc thuốc lá', 'Cigarette butt', 'mixed_material', 'small_waste', 'Landfill', false, false, [
+    'đầu lọc thuốc lá',
+    'mẩu thuốc lá',
+  ], ['cigarette butt', 'cigarette filter']),
   item('unknown', 'Vật phẩm chưa xác định', 'Unknown item', 'unknown', 'unknown', 'Unknown', false, false, [
     'không rõ',
     'vật lạ',
@@ -367,7 +503,7 @@ export const conditionQuestions: ConditionQuestion[] = [
     sortOrder: 1,
     isActive: true,
   })),
-  ...['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container'].map(
+  ...['plastic_cup_lid', 'plastic_straw', 'snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container'].map(
     (itemCode) => ({
       itemCode,
       questionKey: 'plastic_cleanliness',
@@ -387,6 +523,8 @@ export const conditionQuestions: ConditionQuestion[] = [
     'newspaper',
     'magazine',
     'paper_bag',
+    'envelope',
+    'paperboard_packaging',
     'cardboard_box',
     'pizza_box',
   ].map((itemCode) => ({
@@ -405,42 +543,37 @@ export const conditionQuestions: ConditionQuestion[] = [
   })),
 ]
 
-const liquidFromContainer: ComponentAction[] = [
-  component('Chất lỏng còn lại', 'Remaining liquid', 'organic'),
-  component('Vỏ rỗng', 'Empty container', 'bottle_can'),
-]
-
 const foodFromPlastic: ComponentAction[] = [
-  component('Thức ăn hoặc chất lỏng', 'Food or liquid', 'organic', {
+  component('remaining_liquid', 'Thức ăn hoặc chất lỏng', 'Food or liquid', 'organic', {
     materialVi: 'Thức ăn / chất lỏng',
     materialEn: 'Food / liquid',
   }),
-  component('Phần nhựa đã rửa sạch', 'Cleaned plastic item', 'clean_plastic', {
+  component('container', 'Phần nhựa đã rửa sạch', 'Cleaned plastic item', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
   }),
 ]
 
 const plasticCupComponents: ComponentAction[] = [
-  component('Ly', 'Cup', 'clean_plastic', {
+  component('cup', 'Ly', 'Cup', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Nhựa Sạch',
     disposalNoteEn: 'Clean Plastic',
   }),
-  component('Nắp', 'Lid', 'clean_plastic', {
+  component('lid', 'Nắp', 'Lid', 'clean_plastic', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Kiểm tra quy định tái chế tại điểm bỏ rác',
     disposalNoteEn: 'Check local recycling rules',
   }),
-  component('Ống hút', 'Straw', 'landfill', {
+  component('straw', 'Ống hút', 'Straw', 'landfill', {
     materialVi: 'Nhựa',
     materialEn: 'Plastic',
     disposalNoteVi: 'Chất Thải Chôn Lấp',
     disposalNoteEn: 'Landfill',
   }),
-  component('Ống bọc giấy', 'Paper sleeve', 'paper_cardboard', {
+  component('paper_sleeve', 'Ống bọc giấy', 'Paper sleeve', 'paper_cardboard', {
     materialVi: 'Giấy',
     materialEn: 'Paper',
     disposalNoteVi: 'Giấy & Bìa Carton',
@@ -449,8 +582,44 @@ const plasticCupComponents: ComponentAction[] = [
 ]
 
 const splitPizzaBox: ComponentAction[] = [
-  component('Phần giấy sạch và khô', 'Clean and dry section', 'paper_cardboard'),
-  component('Phần dính dầu mỡ', 'Greasy section', 'landfill'),
+  component('clean_section', 'Phần giấy sạch và khô', 'Clean and dry section', 'paper_cardboard'),
+  component('greasy_section', 'Phần dính dầu mỡ', 'Greasy section', 'landfill'),
+]
+
+const paperCupComponents: ComponentAction[] = [
+  component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+    materialVi: 'Chất lỏng',
+    materialEn: 'Liquid',
+  }),
+  component('paper_cup_body', 'Thân ly', 'Cup body', 'landfill', {
+    materialVi: 'Giấy có lớp phủ',
+    materialEn: 'Lined paper',
+  }),
+  component('lid', 'Nắp nhựa', 'Plastic lid', 'clean_plastic', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+  }),
+  component('straw', 'Ống hút', 'Straw', 'landfill', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+    disposalNoteVi: 'Chất Thải Chôn Lấp',
+    disposalNoteEn: 'Landfill',
+  }),
+]
+
+const drinkCartonComponents: ComponentAction[] = [
+  component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+    materialVi: 'Chất lỏng',
+    materialEn: 'Liquid',
+  }),
+  component('carton_body', 'Thân hộp', 'Carton body', 'paper_cardboard', {
+    materialVi: 'Giấy ghép nhiều lớp',
+    materialEn: 'Paper composite',
+  }),
+  component('plastic_cap', 'Nắp nhựa', 'Plastic cap', 'clean_plastic', {
+    materialVi: 'Nhựa',
+    materialEn: 'Plastic',
+  }),
 ]
 
 export const disposalRules: DisposalRule[] = [
@@ -468,8 +637,24 @@ export const disposalRules: DisposalRule[] = [
   ...plasticCupRules('milk_tea_cup', 'ly trà sữa', 'milk tea cup'),
   ...plasticContainerRules('plastic_food_container', 'hộp nhựa', 'plastic food container'),
   ...plasticContainerRules('plastic_takeaway_box', 'hộp nhựa mang đi', 'plastic takeaway box'),
-  ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw', 'plastic_spoon', 'plastic_fork']),
-  ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container']),
+  rule('plastic_cosmetic_container', 'default', 'landfill', {
+    vi: 'Đặt hộp đựng mỹ phẩm vào Chất Thải Chôn Lấp.',
+    en: 'Place the cosmetic container in Landfill.',
+    stepsVi: [
+      'Đậy kín hộp, lọ hoặc tuýp và không đổ phần mỹ phẩm còn lại xuống bồn rửa.',
+      'Đặt hộp đựng mỹ phẩm vào Chất Thải Chôn Lấp.',
+    ],
+    stepsEn: [
+      'Close the container and do not pour leftover product down the drain.',
+      'Place the cosmetic container in Landfill.',
+    ],
+    whyVi: 'Hộp đựng mỹ phẩm thường còn cặn và có thể gồm nhiều phần như thân, nắp hoặc vòi bơm nên không nên mặc định đưa vào luồng Nhựa Sạch.',
+    whyEn: 'Cosmetic containers often retain product residue and may combine parts such as a body, cap, or pump, so they should not automatically enter the Clean Plastic stream.',
+    warningVi: 'Nếu đây là bao bì thuốc, hóa chất hoặc bình xịt, hãy dùng điểm thu gom xử lý riêng thay vì thùng rác thường.',
+    warningEn: 'If this is medicine, chemical, or aerosol packaging, use a special collection point instead of a general waste bin.',
+  }),
+  ...cleanPlasticRules(['plastic_cup_lid', 'plastic_straw']),
+  ...cleanPlasticRules(['snack_wrapper', 'instant_noodle_packaging', 'clean_styrofoam_container', 'plastic_bag', 'styrofoam_container']),
   rule('clean_plastic_bag', 'default', 'clean_plastic', {
     vi: 'Đặt túi nhựa sạch vào thùng Nhựa Sạch.',
     en: 'Place the clean plastic bag in Clean Plastic.',
@@ -496,29 +681,56 @@ export const disposalRules: DisposalRule[] = [
     'newspaper',
     'magazine',
     'paper_bag',
+    'envelope',
+    'paperboard_packaging',
     'cardboard_box',
   ]),
   ...paperRules(['pizza_box'], true),
   rule('paper_cup', 'default', 'landfill', {
     vi: 'Đổ chất lỏng còn lại vào Hữu Cơ, sau đó bỏ ly giấy vào Chất Thải Chôn Lấp.',
     en: 'Empty remaining liquid into Organic Waste, then place the paper cup in Landfill.',
-    stepsVi: ['Đổ chất lỏng còn lại.', 'Không bỏ ly giấy vào Giấy & Bìa Carton.', 'Đặt ly vào Chất Thải Chôn Lấp.'],
-    stepsEn: ['Empty remaining liquid.', 'Do not place the cup in Paper & Cardboard.', 'Place the cup in Landfill.'],
-    components: [
-      component('Chất lỏng còn lại', 'Remaining liquid', 'organic'),
-      component('Ly giấy', 'Paper cup', 'landfill'),
+    stepsVi: ['Đổ chất lỏng còn lại.', 'Tháo nắp và ống hút khỏi ly.', 'Đặt thân ly giấy vào Chất Thải Chôn Lấp.'],
+    stepsEn: ['Empty remaining liquid.', 'Remove the lid and straw from the cup.', 'Place the paper cup body in Landfill.'],
+    components: paperCupComponents,
+    stepComponentCodes: [
+      ['remaining_liquid'],
+      ['lid', 'straw'],
+      ['paper_cup_body'],
     ],
     warningVi: 'Ly giấy thường có lớp phủ và không thuộc nhóm giấy sạch.',
     warningEn: 'Paper cups usually have a lining and are not clean paper.',
   }),
-  ...defaultRules(['tissue', 'paper_napkin', 'wooden_utensil', 'medical_mask'], 'landfill', {
+  rule('drink_carton', 'default', 'paper_cardboard', {
+    vi: 'Làm rỗng, tráng sạch và để khô hộp trước khi đặt vào Giấy & Bìa Carton.',
+    en: 'Empty, rinse and dry the carton before placing it in Paper & Cardboard.',
+    stepsVi: ['Đổ hết chất lỏng còn lại.', 'Tráng sạch hộp.', 'Để hộp ráo và khô.', 'Đặt vào Giấy & Bìa Carton.'],
+    stepsEn: ['Empty any remaining liquid.', 'Rinse the carton.', 'Let it drain and dry.', 'Place it in Paper & Cardboard.'],
+    components: drinkCartonComponents,
+    stepComponentCodes: [
+      ['remaining_liquid'],
+      ['carton_body'],
+      ['carton_body', 'plastic_cap'],
+      ['carton_body', 'plastic_cap'],
+    ],
+    warningVi: 'Hộp đồ uống có nhiều lớp vật liệu; chỉ bỏ hộp rỗng, sạch và khô vào dòng này.',
+    warningEn: 'Drink cartons contain multiple material layers; use this stream only for empty, clean and dry cartons.',
+  }),
+  ...defaultRules(['tissue', 'hair_clip', 'hair_tie', 'pen_marker', 'phone_case', 'paper_napkin', 'wooden_utensil', 'plastic_spoon', 'plastic_fork', 'disposable_cutlery', 'medical_mask', 'paper_plate', 'receipt', 'disposable_diaper', 'sanitary_pad', 'cigarette_butt'], 'landfill', {
     vi: 'Đặt vật phẩm này vào thùng Chất Thải Chôn Lấp.',
     en: 'Place this item in Landfill.',
     stepsVi: ['Không bỏ vào thùng tái chế.', 'Đặt vào Chất Thải Chôn Lấp.'],
     stepsEn: ['Do not place it in a recycling bin.', 'Place it in Landfill.'],
   }),
+  rule('medicine_blister_pack', 'default', 'landfill', {
+    vi: 'Đặt vỏ thuốc rỗng vào thùng Chất Thải Chôn Lấp.',
+    en: 'Place empty medicine packaging in Landfill.',
+    stepsVi: ['Kiểm tra để chắc chắn vỏ không còn thuốc.', 'Đặt vỏ thuốc rỗng vào Chất Thải Chôn Lấp.'],
+    stepsEn: ['Make sure no medicine remains in the packaging.', 'Place the empty packaging in Landfill.'],
+    warningVi: 'Nếu còn thuốc hoặc thuốc đã hết hạn, không bỏ vào Landfill; hãy dùng điểm thu gom thuốc phù hợp.',
+    warningEn: 'If medicine remains or has expired, do not use Landfill; use an appropriate medicine collection point.',
+  }),
   ...defaultRules(
-    ['food_waste', 'leftover_rice', 'leftover_noodles', 'fruit_peel', 'coffee_grounds', 'tea_bag', 'leftover_drink'],
+    ['food_waste', 'leftover_rice', 'leftover_noodles', 'fruit_peel', 'vegetable_scraps', 'egg_shell', 'coffee_grounds', 'tea_bag', 'leftover_drink'],
     'organic',
     {
       vi: 'Đặt phần hữu cơ vào thùng Chất Thải Hữu Cơ.',
@@ -529,7 +741,7 @@ export const disposalRules: DisposalRule[] = [
       warningEn: 'Any packaging should be sorted separately.',
     },
   ),
-  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container'], 'special_handling', {
+  ...defaultRules(['battery', 'mobile_phone', 'electronic_cable', 'broken_glass', 'light_bulb', 'chemical_container', 'paint_container', 'pesticide_container', 'aerosol_can', 'loose_medicine', 'used_syringe', 'power_bank', 'small_e_waste'], 'special_handling', {
     vi: 'Vật phẩm này cần xử lý riêng.',
     en: 'Special handling is required for this item.',
     stepsVi: ['Không bỏ vào năm thùng rác thông thường.', 'Dùng điểm thu gom được phê duyệt hoặc hỏi nhân viên phụ trách.'],
@@ -633,12 +845,13 @@ function option(value: ConditionKey, labelVi: string, labelEn: string) {
 }
 
 function component(
+  code: string,
   componentVi: string,
   componentEn: string,
   destinationBinCode: BinCode,
   metadata: Pick<ComponentAction, 'materialVi' | 'materialEn' | 'disposalNoteVi' | 'disposalNoteEn'> = {},
 ): ComponentAction {
-  return { componentVi, componentEn, destinationBinCode, ...metadata }
+  return { code, componentVi, componentEn, destinationBinCode, ...metadata }
 }
 
 function rule(
@@ -655,6 +868,7 @@ function rule(
     whyVi?: string
     whyEn?: string
     components?: ComponentAction[]
+    stepComponentCodes?: string[][]
   },
   priority = 100,
 ): DisposalRule {
@@ -671,6 +885,7 @@ function rule(
     whyCategoryEn: text.whyEn ?? defaultWhyForBin(destinationBinCode, 'en'),
     preparationStepsVi: text.stepsVi,
     preparationStepsEn: text.stepsEn,
+    preparationComponentCodes: text.stepsEn.map((_, index) => text.stepComponentCodes?.[index] ?? []),
     warningVi: text.warningVi,
     warningEn: text.warningEn,
     componentActions: text.components ?? [],
@@ -709,23 +924,50 @@ function defaultWhyForBin(destinationBinCode: BinCode, locale: 'vi' | 'en') {
       return isVi
         ? 'Vật phẩm này cần xử lý riêng vì có thể gây rủi ro an toàn hoặc cần điểm thu gom được phê duyệt.'
         : 'This item needs special handling because it may create safety risks or require an approved collection point.'
+    case 'mixed_uncertain':
+      return isVi
+        ? 'Không chọn thùng vì mô hình chỉ xác định được vật liệu hỗn hợp hoặc chưa chắc chắn.'
+        : 'No bin is selected because the material model could only identify a mixed or uncertain material.'
   }
 }
 
 function containerToBottleCanRules(itemCode: string, viName: string, enName: string): DisposalRule[] {
+  const components = [
+    component('remaining_liquid', 'Chất lỏng còn lại', 'Remaining liquid', 'organic', {
+      materialVi: 'Chất lỏng',
+      materialEn: 'Liquid',
+    }),
+    component('container', 'Thân chai / lon', 'Bottle or can body', 'bottle_can'),
+    component('plastic_cap', 'Nắp nhựa', 'Plastic cap', 'clean_plastic', {
+      materialVi: 'Nhựa',
+      materialEn: 'Plastic',
+    }),
+  ]
+
   return [
     rule(itemCode, 'empty', 'bottle_can', {
       vi: `Đặt ${viName} rỗng vào thùng Chai & Lon.`,
       en: `Place the empty ${enName} in Bottle & Can.`,
       stepsVi: ['Đổ bỏ chất lỏng còn lại nếu có.', 'Đảm bảo vật phẩm rỗng.', 'Đặt vào Chai & Lon.'],
       stepsEn: ['Empty any remaining liquid.', 'Make sure the item is empty.', 'Place it in Bottle & Can.'],
+      components,
+      stepComponentCodes: [
+        ['remaining_liquid'],
+        ['container'],
+        ['container', 'plastic_cap'],
+      ],
     }),
     rule(itemCode, 'contains_liquid', 'bottle_can', {
       vi: `Đổ chất lỏng còn lại, sau đó đặt ${viName} rỗng vào Chai & Lon.`,
       en: `Pour out the remaining liquid, then place the empty ${enName} in Bottle & Can.`,
       stepsVi: ['Đổ chất lỏng còn lại vào Hữu Cơ.', 'Để vật phẩm rỗng.', 'Đặt vỏ rỗng vào Chai & Lon.'],
       stepsEn: ['Pour remaining liquid into Organic Waste.', 'Keep the container empty.', 'Place the empty container in Bottle & Can.'],
-      components: liquidFromContainer,
+      components,
+      stepComponentCodes: [
+        ['remaining_liquid'],
+        ['container'],
+        ['container', 'plastic_cap'],
+      ],
     }),
   ]
 }
@@ -735,6 +977,13 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
   const cupWhyEn = 'This cup is made from recyclable plastic, but food or liquid contamination may prevent it from being recycled.'
   const cupStepsVi = ['Đổ chất lỏng còn lại.', 'Rửa ly.', 'Tháo nắp và ống hút.', 'Để khô.', 'Đặt từng phần vào đúng thùng.']
   const cupStepsEn = ['Empty remaining liquid.', 'Rinse the cup.', 'Remove the lid and straw.', 'Let it dry.', 'Place each component in the correct bin.']
+  const cupStepComponentCodes = [
+    ['remaining_liquid'],
+    ['cup'],
+    ['lid', 'straw'],
+    ['cup', 'lid', 'paper_sleeve'],
+    ['cup', 'lid', 'straw', 'paper_sleeve'],
+  ]
 
   return [
     rule(itemCode, 'clean_empty', 'clean_plastic', {
@@ -745,6 +994,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: plasticCupComponents,
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'contains_food_liquid', 'clean_plastic', {
       vi: `Đổ thức ăn hoặc chất lỏng, rửa ${viName}, rồi đặt vào Nhựa Sạch.`,
@@ -754,6 +1004,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: [foodFromPlastic[0], ...plasticCupComponents],
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'empty_dirty_cleanable', 'clean_plastic', {
       vi: `Rửa sạch ${viName}, để ráo, rồi đặt vào Nhựa Sạch.`,
@@ -763,6 +1014,7 @@ function plasticCupRules(itemCode: string, viName: string, enName: string): Disp
       whyVi: cupWhyVi,
       whyEn: cupWhyEn,
       components: plasticCupComponents,
+      stepComponentCodes: cupStepComponentCodes,
     }),
     rule(itemCode, 'cannot_clean', 'landfill', {
       vi: `Nếu ${viName} không thể làm sạch, đặt vào Chất Thải Chôn Lấp.`,

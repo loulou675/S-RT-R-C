@@ -149,7 +149,10 @@ export function CropEditor({ source, onApply, onCancel, onRetake }: CropEditorPr
         />
         <div className="crop-frame" aria-hidden="true" />
       </div>
-      <p className="crop-hint"><Move size={15} aria-hidden="true" /> Drag to reposition. Zoom in or out to fit the item.</p>
+      <p className="crop-hint">
+        <Move size={15} aria-hidden="true" />
+        <span>Drag to reposition. Zoom in or out to fit the item.<span className="vi-note">Kéo để căn lại. Phóng to hoặc thu nhỏ để vật thể vừa khung.</span></span>
+      </p>
       <label className="crop-zoom">
         <span><ZoomIn size={15} aria-hidden="true" /> Zoom in / out</span>
         <input
@@ -165,15 +168,15 @@ export function CropEditor({ source, onApply, onCancel, onRetake }: CropEditorPr
       <div className="button-row full crop-actions">
         <button type="button" className="primary-action" onClick={applyCrop} disabled={!layout}>
           <Check size={17} aria-hidden="true" />
-          Use crop
+          <span>Use crop</span>
         </button>
         <button type="button" className="secondary-action" onClick={onRetake}>
           <RotateCcw size={17} aria-hidden="true" />
-          Retake
+          <span>Retake</span>
         </button>
         <button type="button" className="ghost-action" onClick={onCancel}>
           <X size={17} aria-hidden="true" />
-          Cancel
+          <span>Cancel</span>
         </button>
       </div>
     </div>

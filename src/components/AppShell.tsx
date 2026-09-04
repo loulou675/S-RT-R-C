@@ -1,8 +1,9 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { History, Info, Lightbulb, ScanLine, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { searchWasteItems } from '../features/search/searchEngine'
+import { trackFeature, trackPageView } from '../services/siteAnalytics'
 
 export function AppShell() {
   const navigate = useNavigate()
@@ -11,7 +12,15 @@ export function AppShell() {
   const [focused, setFocused] = useState(false)
   const results = useMemo(() => searchWasteItems(query, 5), [query])
 
+  useEffect(() => {
+    const routeFeature = location.pathname === '/'
+      ? 'waste_scan'
+      : location.pathname.replace(/^\//, '').replace(/\//g, '_') || 'waste_scan'
+    void trackPageView(routeFeature)
+  }, [location.pathname])
+
   function chooseItem(itemCode: string) {
+    void trackFeature('manual_search')
     setQuery('')
     setFocused(false)
     navigate(`/?item=${itemCode}&source=search`)
@@ -27,21 +36,6 @@ export function AppShell() {
 
   return (
     <div className="app-shell">
-      <aside className="rail" aria-label="Primary">
-        <button type="button" aria-label="Eco Tips coming soon" title="Eco Tips coming soon">
-          <Lightbulb size={18} aria-hidden="true" />
-          <span className="nav-label">Eco Tips</span>
-        </button>
-        <button type="button" aria-label="Waste Scan" className={location.pathname === '/' ? 'active' : ''} onClick={() => navigate('/')}>
-          <ScanLine size={20} aria-hidden="true" />
-          <span className="nav-label">Waste Scan</span>
-        </button>
-        <button type="button" aria-label="Scan history" className={location.pathname === '/history' ? 'active' : ''} onClick={() => navigate('/history')}>
-          <History size={17} aria-hidden="true" />
-          <span className="nav-label">History</span>
-        </button>
-        </aside>
-
       <main className="main-surface">
         <header className="top-bar">
           <form className="search-form" role="search" onSubmit={submitSearch}>
@@ -79,6 +73,28 @@ export function AppShell() {
         </header>
         <Outlet />
       </main>
+
+      {/* Keep navigation outside the result content surface so result sheets
+          cannot unmount or cover it while they are open. */}
+      <aside className="rail" aria-label="Primary">
+        <button
+          type="button"
+          aria-label="Eco Tips"
+          className={location.pathname.startsWith('/eco-tips') ? 'active' : ''}
+          onClick={() => { void trackFeature('eco_tips'); navigate('/eco-tips') }}
+        >
+          <Lightbulb size={18} aria-hidden="true" />
+          <span className="nav-label">Eco Tips</span>
+        </button>
+        <button type="button" aria-label="Waste Scan" className={location.pathname === '/' ? 'active' : ''} onClick={() => { void trackFeature('waste_scan'); navigate('/') }}>
+          <ScanLine size={20} aria-hidden="true" />
+          <span className="nav-label">Waste Scan</span>
+        </button>
+        <button type="button" aria-label="Scan history" className={location.pathname === '/history' ? 'active' : ''} onClick={() => { void trackFeature('history'); navigate('/history') }}>
+          <History size={17} aria-hidden="true" />
+          <span className="nav-label">History</span>
+        </button>
+      </aside>
     </div>
   )
 }

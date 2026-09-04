@@ -1,0 +1,125 @@
+{
+  "purpose": "New object candidates collected for review before expanding the production classifier.",
+  "productionModelChanged": false,
+  "classes": [
+    {
+      "code": "hair_clip",
+      "label": "Hair clip",
+      "bin": "landfill",
+      "status": "usable_candidate",
+      "note": "Plastic or mixed-material hair accessories are treated as general waste unless a local collection stream says otherwise."
+    },
+    {
+      "code": "phone_case",
+      "label": "Phone case",
+      "bin": "landfill",
+      "status": "needs_more_images",
+      "note": "Add silicone, TPU, hard plastic, clear, damaged and dirty cases."
+    },
+    {
+      "code": "clothing_fabric",
+      "label": "Clothing and fabric",
+      "bin": "landfill",
+      "status": "usable_candidate",
+      "note": "Keep worn clothing, socks, fabric scraps and torn textiles distinct from clean reusable donation items."
+    },
+    {
+      "code": "hair_tie",
+      "label": "Hair tie",
+      "bin": "landfill",
+      "status": "usable_candidate",
+      "note": "Rubber, elastic and scrunchie variants."
+    },
+    {
+      "code": "comb",
+      "label": "Comb",
+      "bin": "landfill",
+      "status": "needs_more_images",
+      "note": "Collect standalone plastic combs, broken combs and close-up phone photos."
+    },
+    {
+      "code": "broken_toy",
+      "label": "Broken toy",
+      "bin": "landfill",
+      "status": "needs_clean_collection",
+      "note": "Do not use broken-heart graphics or injury photos as toy examples."
+    },
+    {
+      "code": "keychain",
+      "label": "Keychain",
+      "bin": "landfill",
+      "status": "usable_candidate",
+      "note": "Mixed plastic, fabric and metal keychains are a general-waste candidate."
+    },
+    {
+      "code": "cosmetic_sponge",
+      "label": "Cosmetic sponge",
+      "bin": "landfill",
+      "status": "needs_clean_collection",
+      "note": "Keep makeup sponges separate from makeup brushes, palettes and cosmetics."
+    },
+    {
+      "code": "broken_ceramic",
+      "label": "Broken ceramic",
+      "bin": "landfill",
+      "status": "needs_more_images",
+      "note": "Use real shards, broken mugs and plates; do not use paintings or diagrams."
+    },
+    {
+      "code": "birthday_candle",
+      "label": "Birthday candle",
+      "bin": "landfill",
+      "status": "needs_clean_collection",
+      "note": "Use loose wax candles, used candles and candle pieces, not birthday cards or balloon graphics."
+    },
+    {
+      "code": "phone_charger",
+      "label": "Phone charger and adapter",
+      "bin": "special_handling",
+      "status": "usable_candidate",
+      "note": "Treat as e-waste or special collection, not Landfill."
+    },
+    {
+      "code": "pen_marker",
+      "label": "Pen, marker and highlighter",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include empty, broken and used writing tools; do not include pencils made only of paper and wood without checking local rules."
+    },
+    {
+      "code": "pencil_crayon",
+      "label": "Colored pencil and crayon",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include colored pencils, crayons and short used pieces."
+    },
+    {
+      "code": "eraser",
+      "label": "Eraser",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Include worn, dirty and broken erasers."
+    },
+    {
+      "code": "ruler",
+      "label": "Ruler",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Focus on plastic and mixed-material rulers, especially broken ones."
+    },
+    {
+      "code": "glue_tape",
+      "label": "Glue, correction tape and sticky tape",
+      "bin": "landfill",
+      "status": "new_candidate",
+      "note": "Keep glue sticks, correction tape and used tape as separate visual variants in the review notes."
+    },
+    {
+      "code": "notebook",
+      "label": "Notebook and exercise book",
+      "bin": "paper_cardboard",
+      "status": "new_candidate",
+      "note": "Collect worn or discarded notebooks, including spiral-bound and partially used examples."
+    }
+  ]
+}

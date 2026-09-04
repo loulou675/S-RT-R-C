@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { EmptyState } from '../components/EmptyState'
 import { StatusBlock } from '../components/StatusBlock'
-import { createVisionProvider } from '../providers/vision'
-import { toAppError } from '../lib/errors'
+import { createVisionProvider, resetVisionProvider } from '../providers/vision'
+import { AppError, toAppError } from '../lib/errors'
 
 export function PreviewPage() {
   const navigate = useNavigate()
@@ -14,8 +14,8 @@ export function PreviewPage() {
 
   if (!state.imagePreview) {
     return (
-      <EmptyState title="No image selected">
-        Return to scanning and capture or upload one item.
+      <EmptyState title="No image selected / Chưa chọn ảnh">
+        Return to scanning and capture or upload one item. / Hãy quay lại để chụp hoặc tải lên ảnh của một vật thể.
       </EmptyState>
     )
   }
@@ -27,12 +27,27 @@ export function PreviewPage() {
       setStatus('Preparing image...')
       await wait(180)
       setStatus('Identifying item...')
-      const provider = await createVisionProvider(state.mockItemCode)
-      const result = await provider.identify(state.imagePreview)
+      let provider = await createVisionProvider(state.mockItemCode)
+      let result
+      try {
+        result = await provider.identify(state.imagePreview)
+      } catch (error) {
+        const appError = error instanceof AppError ? error : toAppError(error, 'INFERENCE_FAILED')
+        if (appError.code !== 'MODEL_LOAD_FAILED') throw error
+
+        setStatus('Retrying the AI model...')
+        resetVisionProvider()
+        provider = await createVisionProvider(state.mockItemCode)
+        result = await provider.identify(state.imagePreview)
+      }
       setStatus('Checking disposal guidance...')
       await wait(180)
-      setPredictedItem(result.itemCode)
-      navigate('/confirm')
+      if (result.kind === 'material') {
+        navigate(`/?material=${result.materialCode}&source=vision`)
+      } else {
+        setPredictedItem(result.itemCode)
+        navigate('/confirm')
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error(error)
@@ -51,11 +66,11 @@ export function PreviewPage() {
       <div className="button-row full">
         <button type="button" className="primary-action" onClick={processImage} disabled={Boolean(status)}>
           <Check size={17} aria-hidden="true" />
-          Use photo
+          <span>Use photo</span>
         </button>
         <button type="button" className="secondary-action" onClick={() => navigate('/scan')} disabled={Boolean(status)}>
           <RotateCcw size={17} aria-hidden="true" />
-          Retake
+          <span>Retake</span>
         </button>
         <button
           type="button"
@@ -67,7 +82,7 @@ export function PreviewPage() {
           disabled={Boolean(status)}
         >
           <X size={17} aria-hidden="true" />
-          Cancel
+          <span>Cancel</span>
         </button>
       </div>
     </section>

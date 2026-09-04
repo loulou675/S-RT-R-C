@@ -1,0 +1,16 @@
+{
+  "split": "test",
+  "calibration": "training/candidate-v61-four-model-classwise-calibration.json",
+  "base": {
+    "correct": 220,
+    "images": 326,
+    "top1": 0.6748466257668712,
+    "nll": 1.2781355381011963
+  },
+  "calibrated": {
+    "correct": 235,
+    "images": 326,
+    "top1": 0.7208588957055214,
+    "nll": 1.10250723361969
+  }
+}

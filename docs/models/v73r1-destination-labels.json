@@ -1,0 +1,32 @@
+{
+  "labels": [
+    {
+      "index": 0,
+      "code": "bottle_can"
+    },
+    {
+      "index": 1,
+      "code": "organic"
+    },
+    {
+      "index": 2,
+      "code": "clean_plastic"
+    },
+    {
+      "index": 3,
+      "code": "paper_cardboard"
+    },
+    {
+      "index": 4,
+      "code": "landfill"
+    },
+    {
+      "index": 5,
+      "code": "special_handling"
+    },
+    {
+      "index": 6,
+      "code": "mixed_uncertain"
+    }
+  ]
+}

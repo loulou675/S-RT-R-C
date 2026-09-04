@@ -1,0 +1,1163 @@
+{
+  "source_manifest": "training/real_component_annotations.json",
+  "records": [
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8984.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8984_12fda0dd4e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8984_12fda0dd4e.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.57,
+            0.47,
+            0.72,
+            0.36
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8985.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8985_5fdfb48a64.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8985_5fdfb48a64.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.6,
+            0.47,
+            0.42,
+            0.48
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8986.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8986_c93f210d0a.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8986_c93f210d0a.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.6,
+            0.49,
+            0.64,
+            0.26
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8987.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8987_ccbddef3f3.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8987_ccbddef3f3.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.57,
+            0.48,
+            0.7,
+            0.38
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8988.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8988_2531d1a9a5.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8988_2531d1a9a5.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.49,
+            0.72,
+            0.34
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8989.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8989_e1a3b0b30b.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8989_e1a3b0b30b.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.58,
+            0.47,
+            0.74,
+            0.38
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8990.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8990_9a69befadb.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8990_9a69befadb.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.58,
+            0.52,
+            0.62,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8991.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8991_1b869c3c01.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8991_1b869c3c01.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.57,
+            0.52,
+            0.7,
+            0.34
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8992.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8992_9cb2c4b82e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8992_9cb2c4b82e.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.61,
+            0.49,
+            0.44,
+            0.46
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8993.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_a_img_8993_41d5c97ed2.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_a_img_8993_41d5c97ed2.txt",
+      "split": "train",
+      "group": "plastic_lid_session_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.56,
+            0.48,
+            0.74,
+            0.4
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8994.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_8994_a79cd7ad50.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_8994_a79cd7ad50.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.54,
+            0.48,
+            0.72,
+            0.42
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8995.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_8995_3a1685cad8.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_8995_3a1685cad8.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.47,
+            0.7,
+            0.4
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8997.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_8997_3a09fe016e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_8997_3a09fe016e.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.45,
+            0.74,
+            0.44
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8998.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_8998_a0d5322762.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_8998_a0d5322762.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.56,
+            0.46,
+            0.72,
+            0.42
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_8999.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_8999_625ca6435d.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_8999_625ca6435d.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.46,
+            0.72,
+            0.44
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_9001.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_9001_93efd0f48c.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_9001_93efd0f48c.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.56,
+            0.45,
+            0.72,
+            0.44
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_9002.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_9002_f28146571a.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_9002_f28146571a.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.56,
+            0.46,
+            0.76,
+            0.48
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_9003.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_9003_903109b772.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_9003_903109b772.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.44,
+            0.74,
+            0.4
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Clean Plastic/Plastic_lid/IMG_9004.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_lid_session_b_img_9004_b164958804.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_lid_session_b_img_9004_b164958804.txt",
+      "split": "train",
+      "group": "plastic_lid_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.55,
+            0.46,
+            0.76,
+            0.46
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/Ảnh màn hình 2026-08-14 lúc 13.52.49.png",
+      "dataset_image": "training/component_dataset/images/train/real_component_food_bowl_distinct_a_nh_ma_n_hi_nh_2026_08_14_lu_c_13_52_49_c0d21a651b.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_food_bowl_distinct_a_nh_ma_n_hi_nh_2026_08_14_lu_c_13_52_49_c0d21a651b.txt",
+      "split": "train",
+      "group": "food_bowl_distinct",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.5,
+            0.48,
+            0.4,
+            0.44
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9174.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9174_16c83f3eec.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9174_16c83f3eec.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.54,
+            0.44,
+            0.34,
+            0.26
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9175.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9175_e791525205.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9175_e791525205.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.53,
+            0.44,
+            0.24,
+            0.24
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9176.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9176_c49e07ea77.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9176_c49e07ea77.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.55,
+            0.46,
+            0.28,
+            0.26
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9177.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9177_b26194d0da.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9177_b26194d0da.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.53,
+            0.51,
+            0.5,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9178.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9178_09e52d77ca.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9178_09e52d77ca.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.49,
+            0.34,
+            0.32
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9179.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9179_70e3d37cb8.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9179_70e3d37cb8.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.53,
+            0.46,
+            0.38,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9180.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9180_9b39d8cc3a.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9180_9b39d8cc3a.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.56,
+            0.53,
+            0.4,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9181.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9181_b4df7f71a9.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9181_b4df7f71a9.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.5,
+            0.44,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9182.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9182_891a0d3e84.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9182_891a0d3e84.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.51,
+            0.5,
+            0.4,
+            0.32
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9183.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9183_c7d6bfe1a0.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9183_c7d6bfe1a0.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.51,
+            0.42,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9184.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9184_8e7f18d0f0.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9184_8e7f18d0f0.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.53,
+            0.44,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9185.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9185_586e02f18f.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9185_586e02f18f.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.51,
+            0.52,
+            0.4,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9186.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9186_e4e052a793.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9186_e4e052a793.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.51,
+            0.49,
+            0.42,
+            0.32
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9187.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9187_537c73eb22.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9187_537c73eb22.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.49,
+            0.46,
+            0.32
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9188.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9188_28958e2805.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9188_28958e2805.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.51,
+            0.53,
+            0.42,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9189.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9189_7e36b373b6.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9189_7e36b373b6.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.49,
+            0.54,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9190.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9190_6f7f6b56c6.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9190_6f7f6b56c6.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.48,
+            0.5,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9191.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9191_2137442949.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9191_2137442949.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.53,
+            0.5,
+            0.44,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9192.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9192_27a9787994.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9192_27a9787994.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.51,
+            0.44,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9193.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9193_d58bb65c26.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9193_d58bb65c26.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.5,
+            0.44,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9194.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9194_62f99363b4.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9194_62f99363b4.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.52,
+            0.44,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9195.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9195_898dffb84e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9195_898dffb84e.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.52,
+            0.49,
+            0.44,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9196.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9196_1fcc131745.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9196_1fcc131745.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.5,
+            0.49,
+            0.62,
+            0.6
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9197.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9197_0d13962d20.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9197_0d13962d20.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.46,
+            0.5,
+            0.5,
+            0.56
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Organic_/food_waste/IMG_9198.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_chicken_bone_session_img_9198_6d0a49f4d3.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_chicken_bone_session_img_9198_6d0a49f4d3.txt",
+      "split": "train",
+      "group": "chicken_bone_session",
+      "boxes": [
+        {
+          "class": "food",
+          "xywhn": [
+            0.51,
+            0.57,
+            0.44,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_almond__762867080_17938179606300763_7459321722131604576_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_almond_a_obj_carton_almond_762867080_17938179606300763_74_8d56132e56.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_almond_a_obj_carton_almond_762867080_17938179606300763_74_8d56132e56.txt",
+      "split": "train",
+      "group": "carton_almond_a",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.52,
+            0.38,
+            0.18,
+            0.12
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_almond__763664803_17938179597300763_5352555533052031378_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_almond_b_obj_carton_almond_763664803_17938179597300763_53_5b09ef33a6.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_almond_b_obj_carton_almond_763664803_17938179597300763_53_5b09ef33a6.txt",
+      "split": "train",
+      "group": "carton_almond_b",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_apple__491459207_17885043018257750_8468110398927261334_n.webp",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_apple_obj_carton_apple_491459207_17885043018257750_846_72a349d031.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_apple_obj_carton_apple_491459207_17885043018257750_846_72a349d031.txt",
+      "split": "train",
+      "group": "carton_apple",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.5,
+            0.055,
+            0.2,
+            0.11
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_apple__491460898_17885043009257750_5953321137631347418_n.webp",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_apple_obj_carton_apple_491460898_17885043009257750_595_719f5fedde.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_apple_obj_carton_apple_491460898_17885043009257750_595_719f5fedde.txt",
+      "split": "train",
+      "group": "carton_apple",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.5,
+            0.055,
+            0.18,
+            0.11
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_blue_open__587783516_17881433682436586_716750017368868538_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_blue_open_obj_carton_blue_open_587783516_17881433682436586_bf0b725f82.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_blue_open_obj_carton_blue_open_587783516_17881433682436586_bf0b725f82.txt",
+      "split": "train",
+      "group": "carton_blue_open",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_blue_open__607974456_17881433643436586_6485311460826871862_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_blue_open_obj_carton_blue_open_607974456_17881433643436586_8f3d032347.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_blue_open_obj_carton_blue_open_607974456_17881433643436586_8f3d032347.txt",
+      "split": "train",
+      "group": "carton_blue_open",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_flex__612130225_17937980949112212_1046250181425781881_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_flex_obj_carton_flex_612130225_17937980949112212_1046_486e154939.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_flex_obj_carton_flex_612130225_17937980949112212_1046_486e154939.txt",
+      "split": "train",
+      "group": "carton_flex",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_fresh_milk__590405280_17917377960218256_7276544921239790907_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_fresh_milk_obj_carton_fresh_milk_590405280_1791737796021825_275d877a0d.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_fresh_milk_obj_carton_fresh_milk_590405280_1791737796021825_275d877a0d.txt",
+      "split": "train",
+      "group": "carton_fresh_milk",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_green_farm__729858823_17955446187177205_3607980110604342456_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_green_farm_obj_carton_green_farm_729858823_1795544618717720_91596dec0d.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_green_farm_obj_carton_green_farm_729858823_1795544618717720_91596dec0d.txt",
+      "split": "train",
+      "group": "carton_green_farm",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.5,
+            0.23,
+            0.18,
+            0.12
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_mocchau__658208484_17941753812174596_1507767956105460138_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_mocchau_obj_carton_mocchau_658208484_17941753812174596_1_2e1bb3a00f.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_mocchau_obj_carton_mocchau_658208484_17941753812174596_1_2e1bb3a00f.txt",
+      "split": "train",
+      "group": "carton_mocchau",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_mocchau__659025419_17941753800174596_4914190175070712534_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_mocchau_obj_carton_mocchau_659025419_17941753800174596_4_4ca55890d6.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_mocchau_obj_carton_mocchau_659025419_17941753800174596_4_4ca55890d6.txt",
+      "split": "train",
+      "group": "carton_mocchau",
+      "boxes": []
+    },
+    {
+      "source": "real image/Paper & Cardboard/drink_carton/obj_carton_nut_milk__657374560_17956712364099538_4908729842838058572_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_carton_nut_milk_obj_carton_nut_milk_657374560_17956712364099538__9174f29335.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_carton_nut_milk_obj_carton_nut_milk_657374560_17956712364099538__9174f29335.txt",
+      "split": "train",
+      "group": "carton_nut_milk",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9053.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9053_0de9d13117.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9053_0de9d13117.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9054.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9054_a386ccfb5b.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9054_a386ccfb5b.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9055.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9055_23e3864ec7.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9055_23e3864ec7.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9056.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9056_5eacaf8326.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9056_5eacaf8326.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9057.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9057_f4fffd9c8b.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9057_f4fffd9c8b.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9058.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9058_357afa1dd2.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9058_357afa1dd2.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9059.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9059_bc0f769d4b.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9059_bc0f769d4b.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/Dirty_plastic/IMG_9060.JPG",
+      "dataset_image": "training/component_dataset/images/train/real_component_plastic_cutlery_negative_img_9060_da72d9e404.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_plastic_cutlery_negative_img_9060_da72d9e404.txt",
+      "split": "train",
+      "group": "plastic_cutlery_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Clean Plastic/plastic_food_container/obj_clear_food_container__618981808_17938265583130145_7494119533249868753_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_empty_container_negative_obj_clear_food_container_618981808_1793826558313_716455e732.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_empty_container_negative_obj_clear_food_container_618981808_1793826558313_716455e732.txt",
+      "split": "train",
+      "group": "empty_container_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__655143239_18000424661866028_6770491966775909461_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_empty_container_negative_obj_icecream_tub_red_655143239_18000424661866028_76da7fa326.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_empty_container_negative_obj_icecream_tub_red_655143239_18000424661866028_76da7fa326.txt",
+      "split": "train",
+      "group": "empty_container_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Clean Plastic/plastic_food_container/obj_icecream_tub_red__709862597_17873432415671855_368979356229111986_n.webp",
+      "dataset_image": "training/component_dataset/images/train/real_component_empty_container_negative_obj_icecream_tub_red_709862597_17873432415671855_1596d84e55.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_empty_container_negative_obj_icecream_tub_red_709862597_17873432415671855_1596d84e55.txt",
+      "split": "train",
+      "group": "empty_container_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Clean:Dirty/Dirty/obj_icecream_tub_red__714871388_17873432424671855_6618385067579779313_n.webp",
+      "dataset_image": "training/component_dataset/images/train/real_component_dirty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_5c9f32517e.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_dirty_container_negative_obj_icecream_tub_red_714871388_17873432424671855_5c9f32517e.txt",
+      "split": "train",
+      "group": "dirty_container_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Clean Plastic/plastic_food_container/obj_icecream_tub_turquoise__588370518_17934099315112371_5793710024788888233_n.jpg",
+      "dataset_image": "training/component_dataset/images/train/real_component_empty_container_negative_obj_icecream_tub_turquoise_588370518_17934099315_fdba7e71f3.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_empty_container_negative_obj_icecream_tub_turquoise_588370518_17934099315_fdba7e71f3.txt",
+      "split": "train",
+      "group": "empty_container_negative",
+      "boxes": []
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9313.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9313_a77201753c.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9313_a77201753c.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.68,
+            0.61,
+            0.2
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.6,
+            0.39,
+            0.16,
+            0.55
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9314.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9314_d499b5565f.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9314_d499b5565f.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.78,
+            0.61,
+            0.32
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.62,
+            0.48,
+            0.15,
+            0.43
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9315.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9315_0ab5c74f47.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9315_0ab5c74f47.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.79,
+            0.61,
+            0.34
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.6,
+            0.46,
+            0.15,
+            0.47
+          ]
+        }
+      ]
+    },
+    {
+      "source": "real image/Landfill_/paper_cup/obj_paper_cup_parts_session_b__IMG_9316.heic",
+      "dataset_image": "training/component_dataset/images/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9316_4d4beae73a.jpg",
+      "dataset_label": "training/component_dataset/labels/train/real_component_paper_cup_parts_session_b_obj_paper_cup_parts_session_b_img_9316_4d4beae73a.txt",
+      "split": "train",
+      "group": "paper_cup_parts_session_b",
+      "boxes": [
+        {
+          "class": "closure",
+          "xywhn": [
+            0.53,
+            0.79,
+            0.6,
+            0.4
+          ]
+        },
+        {
+          "class": "straw",
+          "xywhn": [
+            0.61,
+            0.81,
+            0.16,
+            0.25
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "reviewDate": "2026-08-20",
+  "scope": "Post-promotion visual audit for future classifier training",
+  "rejected": [
+    {
+      "class": "phone_case",
+      "sha256": "9d71eaf24e304394665d7751884c564fdcceb1d1100898ba0efc1cb614fc4a32",
+      "reason": "Fabric phone sleeve rather than the rigid smartphone case represented by validation and field use"
+    },
+    {
+      "class": "phone_case",
+      "sha256": "b0adac0fdcdf4b4545ed3be9dfe700a236f20f3ada59b4fe10c0bf022f764136",
+      "reason": "Fabric purse/pouch rather than a rigid smartphone case"
+    },
+    {
+      "class": "hair_clip",
+      "sha256": "08617fc0a4fdd4da1c89b2d139bacda46c7d9d10429340321a170b2b5f29d13b",
+      "reason": "Antique artifact is outside the intended modern one-item field distribution"
+    }
+  ],
+  "replacementNotes": [
+    "Future phone_case training now uses three real rigid-case field views from roboflow_phone_case_v1.",
+    "The hair_clip validation replacement is a single loose bow clip and is not present in train or test."
+  ]
+}

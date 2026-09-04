@@ -1,7 +1,8 @@
 import { AppError } from '../errors'
 
 const supportedTypes = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
-const maxImageBytes = 8 * 1024 * 1024
+export const maxImageMegabytes = 20
+const maxImageBytes = maxImageMegabytes * 1024 * 1024
 const minDimension = 224
 
 export async function validateImageFile(file: File) {

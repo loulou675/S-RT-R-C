@@ -1,0 +1,74 @@
+{
+  "source": "/Users/Vy/Documents/sort rac/training/dataset/train/plastic_water_bottle",
+  "targetClass": "plastic_water_bottle",
+  "policy": "Accept readable plastic water or soft-drink bottles, including crushed and partially occluded hard examples. Reject other plastic-container classes and ambiguous material.",
+  "accepted": [
+    "commons_real_16844093.jpg",
+    "hard_aug_plastic_water_bottle_004.jpg",
+    "hard_aug_plastic_water_bottle_006.jpg",
+    "taco_field_v2_130_438.jpg",
+    "taco_field_v2_13_42.jpg",
+    "taco_field_v2_222_746.jpg",
+    "taco_field_v2_227_751.jpg",
+    "taco_field_v2_2_4.jpg",
+    "taco_field_v2_3_6.jpg",
+    "taco_field_v2_76_189.jpg",
+    "taco_field_v2_7_18.jpg",
+    "taco_field_v2_89_232.jpg",
+    "taco_hard_v3_291_885.jpg",
+    "taco_hard_v3_295_891.jpg",
+    "taco_hard_v3_313_947.jpg",
+    "taco_hard_v3_314_948.jpg",
+    "taco_hard_v3_380_1330.jpg",
+    "taco_hard_v3_394_1408.jpg",
+    "taco_hard_v3_395_1414.jpg",
+    "taco_hard_v3_429_1549.jpg",
+    "taco_hard_v3_435_1557.jpg"
+  ],
+  "rejected": {
+    "commons_real_72520897.jpg": "milk jug rather than a water or soft-drink bottle",
+    "hard_aug_plastic_water_bottle_001.jpg": "chemical container with hazard marking",
+    "hard_aug_plastic_water_bottle_002.jpg": "shampoo/cosmetic container",
+    "hard_aug_plastic_water_bottle_005.jpg": "cleaner/cosmetic container",
+    "taco_field_v2_12_32.jpg": "milk jug",
+    "taco_field_v2_12_33.jpg": "material is ambiguous and may be glass",
+    "taco_field_v2_14_46.jpg": "sunscreen/cosmetic container",
+    "taco_field_v2_15_47.jpg": "shampoo/cosmetic container",
+    "taco_field_v2_15_48.jpg": "cleaner/cosmetic container",
+    "taco_field_v2_23_65.jpg": "household cleaner container",
+    "taco_field_v2_23_66.jpg": "toilet-cleaner/chemical container",
+    "taco_field_v2_43_107.jpg": "dishwashing-liquid container",
+    "taco_field_v2_43_108.jpg": "dishwashing-liquid container",
+    "taco_field_v2_5_13.jpg": "dishwashing-liquid container",
+    "taco_field_v2_75_178.jpg": "dishwashing-liquid/chemical container",
+    "taco_field_v2_84_218.jpg": "toilet-cleaner/chemical container",
+    "taco_hard_v3_237_774.jpg": "large jerrycan rather than a water or soft-drink bottle"
+  },
+  "hardNegativeLabels": {
+    "chemical_container": [
+      "hard_aug_plastic_water_bottle_001.jpg",
+      "taco_field_v2_23_65.jpg",
+      "taco_field_v2_23_66.jpg",
+      "taco_field_v2_43_107.jpg",
+      "taco_field_v2_43_108.jpg",
+      "taco_field_v2_5_13.jpg",
+      "taco_field_v2_75_178.jpg",
+      "taco_field_v2_84_218.jpg"
+    ],
+    "plastic_cosmetic_container": [
+      "hard_aug_plastic_water_bottle_002.jpg",
+      "hard_aug_plastic_water_bottle_005.jpg",
+      "taco_field_v2_14_46.jpg",
+      "taco_field_v2_15_47.jpg",
+      "taco_field_v2_15_48.jpg"
+    ],
+    "glass_drink_bottle": [
+      "taco_field_v2_12_33.jpg"
+    ],
+    "unknown": [
+      "commons_real_72520897.jpg",
+      "taco_field_v2_12_32.jpg",
+      "taco_hard_v3_237_774.jpg"
+    ]
+  }
+}

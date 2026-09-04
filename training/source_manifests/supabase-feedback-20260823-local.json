@@ -1,0 +1,43 @@
+{
+  "source": "Supabase project mbgiaevxiabtdweydgwm, training_feedback and private training-feedback bucket",
+  "queried_after": "2026-08-21T08:43:09.561238+00:00",
+  "pulled_at": "2026-08-23",
+  "rows_returned": 31,
+  "jpeg_integrity": {
+    "valid": 31,
+    "invalid": 0
+  },
+  "deduplication": {
+    "already_present_in_v67_feedback_review": 29,
+    "genuinely_new": 2,
+    "note": "The 29 older rows are not inserted a second time. Their earlier review excluded one 8x8 deployment placeholder and two exact duplicates, then kept 26 train-only images."
+  },
+  "new_train_only_rows": [
+    {
+      "feedback_id": "31913fdb-9825-444d-ab82-48d7250090d8",
+      "client_record_id": "8dd5a301-15a2-42eb-bab0-b83707e2b9b8",
+      "image_path": "pending/2026-08-23/8dd5a301-15a2-42eb-bab0-b83707e2b9b8.jpg",
+      "corrected_item_code": "plastic_takeaway_cup",
+      "local_review": "accepted",
+      "reason": "Clear, readable single-item field image; label matches the visible plastic takeaway cup."
+    },
+    {
+      "feedback_id": "d4416304-bb04-400f-ba3c-86aade7fe23e",
+      "client_record_id": "8e790c39-2552-4d02-bcc1-91e88b08c1f4",
+      "image_path": "pending/2026-08-23/8e790c39-2552-4d02-bcc1-91e88b08c1f4.jpg",
+      "corrected_item_code": "printing_paper",
+      "local_review": "accepted",
+      "reason": "Clear, readable single-item receipt/bill image; user note and visible material agree."
+    }
+  ],
+  "candidate_dataset": {
+    "source": "candidate_v67_cutlery_feedback_41class",
+    "output": "training/candidate_datasets/candidate_v69_feedback_41class",
+    "new_classes_affected": [
+      "plastic_takeaway_cup",
+      "printing_paper"
+    ],
+    "split_policy": "New feedback is train-only. Existing validation and test splits are unchanged.",
+    "oversampling_policy": "Each genuinely new image is represented eight times in train; randomized focus augmentations are generated during feature extraction."
+  }
+}

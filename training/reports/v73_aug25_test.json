@@ -1,0 +1,16 @@
+{
+  "split": "test",
+  "calibration": "training/checkpoints/calibration_v73_aug25.json",
+  "base": {
+    "correct": 239,
+    "images": 378,
+    "top1": 0.6322751322751323,
+    "nll": 1.4742499589920044
+  },
+  "calibrated": {
+    "correct": 258,
+    "images": 378,
+    "top1": 0.6825396825396826,
+    "nll": 1.2988214492797852
+  }
+}

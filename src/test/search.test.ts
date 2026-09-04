@@ -19,6 +19,12 @@ describe('search', () => {
     expect(result.item.code).toBe('pizza_box')
   })
 
+  it('maps cigarette packs to paperboard packaging for search and feedback', () => {
+    const [result] = searchWasteItems('cigarette pack')
+
+    expect(result.item.code).toBe('paperboard_packaging')
+  })
+
   it('handles small typos where reasonable', () => {
     const [result] = searchWasteItems('baterny')
 

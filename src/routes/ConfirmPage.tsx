@@ -13,8 +13,8 @@ export function ConfirmPage() {
 
   if (!item) {
     return (
-      <EmptyState title="No item identified">
-        Scan again or use manual search to continue.
+      <EmptyState title="No item identified / Chưa nhận diện được vật thể">
+        Scan again or use manual search to continue. / Hãy quét lại hoặc tìm kiếm thủ công để tiếp tục.
       </EmptyState>
     )
   }
@@ -33,7 +33,7 @@ export function ConfirmPage() {
     <section className="flow-layout narrow">
       <div className="identified-card">
         <ItemGlyph objectType={item.objectType} />
-        <p>We identified this as:</p>
+        <p>We identified this as:<span className="vi-note">Vật thể được nhận diện là:</span></p>
         <h1>{item.nameEn}</h1>
         <span>{item.nameVi}</span>
       </div>
@@ -42,15 +42,15 @@ export function ConfirmPage() {
       <div className="action-stack">
         <button type="button" className="primary-action large" onClick={continueFlow}>
           <Check size={19} aria-hidden="true" />
-          Yes, continue
+          <span>Yes, continue</span>
         </button>
         <button type="button" className="secondary-action large" onClick={() => navigate('/search')}>
           <Search size={19} aria-hidden="true" />
-          This is not correct
+          <span>This is not correct</span>
         </button>
         <button type="button" className="ghost-action large" onClick={() => navigate('/scan')}>
           <RotateCcw size={19} aria-hidden="true" />
-          Retake photo
+          <span>Retake photo</span>
         </button>
       </div>
     </section>

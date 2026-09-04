@@ -13,6 +13,17 @@ export type BinCode =
   | 'paper_cardboard'
   | 'landfill'
   | 'special_handling'
+  | 'mixed_uncertain'
+
+export type BroadMaterialCode =
+  | 'plastic'
+  | 'metal'
+  | 'paper_cardboard'
+  | 'organic'
+  | 'glass'
+  | 'electronic_battery'
+  | 'landfill'
+  | 'mixed_uncertain'
 
 export type MaterialCode =
   | 'pet_plastic'
@@ -114,6 +125,7 @@ export interface ConditionQuestion {
 }
 
 export interface ComponentAction {
+  code: string
   componentVi: string
   componentEn: string
   materialVi?: string
@@ -121,6 +133,12 @@ export interface ComponentAction {
   disposalNoteVi?: string
   disposalNoteEn?: string
   destinationBinCode: BinCode
+}
+
+export interface DetectedComponent {
+  code: string
+  confidence: number
+  areaRatio: number
 }
 
 export interface DisposalRule {
@@ -136,6 +154,7 @@ export interface DisposalRule {
   whyCategoryEn?: string
   preparationStepsVi: string[]
   preparationStepsEn: string[]
+  preparationComponentCodes: string[][]
   warningVi?: string
   warningEn?: string
   componentActions: ComponentAction[]
@@ -171,6 +190,13 @@ export interface RuleEngineInput {
   itemCode: string
   conditionAnswers: Record<string, ConditionKey>
   locale?: Locale
+  detectedComponents?: DetectedComponent[]
+}
+
+export interface PreparationStepResult {
+  text: string
+  textVi: string
+  components: Array<ComponentAction & { destinationBin: Bin }>
 }
 
 export interface RuleEngineResult {
@@ -179,9 +205,17 @@ export interface RuleEngineResult {
   mainInstruction: string
   detailedInstruction: string
   whyCategory: string
+  mainInstructionVi: string
+  detailedInstructionVi: string
+  whyCategoryVi: string
   preparationSteps: string[]
+  preparationStepsVi: string[]
+  preparationActions: PreparationStepResult[]
   componentActions: Array<ComponentAction & { destinationBin: Bin }>
   warning?: string
+  warningVi?: string
   reuseSuggestions: ReuseSuggestion[]
   specialHandling: boolean
+  matchLevel?: 'item' | 'material'
+  materialCode?: BroadMaterialCode
 }

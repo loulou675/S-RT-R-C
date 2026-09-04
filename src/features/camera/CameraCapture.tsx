@@ -1,32 +1,51 @@
-import { Camera, X } from 'lucide-react'
+import { Camera, RotateCcw, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { AppError, toAppError, type AppErrorCode } from '../../lib/errors'
+import { toAppError, type AppErrorCode } from '../../lib/errors'
+import { measureFrameQuality } from './frameQuality'
 
 interface CameraCaptureProps {
-  onCapture: (dataUrl: string) => void
+  onCapture: (dataUrl: string) => Promise<boolean>
   onCancel: () => void
   onError: (code: AppErrorCode) => void
+}
+
+const QUALITY_SAMPLE_SIZE = 64
+const CAPTURE_SIZE = 640
+const CAMERA_START_TIMEOUT_MS = Number(import.meta.env.VITE_CAMERA_START_TIMEOUT_MS ?? 12_000)
+
+type CaptureState = 'preview' | 'needs-retake' | 'processing'
+
+interface CapturedFrame {
+  dataUrl: string
+  qualitySample: Uint8ClampedArray
 }
 
 export function CameraCapture({ onCapture, onCancel, onError }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const mountedRef = useRef(true)
   const [facingMode] = useState<'environment' | 'user'>(() =>
     window.matchMedia('(max-width: 860px)').matches ? 'environment' : 'user',
   )
   const [status, setStatus] = useState('Starting camera...')
+  const [statusVi, setStatusVi] = useState('Đang khởi động camera...')
+  const [captureState, setCaptureState] = useState<CaptureState>('preview')
+  const [capturedImage, setCapturedImage] = useState<string>()
   const isFrontCamera = facingMode === 'user'
 
   useEffect(() => {
+    mountedRef.current = true
     let cancelled = false
 
     function stopCamera() {
-      streamRef.current?.getTracks().forEach((track) => track.stop())
-      streamRef.current = null
+      stopStream(streamRef)
     }
 
     async function startCamera() {
       setStatus('Starting camera...')
+      setStatusVi('Đang khởi động camera...')
+      setCaptureState('preview')
+      setCapturedImage(undefined)
 
       if (!navigator.mediaDevices?.getUserMedia) {
         onError('CAMERA_NOT_AVAILABLE')
@@ -35,7 +54,7 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
 
       try {
         stopCamera()
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const stream = await getUserMediaWithTimeout({
           video: {
             facingMode: { ideal: facingMode },
             width: { ideal: 1280 },
@@ -50,13 +69,17 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
         }
 
         streamRef.current = stream
+        void enableContinuousFocus(stream)
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream
           await videoRef.current.play()
         }
 
-        setStatus('Place one item clearly inside the frame.')
+        if (!cancelled) {
+          setStatus('Place one item inside the frame, then take a photo.')
+          setStatusVi('Đặt một vật vào trong khung rồi chụp ảnh.')
+        }
       } catch (error) {
         const appError = toAppError(
           error,
@@ -68,38 +91,70 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
       }
     }
 
-    startCamera()
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onCancel()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    void startCamera()
 
     return () => {
       cancelled = true
+      mountedRef.current = false
+      window.removeEventListener('keydown', handleKeyDown)
       stopCamera()
     }
-  }, [facingMode, onError])
+  }, [facingMode, onCancel, onError])
 
-  function capture() {
+  async function handleCapture() {
     const video = videoRef.current
+    if (captureState === 'processing') return
 
-    if (!video || !video.videoWidth || !video.videoHeight) {
-      throw new AppError('CAMERA_NOT_AVAILABLE', 'Video stream is unavailable')
+    if (captureState === 'needs-retake') {
+      setCapturedImage(undefined)
+      setCaptureState('preview')
+      setStatus('Place one item inside the frame, then take a photo.')
+      setStatusVi('Đặt một vật vào trong khung rồi chụp ảnh.')
+      try {
+        await video?.play()
+      } catch {
+        onError('CAMERA_NOT_AVAILABLE')
+      }
+      return
     }
 
-    const canvas = document.createElement('canvas')
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const context = canvas.getContext('2d')
-
-    if (!context) {
+    if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
       onError('IMAGE_INVALID')
       return
     }
 
-    if (isFrontCamera) {
-      context.translate(canvas.width, 0)
-      context.scale(-1, 1)
+    const frame = captureFrame(video, isFrontCamera)
+    if (!frame) {
+      onError('IMAGE_INVALID')
+      return
     }
 
-    context.drawImage(video, 0, 0, canvas.width, canvas.height)
-    onCapture(canvas.toDataURL('image/jpeg', 0.92))
+    video.pause()
+    setCapturedImage(frame.dataUrl)
+    const quality = measureFrameQuality(frame.qualitySample, QUALITY_SAMPLE_SIZE)
+    if (!quality.good) {
+      setCaptureState('needs-retake')
+      setStatus(`${quality.message} Retake the photo.`)
+      setStatusVi('Ảnh chưa đủ rõ. Hãy điều chỉnh ánh sáng hoặc giữ máy ổn định rồi chụp lại.')
+      return
+    }
+
+    setCaptureState('processing')
+    setStatus('Identifying item...')
+    setStatusVi('Đang nhận diện vật thể...')
+    stopStream(streamRef)
+    const recognised = await onCapture(frame.dataUrl)
+    if (!mountedRef.current) return
+
+    if (!recognised) {
+      setStatus('No confident match. Opening the feedback form...')
+      setStatusVi('Chưa có kết quả đủ chắc chắn. Đang mở biểu mẫu phản hồi...')
+    }
   }
 
   return (
@@ -107,21 +162,123 @@ export function CameraCapture({ onCapture, onCancel, onError }: CameraCapturePro
       <div className="camera-card" aria-live="polite">
         <div className={isFrontCamera ? 'camera-frame user-facing' : 'camera-frame'}>
           <video ref={videoRef} playsInline muted aria-label="Camera preview" />
-          <div className="scan-haze" aria-hidden="true" />
-          <div className="scan-window" aria-hidden="true" />
+          <div className="scan-shade" aria-hidden="true" />
+          <div className={`scan-window ${captureState}`} aria-hidden="true">
+            {capturedImage ? <img src={capturedImage} alt="" className="captured-scan-frame" /> : null}
+          </div>
         </div>
       </div>
-      <p className="status-line">{status}</p>
-      <div className="button-row full">
-        <button type="button" className="primary-action" onClick={capture}>
-          <Camera size={17} aria-hidden="true" />
-          Capture
+      <p className="status-line" role="status">{status}<span className="vi-note">{statusVi}</span></p>
+      <div className="camera-controls">
+        <button type="button" className="camera-cancel-button" onClick={onCancel} aria-label="Close camera">
+          <X size={20} aria-hidden="true" />
+          <span>Cancel</span>
         </button>
-        <button type="button" className="secondary-action" onClick={onCancel}>
-          <X size={17} aria-hidden="true" />
-          Cancel
+        <button
+          type="button"
+          className={captureState === 'needs-retake' ? 'camera-retake-button' : 'camera-shutter-button'}
+          onClick={() => void handleCapture()}
+          disabled={captureState === 'processing'}
+          aria-label={captureState === 'needs-retake' ? 'Retake photo' : 'Take photo'}
+          title={captureState === 'needs-retake' ? 'Retake photo' : 'Take photo'}
+        >
+          {captureState === 'needs-retake'
+            ? <><RotateCcw size={21} aria-hidden="true" /><span>Retake</span></>
+            : <Camera size={25} aria-hidden="true" />}
         </button>
       </div>
     </div>
   )
+}
+
+function captureFrame(video: HTMLVideoElement, mirror: boolean): CapturedFrame | undefined {
+  if (!video.videoWidth || !video.videoHeight) return undefined
+
+  const canvas = document.createElement('canvas')
+  canvas.width = CAPTURE_SIZE
+  canvas.height = CAPTURE_SIZE
+  const context = canvas.getContext('2d')
+  if (!context) return undefined
+
+  drawCenterCrop(context, video, CAPTURE_SIZE, mirror)
+
+  const sampleCanvas = document.createElement('canvas')
+  sampleCanvas.width = QUALITY_SAMPLE_SIZE
+  sampleCanvas.height = QUALITY_SAMPLE_SIZE
+  const sampleContext = sampleCanvas.getContext('2d', { willReadFrequently: true })
+  if (!sampleContext) return undefined
+  sampleContext.drawImage(canvas, 0, 0, QUALITY_SAMPLE_SIZE, QUALITY_SAMPLE_SIZE)
+
+  return {
+    dataUrl: canvas.toDataURL('image/jpeg', 0.9),
+    qualitySample: sampleContext.getImageData(0, 0, QUALITY_SAMPLE_SIZE, QUALITY_SAMPLE_SIZE).data,
+  }
+}
+
+function drawCenterCrop(
+  context: CanvasRenderingContext2D,
+  video: HTMLVideoElement,
+  outputSize: number,
+  mirror: boolean,
+) {
+  const videoBounds = video.getBoundingClientRect()
+  const windowBounds = video.parentElement?.querySelector('.scan-window')?.getBoundingClientRect()
+  const renderedScale = Math.max(videoBounds.width / video.videoWidth, videoBounds.height / video.videoHeight)
+  const renderedWidth = video.videoWidth * renderedScale
+  const renderedHeight = video.videoHeight * renderedScale
+  const cropDisplaySize = windowBounds?.width ?? Math.min(videoBounds.width, videoBounds.height) * 0.78
+  const sourceSize = Math.min(cropDisplaySize / renderedScale, video.videoWidth, video.videoHeight)
+  const sourceX = ((renderedWidth - videoBounds.width) / 2 + (videoBounds.width - cropDisplaySize) / 2) / renderedScale
+  const sourceY = ((renderedHeight - videoBounds.height) / 2 + (videoBounds.height - cropDisplaySize) / 2) / renderedScale
+
+  if (mirror) {
+    context.translate(outputSize, 0)
+    context.scale(-1, 1)
+  }
+
+  context.drawImage(video, sourceX, sourceY, sourceSize, sourceSize, 0, 0, outputSize, outputSize)
+}
+
+async function getUserMediaWithTimeout(constraints: MediaStreamConstraints) {
+  let timedOut = false
+  let timeoutId: number | undefined
+  const mediaRequest = navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    if (timedOut) {
+      stream.getTracks().forEach((track) => track.stop())
+      throw new DOMException('Camera startup timed out.', 'NotReadableError')
+    }
+    return stream
+  })
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => {
+      timedOut = true
+      reject(new DOMException('Camera startup timed out.', 'NotReadableError'))
+    }, CAMERA_START_TIMEOUT_MS)
+  })
+
+  try {
+    return await Promise.race([mediaRequest, timeout])
+  } finally {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+  }
+}
+
+function stopStream(streamRef: { current: MediaStream | null }) {
+  streamRef.current?.getTracks().forEach((track) => track.stop())
+  streamRef.current = null
+}
+
+async function enableContinuousFocus(stream: MediaStream) {
+  const track = stream.getVideoTracks()[0]
+  if (!track?.getCapabilities) return
+
+  try {
+    const capabilities = track.getCapabilities() as MediaTrackCapabilities & { focusMode?: string[] }
+    if (!capabilities.focusMode?.includes('continuous')) return
+    await track.applyConstraints({
+      advanced: [{ focusMode: 'continuous' } as MediaTrackConstraintSet],
+    })
+  } catch {
+    // Browsers without camera focus controls keep their native autofocus.
+  }
 }

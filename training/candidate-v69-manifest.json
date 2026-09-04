@@ -1,0 +1,77 @@
+{
+  "candidate": "v69-four-model-41class-feedback-refinement",
+  "promotedAt": "2026-08-23",
+  "classes": 41,
+  "refinement": {
+    "base": "v66-four-model-41class-calibrated-ensemble",
+    "changedComponent": 4,
+    "changedRows": [
+      "plastic_takeaway_cup",
+      "printing_paper"
+    ],
+    "otherClassifierRowsUnchanged": true,
+    "backboneUnchanged": true,
+    "validationSelection": {
+      "baselineCorrect": 245,
+      "candidateCorrect": 247,
+      "images": 373,
+      "baselineTop1": 0.6568364611260054,
+      "candidateTop1": 0.6621983914209115,
+      "report": "training/candidate-v69-component-validation.json"
+    }
+  },
+  "feedback": {
+    "rowsPulled": 31,
+    "alreadyAccountedFor": 29,
+    "newTrainOnlyImages": 2,
+    "audit": "training/source_manifests/supabase-feedback-20260823-local.json"
+  },
+  "browserBundle": {
+    "modelFiles": [
+      {
+        "path": "public/models/waste_classifier.onnx",
+        "sha256": "cd9e9b97fd5b648ade7ea3e4c04a5036e248f5795d860c6a52a21fb1b35d7bff"
+      },
+      {
+        "path": "public/models/waste_classifier_v66_s_late.onnx",
+        "sha256": "17b90ff5bba25e6158793b27c8370df20034f820918d07417205411ac7e59b9f"
+      },
+      {
+        "path": "public/models/waste_classifier_v66_s_frozen.onnx",
+        "sha256": "b951d176e509d74b93f765358cb30f9a05e033ec5f9c61cd3a2a4369f4a166e5"
+      },
+      {
+        "path": "public/models/waste_classifier_v69_m_feedback.onnx",
+        "sha256": "9ba0177ad163e7d1955bc7d0d217b8be09a65eb3bc632b6bad3eb48a581022de"
+      }
+    ],
+    "runtime": {
+      "path": "public/models/waste_classifier_ensemble.json",
+      "sha256": "9df14495351477101355c4209cd273e004d558b7365392dea44fc7679c989b25"
+    },
+    "labels": {
+      "path": "public/models/labels.json",
+      "sha256": "43486aac50c11d55f98d1dedffac7d8113f1a1ca16a21aa163eb450e427dac1b"
+    }
+  },
+  "evaluation": {
+    "report": "training/candidate-v69-vs-v66-heldout.json",
+    "testImages": 330,
+    "top1Correct": 237,
+    "top1": 0.7181818181818181,
+    "v66Top1Correct": 236,
+    "v66Top1": 0.7151515151515152,
+    "macroRecall": 0.6136072295404215,
+    "knownItemBinAccuracy": 0.7933884297520661,
+    "groupedKnownItemBinAccuracy": 0.7975206611570248,
+    "hazardousMacroRecall": 0.7023809523809524,
+    "unknownRejectionRecall": 0.8522727272727273,
+    "correctToWrongRegressions": 0
+  },
+  "replacedModel": {
+    "candidate": "v66",
+    "removedBrowserFile": "public/models/waste_classifier_v66_m_frozen.onnx",
+    "removedBrowserSha256": "b2c5b5b13ed88b5fe94bbd1b7d037f1ef8eda4c60a5b22120957bdbdc645acde",
+    "rollback": "Git parent commit and local model archives"
+  }
+}

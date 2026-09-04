@@ -1,19 +1,21 @@
 # SỌRT RÁC
 
-SỌRT RÁC is an MVP web application for an AI-powered waste sorting assistant at the selected RMIT Vietnam waste station.
+SỌRT RÁC is an MVP web application for an AI-powered waste sorting assistant at a configurable waste station.
 
 The main recognition experience runs on one page: camera, upload, preview, processing and the sliding result panel all stay inside `/`.
 
-The repository contains the complete application and AI integration layer, but an accurate custom waste classifier requires a trained ONNX model and a dataset representative of the RMIT test environment.
+The repository contains the complete application and AI integration layer, but an accurate custom waste classifier requires a trained ONNX model and a dataset representative of the intended real-world environment.
 
 ## Architecture
 
 - React, TypeScript, Vite and React Router provide the multi-route web app.
 - Browser MediaDevices handles laptop and mobile camera capture after explicit user action.
-- Browser Canvas handles still-image capture, cropping, resizing and RGB preprocessing.
-- ONNX Runtime Web loads `/public/models/waste_classifier.onnx` for local browser inference.
+- Browser Canvas automatically extracts the centered camera guide, resizes it and prepares the RGB tensor.
+- ONNX Runtime Web loads the calibrated v71e four-model, 41-class ensemble from `/public/models/` for local browser inference.
+- Rejected exact-item scans can fall back to a separate seven-class broad-material model and open the normal result sheet with material-only guidance.
 - A `VisionProvider` interface separates the model from the app flow.
 - Supabase Postgres stores normalized reference data, rules, condition questions, reuse suggestions and anonymous scan events.
+- A short post-scan survey stores usability feedback locally first, then syncs it to Supabase when configured.
 - The deterministic TypeScript rule engine selects active verified rules and never invents disposal guidance.
 - Zod validates model labels and model output structure.
 - Vitest covers rule/search behavior. Playwright covers critical browser flows in mock mode.
@@ -87,33 +89,41 @@ pnpm build:pages
 ## Environment Variables
 
 ```text
-VITE_SUPABASE_URL=
+VITE_SUPABASE_URL=https://mbgiaevxiabtdweydgwm.supabase.co
 VITE_SUPABASE_ANON_KEY=
 VITE_USE_MOCK_VISION=false
+VITE_AI_ENSEMBLE_ENABLED=true
+VITE_AI_ENSEMBLE_CONFIG_PATH=/models/waste_classifier_ensemble.json
 VITE_AI_MODEL_PATH=/models/waste_classifier.onnx
 VITE_AI_LABELS_PATH=/models/labels.json
 VITE_AI_NORMALIZATION=zero-one
 VITE_AI_MIN_ACCEPTANCE=0.55
 VITE_AI_MIN_MARGIN=0.15
 VITE_AI_SPECIAL_HANDLING_MIN_ACCEPTANCE=0.8
-VITE_AI_TIMEOUT_MS=10000
+VITE_AI_TIMEOUT_MS=60000
+VITE_BIN_MODEL_ENABLED=false
+VITE_BIN_MODEL_PATH=/models/waste_bin_classifier.onnx
+VITE_BIN_LABELS_PATH=/models/bin_labels.json
+VITE_BIN_ENSEMBLE_WEIGHT=0.53
 VITE_TRAINING_MODE=false
+VITE_RESULT_FEEDBACK=true
+VITE_FEEDBACK_AUTO_UPLOAD=true
 ```
 
 Do not expose Supabase service-role keys in the browser.
 
 ## Private training mode
 
-Set `VITE_TRAINING_MODE=true` only in a local or private field-test `.env.local`.
-When enabled, the scan flow shows a correction form for unknown or incorrect
-results and stores compact feedback images plus labels in the browser for later
-export. The public/client build keeps this feature hidden when the variable is
-unset or set to `false`.
+The correction prompt is controlled with `VITE_RESULT_FEEDBACK=true`. A user
+must choose the correct item and consent before anything is sent. When Supabase
+and `VITE_FEEDBACK_AUTO_UPLOAD=true` are configured, the app uploads the cropped
+JPEG and correction to a private review queue automatically. Failed uploads
+stay in a local outbox and retry at startup or when the browser comes back
+online. There is no manual reviewer-export control in the deployed interface.
 
-After field testing, set `VITE_TRAINING_MODE=false` (or remove it) and restart
-the Vite server or rebuild the app. Because Vite environment variables are
-embedded at build time, a production rebuild is required before the training
-controls disappear from a deployed build.
+After field testing, set `VITE_RESULT_FEEDBACK=false` and rebuild the app to
+remove the correction prompt. Vite environment variables are embedded at build
+time, so changing the value requires a new deployment.
 
 To publish a temporary training-mode Pages build, run:
 
@@ -126,7 +136,23 @@ new `docs/` output.
 
 ## Supabase Setup
 
-Create a Supabase project, then apply:
+For the automatic result-feedback queue only, run
+`supabase/migrations/002_training_feedback.sql` in the Supabase SQL Editor. It
+is self-contained and can be run without loading the reference-data seed.
+
+The same queue stores both kinds of result feedback. When
+`predicted_item_code` equals `corrected_item_code`, the user confirmed that the
+AI result was correct. When the values differ, the user selected a correction.
+Every row remains `pending` until a reviewer accepts, relabels, or rejects it.
+
+For post-scan survey responses, also run
+`supabase/migrations/004_user_surveys.sql` once in the Supabase SQL Editor. The
+answers are kept in a small browser outbox first, then inserted into the
+`user_surveys` table automatically when Supabase is configured or the browser
+comes back online. Survey responses never contain the uploaded image.
+
+For the complete optional remote reference database, create a Supabase project,
+then apply:
 
 ```bash
 supabase db push
@@ -144,10 +170,17 @@ The migration creates:
 - `condition_questions`
 - `reuse_suggestions`
 - `scan_events`
+- `training_feedback`
+- `user_surveys`
+- private Storage bucket `training-feedback`
 
-Row Level Security is enabled. Anonymous users can read active reference data and insert scan events. They cannot modify reference tables.
+Row Level Security is enabled. Anonymous users can read active reference data,
+insert scan events, and submit consented pending corrections. They cannot read
+the feedback queue or its private images and cannot modify reference tables.
 
-Raw user images are not stored in the database.
+Feedback images are center-cropped to 640 x 640 JPEG in the browser, which also
+removes original image metadata. The database stores only the private image
+path, labels, optional note, consent version and review state.
 
 ## ONNX Model
 
@@ -155,7 +188,13 @@ Place files in `public/models/`:
 
 ```text
 public/models/waste_classifier.onnx
+public/models/waste_classifier_v66_s_late.onnx
+public/models/waste_classifier_v66_s_frozen.onnx
+public/models/waste_classifier_v69_m_feedback.onnx
+public/models/waste_classifier_ensemble.json
 public/models/labels.json
+public/models/waste_material_classifier.onnx
+public/models/material_labels.json
 ```
 
 The app expects a 224 x 224 RGB classifier unless the provider is adjusted for model metadata.
@@ -173,16 +212,16 @@ Example labels format:
 }
 ```
 
-The model should output internal item codes such as:
+The checked-in v71e ensemble and `labels.json` contain 41 visual classes,
+including `unknown`. Searchable waste names
+can be more detailed than model classes; disposal conditions such as clean,
+dirty, wet or full are handled by rules after recognition.
 
-- `plastic_water_bottle`
-- `aluminium_drink_can`
-- `plastic_takeaway_cup`
-- `fruit_peel`
-- `cardboard_box`
-- `paper_cup`
-- `battery`
-- `unknown`
+If that exact-item ensemble rejects a scan, the app may run the separate
+seven-class material model. A sufficiently reliable material prediction opens
+the same result sheet as a successful exact scan, clearly marked as a
+material-based result. If both stages reject the scan, the user is routed to
+the correction-feedback flow.
 
 No confidence score appears in the user interface. Scores are used only internally to reject uncertain results.
 
@@ -205,10 +244,10 @@ Browser camera access requires HTTPS in production. Localhost is allowed by mode
 The camera flow:
 
 1. User clicks `Scan an item`.
-2. The app requests camera permission.
-3. User captures one still image.
-4. User reviews the preview.
-5. The image is processed only after `Use photo`.
+2. The app requests camera permission and uses the rear camera on mobile when available.
+3. User places one item inside the centered guide.
+4. The app samples that region automatically and waits for a sufficiently confident, stable result.
+5. Uncertain frames stay in the camera flow and ask the user to reposition the item; there is no crop or confirmation step.
 
 The app does not continuously send video frames anywhere.
 
@@ -302,8 +341,11 @@ The Playwright suite runs in mock vision mode and covers:
 
 ## Current Limitations
 
-- The custom ONNX classifier is not included.
-- Recognition accuracy depends on the future RMIT-specific dataset and training process.
+- The checked-in 41-class v71e ensemble is a candidate MVP (71.8% held-out top-1 on the expanded test set), not a production safety system.
+- `disposable_cutlery` is an experimental v71e output with only 1/4 held-out recall; keep collecting independent field images.
+- Broad-material results are deliberately conservative, visibly labelled, and cannot determine hidden materials, contamination, coatings or local acceptance rules.
+- Several rare classes still have too few reviewed original images; see `training/HUONG_DAN_TRAIN_AI.md` before retraining or publishing accuracy claims.
+- Recognition accuracy depends on representative field data and controlled field evaluation through the actual camera frame.
 - Cloud vision providers are intentionally not used in the default flow.
 - Font and final icon style are placeholders and can be swapped later.
 - Supabase is optional for the local demo because reference data is bundled in the app.

@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useFlow } from '../app/useFlow'
 import { EmptyState } from '../components/EmptyState'
@@ -13,18 +14,21 @@ export function ConditionPage() {
   const item = itemCode ? getItem(itemCode) : undefined
   const question = item ? getQuestionForItem(item.code) : undefined
 
+  useEffect(() => {
+    if (item && !question) {
+      navigate(`/result?item=${item.code}&condition=default`, { replace: true })
+    }
+  }, [item, navigate, question])
+
   if (!item) {
     return (
-      <EmptyState title="Item is missing">
-        Search for the item again to continue.
+      <EmptyState title="Item is missing / Thiếu thông tin vật thể">
+        Search for the item again to continue. / Hãy tìm lại vật thể để tiếp tục.
       </EmptyState>
     )
   }
 
-  if (!question) {
-    navigate(`/result?item=${item.code}&condition=default`, { replace: true })
-    return null
-  }
+  if (!question) return null
 
   function answer(condition: ConditionKey) {
     if (!item) return
@@ -36,8 +40,8 @@ export function ConditionPage() {
   return (
     <section className="flow-layout narrow">
       <div className="page-heading">
-        <p className="eyebrow">{item.nameEn}</p>
-        <h1>{question.questionEn}</h1>
+        <p className="eyebrow">{item.nameEn}<span className="vi-note">{item.nameVi}</span></p>
+        <h1>{question.questionEn}<span className="vi-note">{question.questionVi}</span></h1>
       </div>
       <div className="choice-list">
         {question.options.map((option) => (

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { AppError } from '../lib/errors'
-import { evaluateDisposal } from '../features/sorting/ruleEngine'
+import { evaluateDisposal, evaluateMaterialFallback, getDefaultConditionForItem } from '../features/sorting/ruleEngine'
+import { trainingTargetClassCodes } from '../config/modelClasses'
+import { wasteItems } from '../data/referenceData'
 import type { ConditionKey } from '../types/domain'
 
 function answers(condition: ConditionKey) {
@@ -28,7 +30,11 @@ describe('rule engine', () => {
     const result = evaluate('plastic_water_bottle', 'contains_liquid')
 
     expect(result.destinationBin.code).toBe('bottle_can')
-    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'bottle_can'])
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual([
+      'organic',
+      'bottle_can',
+      'clean_plastic',
+    ])
   })
 
   it('routes a plastic bottle with liquid through component sorting', () => {
@@ -66,6 +72,31 @@ describe('rule engine', () => {
     expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'clean_plastic'])
   })
 
+  it('routes cosmetic containers to Landfill regardless of the selected condition', () => {
+    const result = evaluate('plastic_cosmetic_container', 'clean_empty')
+
+    expect(result.destinationBin.code).toBe('landfill')
+    expect(result.preparationSteps).toContain('Place the cosmetic container in Landfill.')
+    expect(result.whyCategory).toContain('Cosmetic containers often retain product residue')
+  })
+
+  it('uses detected food to override the default clean-container condition', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'plastic_food_container',
+      conditionAnswers: answers('clean_empty'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'container', confidence: 1, areaRatio: 0.65 },
+        { code: 'remaining_liquid', confidence: 0.91, areaRatio: 0.35 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.preparationSteps[0]).toContain('Empty leftover food')
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'clean_plastic'])
+  })
+
   it('routes clean cardboard to Paper & Cardboard', () => {
     const result = evaluate('cardboard_box', 'clean_dry')
 
@@ -82,7 +113,55 @@ describe('rule engine', () => {
     const result = evaluate('paper_cup')
 
     expect(result.destinationBin.code).toBe('landfill')
-    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual(['organic', 'landfill'])
+    expect(result.componentActions.map((action) => action.destinationBin.code)).toEqual([
+      'organic',
+      'landfill',
+      'clean_plastic',
+      'landfill',
+    ])
+  })
+
+  it('routes empty medicine packaging to Landfill', () => {
+    const result = evaluate('medicine_blister_pack')
+
+    expect(result.destinationBin.code).toBe('landfill')
+    expect(result.specialHandling).toBe(false)
+    expect(result.warning).toContain('medicine remains')
+  })
+
+  it('keeps the item destination as the main category when it detects separate parts', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'drink_carton',
+      conditionAnswers: answers('default'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'plastic_cap', confidence: 0.91, areaRatio: 0.61 },
+        { code: 'carton_body', confidence: 0.96, areaRatio: 0.39 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('paper_cardboard')
+    expect(result.componentActions.map((action) => action.code)).toEqual([
+      'remaining_liquid',
+      'carton_body',
+      'plastic_cap',
+    ])
+  })
+
+  it('keeps the main item destination regardless of detected part area', () => {
+    const result = evaluateDisposal({
+      siteCode: 'default_station',
+      itemCode: 'drink_carton',
+      conditionAnswers: answers('default'),
+      locale: 'en',
+      detectedComponents: [
+        { code: 'carton_body', confidence: 0.95, areaRatio: 0.86 },
+        { code: 'plastic_cap', confidence: 0.89, areaRatio: 0.14 },
+      ],
+    })
+
+    expect(result.destinationBin.code).toBe('paper_cardboard')
   })
 
   it('routes food waste to Organic Waste', () => {
@@ -113,6 +192,12 @@ describe('rule engine', () => {
     expect(greasy.reuseSuggestions).toHaveLength(0)
   })
 
+  it('offers a relevant Eco Tip for a clean recyclable item', () => {
+    const result = evaluate('plastic_water_bottle', 'empty')
+
+    expect(result.reuseSuggestions.map((suggestion) => suggestion.code)).toContain('plastic_bottle_planter')
+  })
+
   it('throws when no verified rule exists', () => {
     expect(() => evaluate('unknown')).toThrow(AppError)
   })
@@ -123,5 +208,33 @@ describe('rule engine', () => {
     expect(result.specialHandling).toBe(true)
     expect(result.mainInstruction).toContain('Special handling')
     expect(result.preparationSteps.join(' ')).not.toContain('dismantle')
+  })
+
+  it('has a usable default rule for every active reference item', () => {
+    const activeCodes = wasteItems.filter((item) => item.isActive && item.code !== 'unknown').map((item) => item.code)
+
+    expect(() => activeCodes.forEach((itemCode) => evaluate(itemCode, getDefaultConditionForItem(itemCode)))).not.toThrow()
+  })
+
+  it('keeps every training class connected to an active reference item', () => {
+    const activeCodes = new Set(wasteItems.filter((item) => item.isActive).map((item) => item.code))
+
+    expect(trainingTargetClassCodes.filter((itemCode) => !activeCodes.has(itemCode))).toEqual([])
+  })
+
+  it('creates a normal result-panel payload for a broad plastic match', () => {
+    const result = evaluateMaterialFallback('plastic')
+
+    expect(result.matchLevel).toBe('material')
+    expect(result.destinationBin.code).toBe('clean_plastic')
+    expect(result.item.nameEn).toBe('Likely plastic material')
+    expect(result.warning).toContain('material-only result')
+  })
+
+  it('does not select a disposal bin for a mixed or uncertain material', () => {
+    const result = evaluateMaterialFallback('mixed_uncertain')
+
+    expect(result.destinationBin.code).toBe('mixed_uncertain')
+    expect(result.whyCategory).toContain('not choosing a disposal bin')
   })
 })

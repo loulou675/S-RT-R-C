@@ -1,4 +1,5 @@
 export type AppErrorCode =
+  | 'CAMERA_EMBEDDED_BROWSER'
   | 'CAMERA_PERMISSION_DENIED'
   | 'CAMERA_NOT_AVAILABLE'
   | 'IMAGE_INVALID'
@@ -8,8 +9,10 @@ export type AppErrorCode =
   | 'MODEL_LOAD_FAILED'
   | 'INFERENCE_FAILED'
   | 'INFERENCE_TIMEOUT'
+  | 'SCAN_TIMEOUT'
   | 'ITEM_NOT_RECOGNISED'
   | 'ITEM_AMBIGUOUS'
+  | 'MATERIAL_NOT_RECOGNISED'
   | 'MULTIPLE_ITEMS_DETECTED'
   | 'DATABASE_UNAVAILABLE'
   | 'RULE_NOT_FOUND'
@@ -30,6 +33,10 @@ export const retryMessage =
   'We could not clearly identify this item. Please place one item inside the frame and take another photo.'
 
 export function messageForError(code?: AppErrorCode) {
+  if (code === 'CAMERA_EMBEDDED_BROWSER') {
+    return 'Camera scanning is not reliable inside Instagram or Facebook. Open this page in Safari or Chrome, or upload an image here.'
+  }
+
   if (code === 'CAMERA_PERMISSION_DENIED') {
     return 'Camera access was blocked. You can upload an image or search manually.'
   }
@@ -39,7 +46,7 @@ export function messageForError(code?: AppErrorCode) {
   }
 
   if (code === 'IMAGE_TOO_LARGE') {
-    return 'This image is too large. Please choose a smaller JPG, PNG or WEBP image.'
+    return 'This image is larger than 20 MB. Please choose a smaller JPG, PNG or WEBP image.'
   }
 
   if (code === 'IMAGE_INVALID' || code === 'IMAGE_DECODE_FAILED') {
@@ -50,11 +57,62 @@ export function messageForError(code?: AppErrorCode) {
     return 'Disposal guidance is temporarily unavailable. Please try manual search again.'
   }
 
+  if (code === 'MODEL_NOT_CONFIGURED') {
+    return 'AI model files are missing. Add the ONNX model and labels, then rebuild the app.'
+  }
+
+  if (code === 'MODEL_LOAD_FAILED') {
+    return 'The AI model could not load. Check the model file, labels file and deployment path.'
+  }
+
+  if (code === 'INFERENCE_FAILED') {
+    return 'The AI model loaded, but could not process this image. Try a clearer image or check the model export.'
+  }
+
+  if (code === 'INFERENCE_TIMEOUT') {
+    return 'AI recognition took too long. Try a smaller image or reload the page.'
+  }
+
+  if (code === 'SCAN_TIMEOUT') {
+    return 'We could not get a clear scan. Try brighter, even light, move one item closer, and use a plain background.'
+  }
+
+  if (code === 'ITEM_NOT_RECOGNISED') {
+    return 'The AI ran, but this image matched Unknown. Crop one clear item and try again.'
+  }
+
+  if (code === 'ITEM_AMBIGUOUS') {
+    return 'The AI ran, but confidence was too low. Crop closer around one item or use a clearer photo.'
+  }
+
+  if (code === 'MATERIAL_NOT_RECOGNISED') {
+    return 'Neither the exact-item model nor the broad-material model was confident. Please identify the item below.'
+  }
+
   if (code === 'OFFLINE') {
     return 'You appear to be offline. Local scan guidance may be limited.'
   }
 
   return retryMessage
+}
+
+export function messageForErrorVi(code?: AppErrorCode) {
+  if (code === 'CAMERA_EMBEDDED_BROWSER') return 'Camera có thể không hoạt động ổn định trong Instagram hoặc Facebook. Hãy mở trang bằng Safari hoặc Chrome, hoặc tải ảnh lên.'
+  if (code === 'CAMERA_PERMISSION_DENIED') return 'Quyền truy cập camera đã bị chặn. Bạn có thể tải ảnh lên hoặc tìm kiếm thủ công.'
+  if (code === 'CAMERA_NOT_AVAILABLE') return 'Không tìm thấy camera trên thiết bị. Bạn có thể tải ảnh lên hoặc tìm kiếm thủ công.'
+  if (code === 'IMAGE_TOO_LARGE') return 'Ảnh lớn hơn 20 MB. Hãy chọn ảnh JPG, PNG hoặc WEBP nhỏ hơn.'
+  if (code === 'IMAGE_INVALID' || code === 'IMAGE_DECODE_FAILED') return 'Không thể đọc ảnh này. Hãy chọn ảnh JPG, PNG hoặc WEBP.'
+  if (code === 'DATABASE_UNAVAILABLE') return 'Hướng dẫn phân loại đang tạm thời gián đoạn. Hãy thử tìm kiếm thủ công.'
+  if (code === 'MODEL_NOT_CONFIGURED') return 'Thiếu tệp mô hình AI. Hãy thêm mô hình ONNX và nhãn rồi build lại ứng dụng.'
+  if (code === 'MODEL_LOAD_FAILED') return 'Không thể tải mô hình AI. Hãy kiểm tra tệp mô hình, nhãn và đường dẫn deploy.'
+  if (code === 'INFERENCE_FAILED') return 'Mô hình AI đã tải nhưng không thể xử lý ảnh. Hãy thử ảnh rõ hơn.'
+  if (code === 'INFERENCE_TIMEOUT') return 'Nhận diện mất quá nhiều thời gian. Hãy thử ảnh nhỏ hơn hoặc tải lại trang.'
+  if (code === 'SCAN_TIMEOUT') return 'Chưa có ảnh quét đủ rõ. Hãy tăng ánh sáng, đưa một vật lại gần và dùng nền đơn giản.'
+  if (code === 'ITEM_NOT_RECOGNISED') return 'AI đã chạy nhưng ảnh được xếp vào Unknown. Hãy chụp gần một vật và thử lại.'
+  if (code === 'ITEM_AMBIGUOUS') return 'Độ tin cậy của AI còn thấp. Hãy chụp gần một vật hơn hoặc dùng ảnh rõ hơn.'
+  if (code === 'MATERIAL_NOT_RECOGNISED') return 'Cả mô hình vật thể và vật liệu đều chưa đủ chắc chắn. Hãy xác định vật ở phần bên dưới.'
+  if (code === 'OFFLINE') return 'Thiết bị có vẻ đang ngoại tuyến. Hướng dẫn quét có thể bị giới hạn.'
+  return 'Chưa thể nhận diện rõ vật này. Hãy đặt một vật vào trong khung rồi chụp lại.'
 }
 
 export function toAppError(error: unknown, fallback: AppErrorCode) {
